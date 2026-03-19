@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Self App | Prototype</title>
+    <title>Self App Prototype</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -31,6 +31,12 @@
             transform: scale(0.97);
             background-color: #f3f4f6;
         }
+
+        /* Accordion transition */
+        .accordion-content {
+            transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+            overflow: hidden;
+        }
     </style>
 </head>
 <body class="h-screen w-screen flex flex-col items-center justify-center p-4 sm:p-8 overflow-hidden">
@@ -49,13 +55,13 @@
         <div class="bg-white w-full h-full rounded-[42px] relative overflow-hidden flex flex-col border border-black/10">
             
             <!-- Dynamic Island -->
-            <div class="absolute top-[10px] left-1/2 -translate-x-1/2 w-[120px] h-[35px] bg-black rounded-full z-[60] flex items-center justify-between px-2 shadow-sm">
+            <div class="absolute top-[10px] left-1/2 -translate-x-1/2 w-[120px] h-[35px] bg-black rounded-full z-[60] flex items-center justify-between px-2 shadow-sm pointer-events-none">
                 <div class="w-2.5 h-2.5 bg-gray-900 rounded-full opacity-50 ml-1.5 shadow-inner"></div>
                 <div class="w-2.5 h-2.5 bg-[#1a1a3a] rounded-full opacity-80 mr-1.5 shadow-inner border border-gray-800"></div>
             </div>
 
             <!-- Status Bar -->
-            <div class="h-12 w-full flex justify-between items-start px-7 pt-3.5 text-[14px] font-semibold bg-white z-50 text-black">
+            <div class="h-12 w-full flex justify-between items-start px-7 pt-3.5 text-[14px] font-semibold bg-white z-50 text-black pointer-events-none">
                 <span class="mt-0.5 tracking-tight">9:41</span>
                 <div class="flex space-x-1.5 mt-1 items-center">
                     <i data-lucide="signal" class="w-4 h-4"></i>
@@ -64,12 +70,18 @@
                 </div>
             </div>
 
+            <!-- Subtle Toast Notification -->
+            <div id="toast" class="absolute top-14 left-1/2 -translate-x-1/2 bg-gray-900/90 backdrop-blur-sm text-white px-4 py-2 rounded-full text-xs font-medium opacity-0 transition-opacity duration-300 pointer-events-none z-[100] shadow-lg flex items-center gap-2">
+                <i data-lucide="check-circle" class="w-3 h-3 text-green-400"></i>
+                <span id="toast-msg">Saved</span>
+            </div>
+
             <!-- Screens Container -->
             <div class="flex-1 overflow-hidden relative bg-white">
                 
                 <!-- ================= SCREEN 1: PRACTICE ================= -->
-                <div id="screen-practice" class="screen-content hidden flex-col h-full w-full absolute inset-0 transition-opacity duration-300 overflow-y-auto no-scrollbar pb-24 px-5">
-                    <h1 class="text-xl font-bold text-center mt-6 mb-8 text-gray-900">Train awareness & presence</h1>
+                <div id="screen-practice" class="screen-content hidden flex-col h-full w-full absolute inset-0 transition-opacity duration-300 overflow-y-auto no-scrollbar pb-24 px-5 pt-2">
+                    <h1 class="text-xl font-bold text-center mt-2 mb-8 text-gray-900">Train awareness & presence</h1>
                     
                     <!-- Body visual & floating buttons -->
                     <div class="relative flex-1 min-h-[400px] flex items-center justify-between mb-6 w-full">
@@ -115,270 +127,321 @@
                     </div>
                 </div>
 
-            <!-- ================= SCREEN 2: CONNECT ================= -->
-            <div id="screen-connect" class="screen-content hidden flex-col h-full w-full absolute inset-0 transition-opacity duration-300 overflow-y-auto no-scrollbar pb-24 px-5">
-                <div class="flex justify-center items-center mt-6 mb-8 gap-2 cursor-pointer">
-                    <h1 class="text-xl font-bold text-gray-900">Share, listen, ask, be</h1>
-                    <i data-lucide="chevron-down" class="w-5 h-5 text-gray-500"></i>
-                </div>
+                <!-- ================= SCREEN 2: CONNECT ================= -->
+                <div id="screen-connect" class="screen-content hidden flex-col h-full w-full absolute inset-0 transition-opacity duration-300 overflow-y-auto no-scrollbar pb-24 px-5 pt-2">
+                    <div class="flex justify-center items-center mt-2 mb-8 gap-2 cursor-pointer">
+                        <h1 class="text-xl font-bold text-gray-900">Share, listen, ask, be</h1>
+                        <i data-lucide="chevron-down" class="w-5 h-5 text-gray-500"></i>
+                    </div>
 
-                <div class="grid grid-cols-2 gap-4 mb-8">
-                    <div class="btn-interactive border border-gray-300 rounded-xl p-4 flex items-center justify-center text-center min-h-[120px] cursor-pointer">
-                        <span class="font-semibold text-sm">1-1 meaningful conversation</span>
-                    </div>
-                    <div class="btn-interactive border border-gray-300 rounded-xl p-4 flex flex-col items-center justify-center text-center min-h-[120px] cursor-pointer">
-                        <span class="font-semibold text-sm mb-2">Join live rooms:</span>
-                        <span class="text-[10px] text-gray-600 leading-tight">
-                            Presence<br>Conversation<br>Meditation<br>Body Movement<br>Art
-                        </span>
-                    </div>
-                </div>
-
-                <div class="mb-8">
-                    <div class="flex justify-center items-center gap-2 mb-4 cursor-pointer">
-                        <h2 class="text-lg font-bold text-gray-900">Work with someone</h2>
-                        <i data-lucide="user" class="w-4 h-4 text-blue-500"></i>
-                        <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400"></i>
-                    </div>
-                    <div class="btn-interactive border border-gray-300 rounded-xl p-6 text-center cursor-pointer">
-                        <h3 class="font-bold text-sm mb-2">Guided support</h3>
-                        <p class="text-xs text-gray-600 px-4">Connect with coaches, mentors, facilitators, specialists, professionals</p>
-                    </div>
-                </div>
-
-                <div>
-                    <div class="flex justify-center items-center gap-2 mb-4 cursor-pointer">
-                        <h2 class="text-lg font-bold text-gray-900">Upcoming</h2>
-                        <i data-lucide="calendar" class="w-4 h-4 text-red-400"></i>
-                        <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400"></i>
-                    </div>
-                    <div class="btn-interactive border border-gray-300 rounded-xl p-6 text-center cursor-pointer">
-                        <h3 class="font-bold text-sm">Upcoming gatherings events & sessions</h3>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ================= SCREEN 3: FEED ================= -->
-            <div id="screen-feed" class="screen-content hidden flex-col h-full w-full absolute inset-0 transition-opacity duration-300">
-                <!-- Filters -->
-                <div class="flex overflow-x-auto no-scrollbar gap-2 px-4 py-4 border-b border-gray-100 shrink-0 mt-2">
-                    <button class="border border-gray-400 rounded-full px-4 py-1 text-xs font-medium whitespace-nowrap bg-gray-100">You</button>
-                    <button class="border border-gray-300 rounded-full px-4 py-1 text-xs font-medium whitespace-nowrap btn-interactive">Mentors</button>
-                    <button class="border border-gray-300 rounded-full px-4 py-1 text-xs font-medium whitespace-nowrap btn-interactive">Self App</button>
-                    <button class="border border-gray-300 rounded-full px-4 py-1 text-xs font-medium whitespace-nowrap btn-interactive">Acquaintances</button>
-                    <button class="border border-gray-300 rounded-full px-4 py-1 text-xs font-medium whitespace-nowrap btn-interactive">Communities</button>
-                    <button class="border border-gray-300 rounded-full px-4 py-1 text-xs font-medium whitespace-nowrap btn-interactive flex items-center gap-1">Series <i data-lucide="chevron-down" class="w-3 h-3"></i></button>
-                </div>
-
-                <!-- Posts List -->
-                <div class="flex-1 overflow-y-auto no-scrollbar pb-24">
-                    <!-- Post 1 -->
-                    <div class="px-5 py-4 border-b border-gray-200">
-                        <p class="text-[13px] text-gray-800 leading-relaxed">
-                            <span class="font-bold">@you</span> <span class="text-gray-400">(yesterday):</span> Reflexión: feeling the need of going to sleep early gave me understanding of the calmness and steadiness I had and then lost some weeks ago.
-                        </p>
-                        <div class="flex justify-end gap-3 mt-3 text-gray-300">
-                            <i data-lucide="message-circle" class="w-4 h-4 cursor-pointer hover:text-gray-500"></i>
-                            <i data-lucide="heart" class="w-4 h-4 cursor-pointer hover:text-red-400"></i>
+                    <div class="grid grid-cols-2 gap-4 mb-8">
+                        <div class="btn-interactive border border-gray-300 rounded-xl p-4 flex items-center justify-center text-center min-h-[120px] cursor-pointer shadow-sm">
+                            <span class="font-semibold text-sm">1-1 meaningful conversation</span>
+                        </div>
+                        <div class="btn-interactive border border-gray-300 rounded-xl p-4 flex flex-col items-center justify-center text-center min-h-[120px] cursor-pointer shadow-sm bg-gray-50/50">
+                            <span class="font-semibold text-sm mb-2 text-gray-900">Join live rooms:</span>
+                            <span class="text-[10px] text-gray-600 leading-tight">
+                                Presence<br>Conversation<br>Meditation<br>Body Movement<br>Art
+                            </span>
                         </div>
                     </div>
-                    <!-- Post 2 -->
-                    <div class="px-5 py-4 border-b border-gray-200">
-                        <p class="text-[13px] text-gray-800 leading-relaxed">
-                            <span class="font-bold">@concreteness:</span> El programa consta de un proceso de 4 semanas donde vamos a trabajar de manera concreta para bajar tus ideas a tierra, ordenar tu método y avanzar hacia la construcción de tu proyecto.
-                        </p>
-                        <div class="flex justify-end gap-3 mt-3 text-gray-300">
-                            <i data-lucide="message-circle" class="w-4 h-4 cursor-pointer hover:text-gray-500"></i>
-                            <i data-lucide="heart" class="w-4 h-4 cursor-pointer hover:text-red-400"></i>
+
+                    <div class="mb-8">
+                        <div class="flex justify-center items-center gap-2 mb-4 cursor-pointer">
+                            <h2 class="text-lg font-bold text-gray-900">Work with someone</h2>
+                            <i data-lucide="user" class="w-4 h-4 text-blue-500"></i>
+                            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400"></i>
+                        </div>
+                        <div class="btn-interactive border border-gray-300 rounded-xl p-6 text-center cursor-pointer shadow-sm">
+                            <h3 class="font-bold text-sm mb-2">Guided support</h3>
+                            <p class="text-xs text-gray-600 px-4">Connect with coaches, mentors, facilitators, specialists, professionals</p>
                         </div>
                     </div>
-                    <!-- Post 3 -->
-                    <div class="px-5 py-4 border-b border-gray-200">
-                        <p class="text-[13px] text-gray-800 leading-relaxed">
-                            <span class="font-bold">@romana74:</span> insight: la práctica de chi-kun [chin003] me trajo una calma y un enfoque muy interesante, que me permitió sobrellevar el día mucho mejor.
-                        </p>
-                        <div class="flex justify-end gap-3 mt-3 text-gray-300">
-                            <i data-lucide="message-circle" class="w-4 h-4 cursor-pointer hover:text-gray-500"></i>
-                            <i data-lucide="heart" class="w-4 h-4 cursor-pointer hover:text-red-400"></i>
+
+                    <div>
+                        <div class="flex justify-center items-center gap-2 mb-4 cursor-pointer">
+                            <h2 class="text-lg font-bold text-gray-900">Upcoming</h2>
+                            <i data-lucide="calendar" class="w-4 h-4 text-red-400"></i>
+                            <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400"></i>
                         </div>
-                    </div>
-                    <!-- Post 4 -->
-                    <div class="px-5 py-4 border-b border-gray-200">
-                        <p class="text-[13px] text-gray-800 leading-relaxed">
-                            <span class="font-bold">Series: Bible:</span> Honor thy father and thy mother: that thy days may be long upon the land which the LORD thy God giveth thee.
-                        </p>
-                        <div class="flex justify-end gap-3 mt-3 text-gray-300">
-                            <i data-lucide="message-circle" class="w-4 h-4 cursor-pointer hover:text-gray-500"></i>
-                            <i data-lucide="heart" class="w-4 h-4 cursor-pointer hover:text-red-400"></i>
-                        </div>
-                    </div>
-                    <!-- Post 5 -->
-                    <div class="px-5 py-4 border-b border-gray-200">
-                        <p class="text-[13px] text-gray-800 leading-relaxed">
-                            <span class="font-bold">Self Basics:</span> La personalidad se conforma del conjunto de mecanismos de defensa que elaboramos frente a las necesidades afectivas que nuestro entorno no supo darnos en la temprana infancia.
-                        </p>
-                        <div class="flex justify-end gap-3 mt-3 text-gray-300">
-                            <i data-lucide="message-circle" class="w-4 h-4 cursor-pointer hover:text-gray-500"></i>
-                            <i data-lucide="heart" class="w-4 h-4 cursor-pointer hover:text-red-400"></i>
-                        </div>
-                    </div>
-                     <!-- Post 6 -->
-                     <div class="px-5 py-4 border-b border-gray-200">
-                        <p class="text-[13px] text-gray-800 leading-relaxed">
-                            <span class="font-bold">@pullover83</span> [aprendizaje]: entendí que un automatismo mío me lleva a siempre estar queriendo entender qué puedo mejorar, hacia dónde avanzar, en vez de nomás Ser-Estar y dejar que las cosas fluyan.
-                        </p>
-                        <div class="flex justify-end gap-3 mt-3 text-gray-300">
-                            <i data-lucide="message-circle" class="w-4 h-4 cursor-pointer hover:text-gray-500"></i>
-                            <i data-lucide="heart" class="w-4 h-4 cursor-pointer hover:text-red-400"></i>
+                        <div class="btn-interactive border border-gray-300 rounded-xl p-6 text-center cursor-pointer shadow-sm">
+                            <h3 class="font-bold text-sm text-gray-800">Upcoming gatherings events & sessions</h3>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- ================= SCREEN 4: NOW ================= -->
-            <div id="screen-now" class="screen-content hidden flex-col h-full w-full absolute inset-0 transition-opacity duration-300 overflow-y-auto no-scrollbar pb-24 px-5">
-                <!-- Top Card -->
-                <div class="bg-[#b3cded] rounded-3xl p-6 mt-6 flex flex-col items-center relative shadow-sm">
-                    <h2 class="text-white text-xl font-bold mb-4">About now</h2>
+                <!-- ================= SCREEN 3: FEED ================= -->
+                <div id="screen-feed" class="screen-content hidden flex-col h-full w-full absolute inset-0 transition-opacity duration-300 pt-2">
                     
-                    <div class="bg-white/40 w-full rounded-2xl p-4 text-center cursor-text mb-4">
-                        <p class="text-gray-700 text-sm font-medium">download your self...<br>what's on your mind & body?</p>
-                    </div>
-                    
-                    <button class="text-white text-sm font-medium flex items-center gap-1 opacity-90 hover:opacity-100 transition-opacity">
-                        Explore your here & now <i data-lucide="chevron-down" class="w-4 h-4"></i>
-                    </button>
-                </div>
-
-                <!-- Inspire text -->
-                <div class="flex justify-center mt-8 mb-6 cursor-pointer hover:opacity-70 transition-opacity">
-                    <p class="text-gray-800 font-bold flex items-center gap-2">
-                        Inspire me a question <i data-lucide="chevron-right" class="w-4 h-4"></i>
-                    </p>
-                </div>
-
-                <!-- Circle Interactive Graphic -->
-                <div class="relative w-56 h-56 mx-auto my-4 flex items-center justify-center">
-                    <!-- Main Purple Circle -->
-                    <div class="w-full h-full bg-[#c8bedb] rounded-full absolute inset-0 opacity-80 z-0 shadow-inner"></div>
-                    
-                    <!-- Inner Green Text Circle -->
-                    <div class="w-16 h-16 bg-[#d1e8a3] rounded-full z-10 flex items-center justify-center p-2 shadow-md cursor-pointer btn-interactive">
-                        <p class="text-[6px] text-center leading-tight font-medium text-gray-800">maybe time<br>to exercise<br>or journal?</p>
+                    <!-- Filters -->
+                    <div class="flex overflow-x-auto no-scrollbar gap-2 px-4 py-2 shrink-0">
+                        <button class="border border-gray-400 rounded-full px-4 py-1 text-xs font-medium whitespace-nowrap bg-gray-100">You</button>
+                        <button class="border border-gray-300 rounded-full px-4 py-1 text-xs font-medium whitespace-nowrap btn-interactive">Mentors</button>
+                        <button class="border border-gray-300 rounded-full px-4 py-1 text-xs font-medium whitespace-nowrap btn-interactive">Self App</button>
+                        <button class="border border-gray-300 rounded-full px-4 py-1 text-xs font-medium whitespace-nowrap btn-interactive">Acquaintances</button>
+                        <button class="border border-gray-300 rounded-full px-4 py-1 text-xs font-medium whitespace-nowrap btn-interactive flex items-center gap-1">Series <i data-lucide="chevron-down" class="w-3 h-3"></i></button>
                     </div>
 
-                    <!-- Orbiting Icons -->
-                    <i data-lucide="clover" class="w-5 h-5 absolute top-10 left-4 text-green-600 z-10"></i>
-                    <i data-lucide="cloud" class="w-5 h-5 absolute top-2 right-12 text-blue-400 z-10"></i>
-                    <i data-lucide="hand" class="w-5 h-5 absolute top-20 -right-2 text-yellow-600 z-10"></i>
-                    <i data-lucide="music" class="w-5 h-5 absolute bottom-12 left-2 text-gray-700 z-10"></i>
-                    <i data-lucide="flame" class="w-5 h-5 absolute bottom-4 right-10 text-orange-500 z-10"></i>
+                    <!-- Create Post Area -->
+                    <div class="px-4 py-4 border-b border-t border-gray-100 bg-gray-50/50 shrink-0">
+                        <div class="relative">
+                            <textarea id="feed-input" class="w-full bg-white border border-gray-200 rounded-xl p-3 text-[13px] text-gray-800 focus:outline-none focus:ring-1 focus:ring-gray-300 resize-none shadow-sm" rows="2" placeholder="What's on your mind? Share or log to your self..."></textarea>
+                        </div>
+                        <div class="flex justify-between items-center mt-2.5 px-1">
+                            <div class="flex items-center gap-2 text-gray-600">
+                                <i data-lucide="folder-plus" class="w-4 h-4 text-gray-400"></i>
+                                <select id="feed-category" class="text-[11px] font-medium border-none bg-transparent focus:outline-none text-gray-600 cursor-pointer">
+                                    <option value="today">Today</option>
+                                    <option value="ideas">To-do // ideas</option>
+                                    <option value="mantras">Actual mantras</option>
+                                    <option value="dreams">Dreams</option>
+                                    <option value="goals">Tasks & goals</option>
+                                </select>
+                            </div>
+                            <button onclick="addPost()" class="bg-black text-white px-5 py-1.5 rounded-full text-xs font-semibold btn-interactive shadow-md flex items-center gap-1.5 hover:bg-gray-800 transition-colors">
+                                Share <i data-lucide="send" class="w-3 h-3"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Posts List Container -->
+                    <div id="feed-list" class="flex-1 overflow-y-auto no-scrollbar pb-24">
+                        <!-- Post 1 -->
+                        <div class="px-5 py-4 border-b border-gray-200">
+                            <p class="text-[13px] text-gray-800 leading-relaxed">
+                                <span class="font-bold">@you</span> <span class="text-gray-400">(yesterday):</span> Reflexión: feeling the need of going to sleep early gave me understanding of the calmness and steadiness I had and then lost some weeks ago.
+                            </p>
+                            <div class="flex justify-end gap-3 mt-3 text-gray-300">
+                                <i data-lucide="message-circle" class="w-4 h-4 cursor-pointer hover:text-gray-500"></i>
+                                <i data-lucide="heart" class="w-4 h-4 cursor-pointer hover:text-red-400"></i>
+                            </div>
+                        </div>
+                        <!-- Post 2 -->
+                        <div class="px-5 py-4 border-b border-gray-200">
+                            <p class="text-[13px] text-gray-800 leading-relaxed">
+                                <span class="font-bold">@concreteness:</span> El programa consta de un proceso de 4 semanas donde vamos a trabajar de manera concreta para bajar tus ideas a tierra, ordenar tu método y avanzar hacia la construcción de tu proyecto.
+                            </p>
+                            <div class="flex justify-end gap-3 mt-3 text-gray-300">
+                                <i data-lucide="message-circle" class="w-4 h-4 cursor-pointer hover:text-gray-500"></i>
+                                <i data-lucide="heart" class="w-4 h-4 cursor-pointer hover:text-red-400"></i>
+                            </div>
+                        </div>
+                        <!-- Post 3 -->
+                        <div class="px-5 py-4 border-b border-gray-200">
+                            <p class="text-[13px] text-gray-800 leading-relaxed">
+                                <span class="font-bold">@romana74:</span> insight: la práctica de chi-kun [chin003] me trajo una calma y un enfoque muy interesante, que me permitió sobrellevar el día mucho mejor.
+                            </p>
+                            <div class="flex justify-end gap-3 mt-3 text-gray-300">
+                                <i data-lucide="message-circle" class="w-4 h-4 cursor-pointer hover:text-gray-500"></i>
+                                <i data-lucide="heart" class="w-4 h-4 cursor-pointer hover:text-red-400"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================= SCREEN 4: NOW ================= -->
+                <div id="screen-now" class="screen-content hidden flex-col h-full w-full absolute inset-0 transition-opacity duration-300 overflow-y-auto no-scrollbar pb-24 px-5 pt-2">
+                    <!-- Top Card -->
+                    <div class="bg-[#b3cded] rounded-[24px] p-6 mt-2 flex flex-col items-center relative shadow-sm">
+                        <h2 class="text-white text-xl font-bold mb-4">About now</h2>
+                        
+                        <div class="bg-white/40 w-full rounded-2xl p-4 text-center cursor-text mb-4">
+                            <p class="text-gray-700 text-sm font-medium">download your self...<br>what's on your mind & body?</p>
+                        </div>
+                        
+                        <button class="text-white text-sm font-medium flex items-center gap-1 opacity-90 hover:opacity-100 transition-opacity">
+                            Explore your here & now <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+
+                    <!-- Inspire text -->
+                    <div class="flex justify-center mt-8 mb-6 cursor-pointer hover:opacity-70 transition-opacity">
+                        <p class="text-gray-800 font-bold flex items-center gap-2">
+                            Inspire me a question <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                        </p>
+                    </div>
+
+                    <!-- Circle Interactive Graphic -->
+                    <div class="relative w-56 h-56 mx-auto my-4 flex items-center justify-center">
+                        <!-- Main Purple Circle -->
+                        <div class="w-full h-full bg-[#c8bedb] rounded-full absolute inset-0 opacity-80 z-0 shadow-inner"></div>
+                        
+                        <!-- Inner Green Text Circle -->
+                        <div class="w-16 h-16 bg-[#d1e8a3] rounded-full z-10 flex items-center justify-center p-2 shadow-md cursor-pointer btn-interactive">
+                            <p class="text-[6px] text-center leading-tight font-medium text-gray-800">maybe time<br>to exercise<br>or journal?</p>
+                        </div>
+
+                        <!-- Orbiting Icons -->
+                        <i data-lucide="clover" class="w-5 h-5 absolute top-10 left-4 text-green-600 z-10"></i>
+                        <i data-lucide="cloud" class="w-5 h-5 absolute top-2 right-12 text-blue-400 z-10"></i>
+                        <i data-lucide="hand" class="w-5 h-5 absolute top-20 -right-2 text-yellow-600 z-10"></i>
+                        <i data-lucide="music" class="w-5 h-5 absolute bottom-12 left-2 text-gray-700 z-10"></i>
+                        <i data-lucide="flame" class="w-5 h-5 absolute bottom-4 right-10 text-orange-500 z-10"></i>
+                        
+                        <!-- 90's text decoration -->
+                        <span class="absolute top-[40%] -right-8 font-bold text-lg text-gray-800">90's</span>
+                    </div>
+
+                    <!-- Bottom Link -->
+                    <div class="mt-auto flex justify-center pb-4 cursor-pointer hover:opacity-70 transition-opacity">
+                        <p class="text-gray-800 text-sm flex items-center gap-2 border-b border-gray-800 pb-0.5">
+                            See what's live today <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- ================= SCREEN 5: PROFILE (REMEMBER) ================= -->
+                <div id="screen-self" class="screen-content hidden flex-col h-full w-full absolute inset-0 transition-opacity duration-300 overflow-y-auto no-scrollbar pb-24 pt-2">
+                    <h1 class="text-xl font-bold text-center mt-2 mb-4 text-gray-900 flex items-center justify-center gap-2">
+                        <i data-lucide="book-open" class="w-5 h-5 text-gray-400"></i> Remember
+                    </h1>
                     
-                    <!-- 90's text decoration -->
-                    <span class="absolute top-[40%] -right-8 font-bold text-lg text-gray-800">90's</span>
+                    <div class="flex flex-col w-full border-t-2 border-gray-800">
+                        
+                        <!-- Category: Today -->
+                        <div class="border-b border-gray-300">
+                            <div class="btn-interactive py-4 px-6 flex justify-between items-center cursor-pointer bg-white hover:bg-gray-50" onclick="toggleAccordion('today')">
+                                <span class="text-[13px] font-semibold text-gray-800">Today</span>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 transition-transform duration-300" id="icon-today"></i>
+                            </div>
+                            <div id="acc-today" class="hidden px-6 pb-4 bg-gray-50/50">
+                                <div id="acc-today-content" class="space-y-2 mt-2">
+                                    <div class="bg-white p-3 rounded-lg border border-gray-100 shadow-sm flex gap-2.5 items-start">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-blue-400 mt-1.5 shrink-0"></div>
+                                        <p class="text-[11px] text-gray-700 leading-relaxed">Felt super energized after the morning somatic exercise.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Category: To-do // ideas -->
+                        <div class="border-b border-gray-300">
+                            <div class="btn-interactive py-4 px-6 flex justify-between items-center cursor-pointer bg-white hover:bg-gray-50" onclick="toggleAccordion('ideas')">
+                                <span class="text-[13px] font-semibold text-gray-800">To-do // ideas</span>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 transition-transform duration-300" id="icon-ideas"></i>
+                            </div>
+                            <div id="acc-ideas" class="hidden px-6 pb-4 bg-gray-50/50">
+                                <div id="acc-ideas-content" class="space-y-2 mt-2">
+                                    <div class="bg-white p-3 rounded-lg border border-gray-100 shadow-sm flex gap-2.5 items-start">
+                                        <input type="checkbox" class="mt-0.5 rounded text-blue-500 focus:ring-blue-500 w-3 h-3 border-gray-300">
+                                        <p class="text-[11px] text-gray-700 leading-relaxed">Research new breathwork facilitators for next week's session.</p>
+                                    </div>
+                                    <div class="bg-white p-3 rounded-lg border border-gray-100 shadow-sm flex gap-2.5 items-start">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-yellow-400 mt-1.5 shrink-0"></div>
+                                        <p class="text-[11px] text-gray-700 leading-relaxed">Idea: Start combining journaling with the 90's music playlist.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Category: Actual Mantras (Highlighted) -->
+                        <div class="border-b border-gray-800 border-b-2 bg-blue-50/30">
+                            <div class="btn-interactive py-5 px-6 flex justify-between items-center cursor-pointer" onclick="toggleAccordion('mantras')">
+                                <span class="text-[13px] font-bold text-gray-900">Actual mantras</span>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-gray-600 transition-transform duration-300" id="icon-mantras"></i>
+                            </div>
+                            <!-- Opened by default to show UX -->
+                            <div id="acc-mantras" class="block px-6 pb-5">
+                                <div id="acc-mantras-content" class="space-y-3 mt-1 text-center flex flex-col items-center">
+                                    <div class="bg-white w-full p-4 rounded-xl border border-gray-200 shadow-sm">
+                                        <p class="text-xs font-bold text-gray-800 italic">"stay happy, stay cheerfull, stay loving, stay busy"</p>
+                                    </div>
+                                    <div class="bg-white w-full p-4 rounded-xl border border-gray-200 shadow-sm">
+                                        <p class="text-xs font-bold text-gray-800 italic">"only God, only God, only God"</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Category: Tasks & goals -->
+                        <div class="border-b border-gray-300">
+                            <div class="btn-interactive py-4 px-6 flex justify-between items-center cursor-pointer bg-white hover:bg-gray-50" onclick="toggleAccordion('goals')">
+                                <span class="text-[13px] font-semibold text-gray-800">Tasks & goals</span>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 transition-transform duration-300" id="icon-goals"></i>
+                            </div>
+                            <div id="acc-goals" class="hidden px-6 pb-4 bg-gray-50/50">
+                                <div id="acc-goals-content" class="space-y-2 mt-2 text-center py-4">
+                                    <p class="text-[11px] text-gray-400 italic">No goals added yet.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Category: Dreams -->
+                        <div class="border-b border-gray-300">
+                            <div class="btn-interactive py-4 px-6 flex justify-between items-center cursor-pointer bg-white hover:bg-gray-50" onclick="toggleAccordion('dreams')">
+                                <span class="text-[13px] font-semibold text-gray-800">Dreams</span>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 transition-transform duration-300" id="icon-dreams"></i>
+                            </div>
+                            <div id="acc-dreams" class="hidden px-6 pb-4 bg-gray-50/50">
+                                <div id="acc-dreams-content" class="space-y-2 mt-2">
+                                    <div class="bg-indigo-50 p-3 rounded-lg border border-indigo-100 shadow-sm flex gap-2.5 items-start">
+                                        <i data-lucide="moon" class="w-3 h-3 text-indigo-400 mt-0.5 shrink-0"></i>
+                                        <p class="text-[11px] text-gray-700 leading-relaxed">Dreamt about walking through an endless forest. Felt peaceful.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Other Empty Categories to show list structure -->
+                        <div class="border-b border-gray-300"><div class="py-4 px-6"><span class="text-[13px] font-medium text-gray-600">Self-Map</span></div></div>
+                        <div class="border-b border-gray-300"><div class="py-4 px-6"><span class="text-[13px] font-medium text-gray-600">Ongoing processes</span></div></div>
+                        <div class="border-b border-gray-300"><div class="py-4 px-6"><span class="text-[13px] font-medium text-gray-600">Psico-spiritual understandings</span></div></div>
+                        <div class="border-b border-gray-800 border-b-2"><div class="py-4 px-6"><span class="text-[13px] font-medium text-gray-600">Unconscious Pattern Tracker</span></div></div>
+                    </div>
+
+                    <div class="mt-6 flex justify-center pb-6">
+                        <p class="text-xs text-gray-500 font-medium flex items-center gap-1 cursor-pointer hover:text-gray-800 transition-colors">
+                            add / remove profile categories: <i data-lucide="settings" class="w-3 h-3"></i>
+                        </p>
+                    </div>
                 </div>
 
-                <!-- Bottom Link -->
-                <div class="mt-auto flex justify-center pb-4 cursor-pointer hover:opacity-70 transition-opacity">
-                    <p class="text-gray-800 text-sm flex items-center gap-2 border-b border-gray-800 pb-0.5">
-                        See what's live today <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                    </p>
-                </div>
-            </div>
+            </div> <!-- End Screens Container -->
 
-            <!-- ================= SCREEN 5: PROFILE ================= -->
-            <div id="screen-self" class="screen-content hidden flex-col h-full w-full absolute inset-0 transition-opacity duration-300 overflow-y-auto no-scrollbar pb-24">
-                <h1 class="text-xl font-bold text-center mt-6 mb-4 text-gray-900">Remember</h1>
+            <!-- ================= BOTTOM NAVIGATION BAR ================= -->
+            <div class="relative z-50 bg-white">
+                <!-- Top border shadow -->
+                <div class="absolute top-0 w-full h-[1px] bg-gray-200 shadow-[0_-4px_10px_rgba(0,0,0,0.03)]"></div>
                 
-                <div class="flex flex-col w-full border-t-2 border-gray-800">
-                    <div class="btn-interactive border-b border-gray-300 py-4 text-center cursor-pointer">
-                        <span class="text-sm font-medium">Today</span>
-                    </div>
-                    <div class="btn-interactive border-b border-gray-300 py-4 text-center cursor-pointer">
-                        <span class="text-sm font-medium">To-do // ideas</span>
-                    </div>
-                    <div class="btn-interactive border-b border-gray-300 py-4 text-center cursor-pointer">
-                        <span class="text-sm font-medium">Habbit 'Self Love' Tracker</span>
-                    </div>
-                    <div class="btn-interactive border-b border-gray-300 py-4 text-center cursor-pointer">
-                        <span class="text-sm font-medium">Self-Map</span>
-                    </div>
-                    <div class="btn-interactive border-b border-gray-800 border-b-2 py-4 text-center cursor-pointer">
-                        <span class="text-sm font-medium">Ongoing processes</span>
-                    </div>
+                <nav class="w-full h-[75px] flex justify-around items-center px-1 pb-6 pt-3">
+                    <!-- Practice Tab -->
+                    <button onclick="switchTab('practice')" id="nav-practice" class="nav-btn flex flex-col items-center gap-1.5 text-gray-400 w-16 transition-colors duration-200">
+                        <i data-lucide="heart" class="w-[22px] h-[22px]"></i>
+                        <span class="text-[9px] font-semibold tracking-wide">Practice</span>
+                    </button>
                     
-                    <!-- Highlighted Mantra Row -->
-                    <div class="btn-interactive border-b border-gray-800 border-b-2 py-6 text-center cursor-pointer bg-gray-50">
-                        <h3 class="text-sm font-bold mb-2">Actual mantras</h3>
-                        <p class="text-[11px] font-semibold text-gray-800">
-                            "stay happy, stay cheerfull, stay loving, stay busy"<br>
-                            "only God, only God, only God"
-                        </p>
-                    </div>
-
-                    <div class="btn-interactive border-b border-gray-300 py-4 text-center cursor-pointer">
-                        <span class="text-sm font-medium">Tasks & goals</span>
-                    </div>
-                    <div class="btn-interactive border-b border-gray-300 py-4 text-center cursor-pointer">
-                        <span class="text-sm font-medium">Dreams</span>
-                    </div>
-                    <div class="btn-interactive border-b border-gray-300 py-4 text-center cursor-pointer">
-                        <span class="text-sm font-medium">Psico-spiritual understandings</span>
-                    </div>
-                    <div class="btn-interactive border-b border-gray-300 py-4 text-center cursor-pointer">
-                        <span class="text-sm font-medium">Wheel of life</span>
-                    </div>
-                    <div class="btn-interactive border-b border-gray-800 border-b-2 py-4 text-center cursor-pointer">
-                        <span class="text-sm font-medium">Unconscious Pattern Tracker</span>
-                    </div>
-                </div>
-
-                <div class="mt-6 flex justify-center pb-6">
-                    <p class="text-xs text-gray-500 font-medium flex items-center gap-1 cursor-pointer hover:text-gray-800">
-                        add / remove profile categories: <i data-lucide="chevron-down" class="w-3 h-3"></i>
-                    </p>
-                </div>
+                    <!-- Connect Tab -->
+                    <button onclick="switchTab('connect')" id="nav-connect" class="nav-btn flex flex-col items-center gap-1.5 text-gray-400 w-16 transition-colors duration-200">
+                        <i data-lucide="users" class="w-[22px] h-[22px]"></i>
+                        <span class="text-[9px] font-semibold tracking-wide">Connect</span>
+                    </button>
+                    
+                    <!-- Feed Tab -->
+                    <button onclick="switchTab('feed')" id="nav-feed" class="nav-btn flex flex-col items-center gap-1.5 text-black w-16 transition-colors duration-200">
+                        <i data-lucide="layout-list" class="w-[22px] h-[22px]"></i>
+                        <span class="text-[9px] font-semibold tracking-wide">Feed</span>
+                    </button>
+                    
+                    <!-- Now Tab -->
+                    <button onclick="switchTab('now')" id="nav-now" class="nav-btn flex flex-col items-center gap-1.5 text-gray-400 w-16 transition-colors duration-200">
+                        <i data-lucide="sun" class="w-[22px] h-[22px]"></i>
+                        <span class="text-[9px] font-semibold tracking-wide">Now</span>
+                    </button>
+                    
+                    <!-- Self Tab -->
+                    <button onclick="switchTab('self')" id="nav-self" class="nav-btn flex flex-col items-center gap-1.5 text-gray-400 w-16 transition-colors duration-200 relative">
+                        <!-- Notification dot simulator -->
+                        <div id="self-badge" class="absolute -top-1 right-3 w-2 h-2 bg-red-500 rounded-full border border-white hidden transition-all"></div>
+                        <i data-lucide="user" class="w-[22px] h-[22px]"></i>
+                        <span class="text-[9px] font-semibold tracking-wide">Self</span>
+                    </button>
+                </nav>
             </div>
-
-        </div>
-
-        <!-- ================= BOTTOM NAVIGATION BAR ================= -->
-        <nav class="absolute bottom-0 w-full h-[70px] bg-white border-t border-gray-200 flex justify-around items-center px-2 pb-4 pt-2 z-50">
-            <!-- Practice Tab -->
-            <button onclick="switchTab('practice')" id="nav-practice" class="nav-btn flex flex-col items-center gap-1 text-black w-16">
-                <i data-lucide="heart" class="w-5 h-5"></i>
-                <span class="text-[9px] font-medium">Practice</span>
-            </button>
             
-            <!-- Connect Tab -->
-            <button onclick="switchTab('connect')" id="nav-connect" class="nav-btn flex flex-col items-center gap-1 text-gray-400 w-16">
-                <i data-lucide="users" class="w-5 h-5"></i>
-                <span class="text-[9px] font-medium">Connect</span>
-            </button>
-            
-            <!-- Feed Tab -->
-            <button onclick="switchTab('feed')" id="nav-feed" class="nav-btn flex flex-col items-center gap-1 text-gray-400 w-16">
-                <i data-lucide="layout-list" class="w-5 h-5"></i>
-                <span class="text-[9px] font-medium">Feed</span>
-            </button>
-            
-            <!-- Now Tab -->
-            <button onclick="switchTab('now')" id="nav-now" class="nav-btn flex flex-col items-center gap-1 text-gray-400 w-16">
-                <i data-lucide="sun" class="w-5 h-5"></i>
-                <span class="text-[9px] font-medium">Now</span>
-            </button>
-            
-            <!-- Self Tab -->
-            <button onclick="switchTab('self')" id="nav-self" class="nav-btn flex flex-col items-center gap-1 text-gray-400 w-16">
-                <i data-lucide="user" class="w-5 h-5"></i>
-                <span class="text-[9px] font-medium">Self</span>
-            </button>
-        </nav>
-        
-        <!-- Home Indicator (iOS style) -->
-        <div class="absolute bottom-1 w-full flex justify-center z-50 pointer-events-none">
-            <div class="w-1/3 h-[5px] bg-black rounded-full mb-1"></div>
-        </div>
+            <!-- Home Indicator (iOS style) -->
+            <div class="absolute bottom-1 w-full flex justify-center z-[60] pointer-events-none">
+                <div class="w-[130px] h-[5px] bg-black rounded-full mb-1"></div>
+            </div>
         
         </div> <!-- End Inner Screen -->
     </div> <!-- End Outer Frame -->
@@ -388,41 +451,138 @@
         // Initialize Lucide Icons
         lucide.createIcons();
 
-        // Tab Navigation Logic
+        // --- Navigation Logic ---
         function switchTab(tabId) {
-            // 1. Hide all screens
+            // Hide all screens
             const screens = document.querySelectorAll('.screen-content');
             screens.forEach(screen => {
                 screen.classList.add('hidden');
                 screen.classList.remove('flex');
             });
 
-            // 2. Show the target screen
+            // Show target screen
             const targetScreen = document.getElementById(`screen-${tabId}`);
             if (targetScreen) {
                 targetScreen.classList.remove('hidden');
                 targetScreen.classList.add('flex');
             }
 
-            // 3. Reset all nav buttons styling
+            // Reset nav styling
             const navBtns = document.querySelectorAll('.nav-btn');
             navBtns.forEach(btn => {
                 btn.classList.remove('text-black');
                 btn.classList.add('text-gray-400');
             });
 
-            // 4. Highlight the active nav button
+            // Highlight active nav
             const activeNav = document.getElementById(`nav-${tabId}`);
             if (activeNav) {
                 activeNav.classList.remove('text-gray-400');
                 activeNav.classList.add('text-black');
             }
+
+            // If switching to Self, hide the notification dot
+            if(tabId === 'self') {
+                document.getElementById('self-badge').classList.add('hidden');
+            }
             
-            // Re-render icons since DOM classes changed occasionally conflicts without re-running
             lucide.createIcons();
         }
 
-        // Initialize first tab
+        // --- Accordion Logic for 'Remember' Screen ---
+        function toggleAccordion(categoryId) {
+            const content = document.getElementById(`acc-${categoryId}`);
+            const icon = document.getElementById(`icon-${categoryId}`);
+            
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                content.classList.add('block');
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                content.classList.add('hidden');
+                content.classList.remove('block');
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // Make mantras icon rotated by default since it starts open
+        document.getElementById('icon-mantras').style.transform = 'rotate(180deg)';
+
+        // --- Add Post Logic (Feed -> Self Sync) ---
+        function addPost() {
+            const input = document.getElementById('feed-input');
+            const categorySelect = document.getElementById('feed-category');
+            const text = input.value.trim();
+            
+            if(!text) return; // Prevent empty posts
+            
+            const categoryId = categorySelect.value;
+            const categoryName = categorySelect.options[categorySelect.selectedIndex].text;
+            
+            // 1. Inject into Feed List
+            const feedList = document.getElementById('feed-list');
+            const newPostHTML = `
+                <div class="px-5 py-4 border-b border-gray-200 bg-blue-50/50 transition-all shadow-inner">
+                    <p class="text-[13px] text-gray-800 leading-relaxed">
+                        <span class="font-bold">@you</span> 
+                        <span class="text-[10px] text-blue-600 font-bold uppercase tracking-wider ml-1 bg-blue-100 px-1.5 py-0.5 rounded-sm">[${categoryName}]</span><br>
+                        ${text}
+                    </p>
+                    <div class="flex justify-end gap-3 mt-3 text-gray-300">
+                        <i data-lucide="message-circle" class="w-4 h-4 cursor-pointer hover:text-gray-500"></i>
+                        <i data-lucide="heart" class="w-4 h-4 cursor-pointer hover:text-red-400"></i>
+                    </div>
+                </div>
+            `;
+            feedList.insertAdjacentHTML('afterbegin', newPostHTML);
+            
+            // 2. Inject into 'Remember' (Self) Accordion
+            const targetAccordionContent = document.getElementById(`acc-${categoryId}-content`);
+            if(targetAccordionContent) {
+                // If it had the "empty" text, clear it
+                if(targetAccordionContent.innerHTML.includes('No goals added yet')) {
+                    targetAccordionContent.innerHTML = '';
+                }
+
+                const newEntryHTML = `
+                    <div class="bg-white p-3 rounded-lg border border-blue-200 shadow-sm flex gap-2.5 items-start relative overflow-hidden">
+                        <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-400"></div>
+                        <div class="w-1.5 h-1.5 rounded-full bg-blue-400 mt-1.5 shrink-0 ml-1"></div>
+                        <p class="text-[11px] text-gray-800 font-medium leading-relaxed">${text}</p>
+                    </div>
+                `;
+                targetAccordionContent.insertAdjacentHTML('afterbegin', newEntryHTML);
+                
+                // Automatically open the accordion so the user sees it when they go to Self tab
+                const accContainer = document.getElementById(`acc-${categoryId}`);
+                accContainer.classList.remove('hidden');
+                accContainer.classList.add('block');
+                document.getElementById(`icon-${categoryId}`).style.transform = 'rotate(180deg)';
+                
+                // Show notification dot on Self tab
+                document.getElementById('self-badge').classList.remove('hidden');
+            }
+            
+            // 3. Clear Input & Show Feedback
+            input.value = '';
+            lucide.createIcons();
+            showToast("Saved to Feed & Remember list");
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = msg;
+            toast.classList.remove('opacity-0');
+            toast.classList.add('opacity-100');
+            
+            // Hide after 2.5 seconds
+            setTimeout(() => {
+                toast.classList.remove('opacity-100');
+                toast.classList.add('opacity-0');
+            }, 2500);
+        }
+
+        // Initialize to Feed tab
         switchTab('feed');
     </script>
 </body>
