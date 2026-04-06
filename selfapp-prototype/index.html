@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Wellness App Prototype</title>
+    <title>Self App Prototype</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -55,7 +55,6 @@
         }
         .smooth-collapse.expanded {
             opacity: 1;
-            /* max-height is set inline via JS for accurate dynamic heights */
         }
         
         /* Modal Transitions */
@@ -74,6 +73,11 @@
         }
         .modal-overlay.active .modal-content {
             transform: translateY(0);
+        }
+        
+        /* Presence Node Transitions */
+        .node-icon-bg {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
     </style>
 </head>
@@ -241,48 +245,117 @@
                 </div>
 
                 <!-- ================= SCREEN 4: NOW ================= -->
-                <div id="screen-now" class="screen-content hidden flex-col h-full w-full absolute inset-0 transition-opacity duration-300 overflow-y-auto no-scrollbar pb-24 px-5 pt-2">
+                <div id="screen-now" class="screen-content hidden flex-col h-full w-full absolute inset-0 transition-opacity duration-300 overflow-hidden bg-[#e5e7eb] px-5 pt-2 pb-24">
+                    
                     <!-- Top Card -->
-                    <div class="bg-[#b3cded] rounded-[24px] p-6 mt-2 flex flex-col items-center relative shadow-sm">
-                        <h2 class="text-white text-xl font-bold mb-4">About now</h2>
+                    <div class="bg-[#b3cded] rounded-[20px] p-4 mt-2 flex flex-col items-center relative shadow-sm z-10 shrink-0">
+                        <h2 class="text-white text-lg font-bold mb-3">About now</h2>
                         
-                        <div class="bg-white/40 w-full rounded-2xl p-4 text-center cursor-text mb-4">
-                            <!-- Bug Fix: Added text-[16px] to prevent zoom -->
+                        <div class="bg-white/40 w-full rounded-xl p-3 text-center cursor-text mb-3">
                             <input type="text" class="w-full bg-transparent border-none text-center text-gray-700 text-[16px] font-medium focus:outline-none placeholder-gray-600" placeholder="what's on your mind & body?">
                         </div>
                         
-                        <button class="text-white text-sm font-medium flex items-center gap-1 opacity-90 hover:opacity-100 transition-opacity">
-                            Explore your here & now <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                        <button class="text-white text-[13px] font-medium flex items-center gap-1 opacity-90 hover:opacity-100 transition-opacity">
+                            Explore your here & now <i data-lucide="chevron-down" class="w-3 h-3"></i>
                         </button>
                     </div>
 
                     <!-- Inspire text -->
-                    <div class="flex justify-center mt-8 mb-6 cursor-pointer hover:opacity-70 transition-opacity" onclick="generateQuestion()">
-                        <p id="inspire-text" class="text-gray-800 font-bold flex items-center gap-2 text-center px-4">
+                    <div class="flex justify-center mt-3 mb-0 cursor-pointer hover:opacity-70 transition-opacity z-10 shrink-0 min-h-[56px] items-center" onclick="generateQuestion()">
+                        <p id="inspire-text" class="text-gray-800 font-bold flex justify-center items-center gap-2 text-center px-4 transition-opacity duration-200">
                             Inspire me a question <i data-lucide="chevron-right" class="w-4 h-4 shrink-0"></i>
                         </p>
                     </div>
 
-                    <!-- Circle Interactive Graphic -->
-                    <div class="relative w-56 h-56 mx-auto my-4 flex items-center justify-center">
-                        <div class="w-full h-full bg-[#c8bedb] rounded-full absolute inset-0 opacity-80 z-0 shadow-inner"></div>
-                        <div class="w-16 h-16 bg-[#d1e8a3] rounded-full z-10 flex items-center justify-center p-2 shadow-md cursor-pointer btn-interactive">
-                            <p class="text-[6px] text-center leading-tight font-medium text-gray-800">maybe time<br>to exercise<br>or journal?</p>
+                    <!-- Full-screen blurred overlay for Presence Timer (Mode 1) -->
+                    <div id="presence-overlay" class="absolute inset-0 z-[60] bg-white/50 backdrop-blur-md hidden flex-col items-center justify-center transition-opacity duration-500 opacity-0">
+                        <button class="absolute top-11 left-6 text-gray-500 z-50 p-2 hover:bg-gray-200 rounded-full transition-colors" onclick="endPresenceTimer()">
+                            <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                        </button>
+                        <div class="relative flex items-center justify-center">
+                            <div class="relative w-48 h-48">
+                                <!-- SVG Progress Ring -->
+                                <svg class="w-full h-full transform -rotate-90 drop-shadow-sm" viewBox="0 0 100 100">
+                                    <circle cx="50" cy="50" r="48" fill="none" stroke="rgba(229, 231, 235, 0.4)" stroke-width="2" />
+                                    <circle id="presence-progress" cx="50" cy="50" r="48" fill="none" stroke="#111827" stroke-width="2" stroke-dasharray="301.59" stroke-dashoffset="301.59" class="transition-all duration-1000 ease-linear" />
+                                </svg>
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <span id="presence-time-left" class="text-4xl font-light text-gray-900 tracking-tight">2:00</span>
+                                </div>
+                            </div>
+                            <p class="absolute top-full mt-10 w-[280px] text-center text-lg font-medium text-gray-800 tracking-wide leading-relaxed">Stay in presence and gratitude in your mind and body.</p>
                         </div>
-                        <i data-lucide="clover" class="w-5 h-5 absolute top-10 left-4 text-green-600 z-10"></i>
-                        <i data-lucide="cloud" class="w-5 h-5 absolute top-2 right-12 text-blue-400 z-10"></i>
-                        <i data-lucide="hand" class="w-5 h-5 absolute top-20 -right-2 text-yellow-600 z-10"></i>
-                        <i data-lucide="music" class="w-5 h-5 absolute bottom-12 left-2 text-gray-700 z-10"></i>
-                        <i data-lucide="flame" class="w-5 h-5 absolute bottom-4 right-10 text-orange-500 z-10"></i>
-                        <span class="absolute top-[40%] -right-8 font-bold text-lg text-gray-800">90's</span>
+                    </div>
+
+                    <!-- Container 1: Radial Interface (Mode 2 Base) -->
+                    <div id="now-radial-container" class="flex-1 relative flex items-center justify-center w-full">
+                        <h2 id="now-radial-title" class="absolute top-2 text-gray-800 text-[15px] font-semibold tracking-widest uppercase opacity-70 transition-opacity duration-300">Now</h2>
+                        
+                        <!-- Back button for Micro-commands view -->
+                        <button id="radial-back-btn" class="absolute top-1 left-2 text-gray-500 hidden z-50 p-2 hover:bg-gray-200 rounded-full transition-colors" onclick="resetNowRadial()">
+                            <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                        </button>
+
+                        <!-- Dynamic Radial Nodes wrapper -->
+                        <div id="radial-icons-wrapper" class="absolute inset-0 pointer-events-none"></div>
+
+                        <!-- Draggable Presence Circle -->
+                        <div id="presence-circle" class="absolute z-40 w-[84px] h-[84px] bg-gray-900 rounded-full shadow-2xl flex items-center justify-center text-white cursor-pointer select-none touch-none hover:bg-gray-800 transition-colors" style="top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                            <div id="presence-fill" class="absolute inset-0 bg-gray-600 rounded-full scale-0 opacity-0 pointer-events-none origin-center" style="transition: transform 2.3s linear, opacity 0.2s;"></div>
+                            <div class="w-[68px] h-[68px] rounded-full border border-gray-700/60 flex items-center justify-center pointer-events-none relative z-10">
+                                <i id="presence-center-icon" data-lucide="circle-dot" class="w-6 h-6 text-gray-300 pointer-events-none"></i>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Bottom Link -->
-                    <div class="mt-auto flex justify-center pb-4 cursor-pointer hover:opacity-70 transition-opacity" onclick="openModal()">
+                    <div class="mt-auto flex justify-center pb-2 cursor-pointer hover:opacity-70 transition-opacity z-10 shrink-0" onclick="openModal()">
                         <p class="text-gray-800 text-sm flex items-center gap-2 border-b border-gray-800 pb-0.5">
                             See what's live today <i data-lucide="arrow-right" class="w-4 h-4"></i>
                         </p>
                     </div>
+
+                    <!-- Container 2: Duration Selector -->
+                    <div id="now-duration-container" class="hidden flex-col items-center justify-center h-full w-full px-6 absolute inset-0 z-30 bg-[#e5e7eb]">
+                        <h3 class="text-xl font-medium mb-10 text-gray-800">Select duration</h3>
+                        <div class="grid grid-cols-2 gap-4 w-full max-w-[260px]">
+                            <button class="py-5 border border-gray-300 bg-white shadow-sm rounded-2xl text-lg hover:bg-gray-50 transition-colors" onclick="startSession(2.5)">2.5 min</button>
+                            <button class="py-5 border border-gray-300 bg-white shadow-sm rounded-2xl text-lg hover:bg-gray-50 transition-colors" onclick="startSession(6)">6 min</button>
+                            <button class="py-5 border border-gray-300 bg-white shadow-sm rounded-2xl text-lg hover:bg-gray-50 transition-colors" onclick="startSession(10)">10 min</button>
+                            <button class="py-5 border border-gray-300 bg-white shadow-sm rounded-2xl text-lg hover:bg-gray-50 transition-colors" onclick="startSession(20)">20 min</button>
+                        </div>
+                        <button class="mt-10 text-sm font-medium text-gray-500 uppercase tracking-widest hover:text-gray-800 transition-colors" onclick="resetNowRadial()">Cancel</button>
+                    </div>
+
+                    <!-- Container 3: Session / Mobilization View -->
+                    <div id="now-session-container" class="hidden flex-col items-center h-full w-full px-8 absolute inset-0 z-30 bg-[#e5e7eb] overflow-y-auto no-scrollbar pt-28 pb-32">
+                        
+                        <div id="session-prompt" class="text-center text-xl text-gray-800 mb-12 max-w-[280px]">
+                            <!-- Prompt text populated dynamically -->
+                        </div>
+
+                        <!-- Visual Timers -->
+                        <div id="session-timer-display" class="text-[52px] font-light text-gray-900 tracking-tighter mb-8 hidden"></div>
+                        
+                        <!-- Tappable Mobilization Timer -->
+                        <div id="session-tappable-timer" class="relative w-40 h-40 rounded-full border-2 border-gray-300 bg-white shadow-sm flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 hidden transition-colors" onclick="confirmMobilization()">
+                             <span id="session-tappable-time" class="text-3xl text-gray-800 font-light mt-1">01:30</span>
+                             <span class="absolute bottom-6 text-[10px] uppercase tracking-widest font-semibold text-gray-400">Tap to confirm</span>
+                        </div>
+
+                        <!-- Waveform mock for "Speak" -->
+                        <div id="session-waveform" class="flex gap-1.5 items-center h-16 hidden mb-8 mt-4">
+                            <div class="w-2 h-4 bg-gray-400 rounded-full animate-pulse"></div>
+                            <div class="w-2 h-8 bg-gray-500 rounded-full animate-pulse delay-75"></div>
+                            <div class="w-2 h-14 bg-gray-600 rounded-full animate-pulse delay-150"></div>
+                            <div class="w-2 h-6 bg-gray-500 rounded-full animate-pulse delay-200"></div>
+                            <div class="w-2 h-10 bg-gray-400 rounded-full animate-pulse delay-75"></div>
+                        </div>
+
+                        <!-- Action / Close Button -->
+                        <button id="session-close-btn" class="px-8 py-3 bg-gray-900 text-white rounded-full text-[13px] uppercase tracking-widest font-semibold mt-auto hidden hover:bg-gray-800 transition-colors" onclick="endSession()">End Session</button>
+                    </div>
+
                 </div>
 
                 <!-- ================= SCREEN 5: PROFILE (REMEMBER) ================= -->
@@ -500,33 +573,31 @@
             { time: "10:00 PM", title: "Cierre del día: Diario en vivo", type: "reflection", icon: "pen-tool" }
         ];
 
-        let postCounter = 0; // To generate unique IDs
+        let postCounter = 0;
 
-        // --- Initialize App ---
         function initApp() {
             lucide.createIcons();
             populateFeed();
             populateLiveEvents();
             switchTab('feed');
             
-            // Re-calculate heights for already open accordions
             setTimeout(() => {
                 const openAccs = document.querySelectorAll('.smooth-collapse.expanded');
                 openAccs.forEach(acc => {
                     acc.style.maxHeight = acc.scrollHeight + "px";
                 });
             }, 100);
+
+            resetNowRadial(); // Initialize Now screen mechanics
         }
 
-        // --- Render the 50 Feed Items ---
+        // --- Feed & Posts Logic ---
         function populateFeed() {
             const feedContainer = document.getElementById('feed-list');
-            feedContainer.innerHTML = ''; // Clear default
-            
+            feedContainer.innerHTML = '';
             spanishFeedPosts.forEach(post => {
                 postCounter++;
-                const html = createPostHTML(post.user, post.text, postCounter);
-                feedContainer.insertAdjacentHTML('beforeend', html);
+                feedContainer.insertAdjacentHTML('beforeend', createPostHTML(post.user, post.text, postCounter));
             });
         }
 
@@ -544,14 +615,9 @@
                             <i data-lucide="heart" class="w-4 h-4"></i>
                         </button>
                     </div>
-                    
-                    <!-- Inline Reply Section (Hidden by default) -->
                     <div id="reply-box-${id}" class="hidden mt-3 pl-2 border-l-2 border-gray-100">
-                        <!-- Replied comments go here -->
                         <div id="reply-list-${id}" class="space-y-2 mb-2"></div>
-                        
                         <div class="flex items-center gap-2 mt-2">
-                            <!-- text-[16px] crucial for iOS zoom bug -->
                             <input type="text" id="reply-input-${id}" class="flex-1 bg-gray-50 border border-gray-200 rounded-full px-3 py-1.5 text-[16px] text-gray-800 focus:outline-none focus:border-gray-300 shadow-sm placeholder:text-[13px]" placeholder="Add a reply...">
                             <button onclick="submitReply(${id})" class="bg-blue-100 text-blue-600 p-1.5 rounded-full hover:bg-blue-200 transition-colors">
                                 <i data-lucide="send" class="w-3 h-3"></i>
@@ -562,61 +628,40 @@
             `;
         }
 
-        // --- Feature: Like Animation (Spotify style) ---
-        function toggleLike(btnElement) {
-            btnElement.classList.toggle('liked');
-            // If liked, the CSS animation takes over.
-        }
+        function toggleLike(btnElement) { btnElement.classList.toggle('liked'); }
 
-        // --- Feature: Inline Comment Replies ---
         function toggleReplyBox(postId) {
             const box = document.getElementById(`reply-box-${postId}`);
             box.classList.toggle('hidden');
-            if (!box.classList.contains('hidden')) {
-                document.getElementById(`reply-input-${postId}`).focus();
-            }
+            if (!box.classList.contains('hidden')) document.getElementById(`reply-input-${postId}`).focus();
         }
 
         function submitReply(postId) {
             const input = document.getElementById(`reply-input-${postId}`);
             const text = input.value.trim();
             if(!text) return;
-
             const replyList = document.getElementById(`reply-list-${postId}`);
-            const newReply = `
-                <div class="bg-gray-50 p-2.5 rounded-lg border border-gray-100 mt-1">
-                    <p class="text-[12px] text-gray-700"><span class="font-bold">@you:</span> ${text}</p>
-                </div>
-            `;
-            replyList.insertAdjacentHTML('beforeend', newReply);
-            input.value = ''; // clear
-            lucide.createIcons(); // refresh icons if needed
+            replyList.insertAdjacentHTML('beforeend', `<div class="bg-gray-50 p-2.5 rounded-lg border border-gray-100 mt-1"><p class="text-[12px] text-gray-700"><span class="font-bold">@you:</span> ${text}</p></div>`);
+            input.value = '';
         }
 
         // --- Feature: Inspire Me Question Generator ---
         function generateQuestion() {
             const textEl = document.getElementById('inspire-text');
-            // Fade out
             textEl.style.opacity = '0';
             setTimeout(() => {
                 const randomQ = questionsArray[Math.floor(Math.random() * questionsArray.length)];
                 textEl.innerHTML = `${randomQ} <i data-lucide="refresh-cw" class="w-3 h-3 shrink-0 ml-1 text-gray-400"></i>`;
                 lucide.createIcons();
-                // Fade in
                 textEl.style.opacity = '1';
             }, 200);
         }
 
-        // --- Feature: Live Events Modal ---
         function populateLiveEvents() {
             const list = document.getElementById('live-events-list');
             liveEvents.forEach(event => {
-                let colorClass = "text-blue-500 bg-blue-50";
-                if(event.type === 'meditation') colorClass = "text-purple-500 bg-purple-50";
-                if(event.type === 'dance') colorClass = "text-orange-500 bg-orange-50";
-                if(event.type === 'music') colorClass = "text-green-500 bg-green-50";
-
-                const html = `
+                let colorClass = event.type === 'meditation' ? "text-purple-500 bg-purple-50" : event.type === 'dance' ? "text-orange-500 bg-orange-50" : event.type === 'music' ? "text-green-500 bg-green-50" : "text-blue-500 bg-blue-50";
+                list.insertAdjacentHTML('beforeend', `
                     <div class="flex items-center p-3 rounded-xl border border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer shadow-sm">
                         <div class="w-10 h-10 rounded-full ${colorClass} flex items-center justify-center shrink-0 mr-3">
                             <i data-lucide="${event.icon}" class="w-5 h-5"></i>
@@ -627,76 +672,55 @@
                         </div>
                         <button class="px-3 py-1 bg-black text-white text-xs font-semibold rounded-full hover:bg-gray-800 transition-colors">Join</button>
                     </div>
-                `;
-                list.insertAdjacentHTML('beforeend', html);
+                `);
             });
         }
 
-        function openModal() {
-            document.getElementById('live-events-modal').classList.add('active');
-        }
-        function closeModal() {
-            document.getElementById('live-events-modal').classList.remove('active');
-        }
+        function openModal() { document.getElementById('live-events-modal').classList.add('active'); }
+        function closeModal() { document.getElementById('live-events-modal').classList.remove('active'); }
 
-        // --- Navigation Logic ---
         function switchTab(tabId) {
-            const screens = document.querySelectorAll('.screen-content');
-            screens.forEach(screen => {
+            document.querySelectorAll('.screen-content').forEach(screen => {
                 screen.classList.add('hidden');
                 screen.classList.remove('flex');
             });
-
             const targetScreen = document.getElementById(`screen-${tabId}`);
             if (targetScreen) {
                 targetScreen.classList.remove('hidden');
                 targetScreen.classList.add('flex');
             }
-
-            const navBtns = document.querySelectorAll('.nav-btn');
-            navBtns.forEach(btn => {
+            document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.classList.remove('text-black');
                 btn.classList.add('text-gray-400');
             });
-
             const activeNav = document.getElementById(`nav-${tabId}`);
             if (activeNav) {
                 activeNav.classList.remove('text-gray-400');
                 activeNav.classList.add('text-black');
             }
-
-            if(tabId === 'self') {
-                document.getElementById('self-badge').classList.add('hidden');
-            }
+            if(tabId === 'self') document.getElementById('self-badge').classList.add('hidden');
             lucide.createIcons();
         }
 
-        // --- Feature: Smooth Accordion Animation ---
         function toggleAccordion(categoryId) {
             const content = document.getElementById(`acc-${categoryId}`);
             const icon = document.getElementById(`icon-${categoryId}`);
-            
             if (content.classList.contains('expanded')) {
-                // Collapse
                 content.style.maxHeight = null;
                 content.classList.remove('expanded');
                 icon.style.transform = 'rotate(0deg)';
             } else {
-                // Expand (Calculate exact height needed)
                 content.classList.add('expanded');
                 content.style.maxHeight = content.scrollHeight + "px";
                 icon.style.transform = 'rotate(180deg)';
             }
         }
 
-        // --- Feed -> Self Sync Logic ---
         function addPost() {
             const input = document.getElementById('feed-input');
             const categorySelect = document.getElementById('feed-category');
             const text = input.value.trim();
-            
             if(!text) return;
-            
             const categoryId = categorySelect.value;
             const categoryName = categorySelect.options[categorySelect.selectedIndex].text;
             
@@ -709,60 +733,41 @@
                         ${text}
                     </p>
                     <div class="flex justify-end gap-4 mt-3 text-gray-400">
-                        <button class="flex items-center gap-1 hover:text-gray-600 transition-colors" onclick="toggleReplyBox(${postCounter})">
-                            <i data-lucide="message-circle" class="w-4 h-4"></i>
-                        </button>
-                        <button class="like-btn flex items-center gap-1 transition-colors" onclick="toggleLike(this)">
-                            <i data-lucide="heart" class="w-4 h-4"></i>
-                        </button>
+                        <button class="flex items-center gap-1 hover:text-gray-600 transition-colors" onclick="toggleReplyBox(${postCounter})"><i data-lucide="message-circle" class="w-4 h-4"></i></button>
+                        <button class="like-btn flex items-center gap-1 transition-colors" onclick="toggleLike(this)"><i data-lucide="heart" class="w-4 h-4"></i></button>
                     </div>
-                    
                     <div id="reply-box-${postCounter}" class="hidden mt-3 pl-2 border-l-2 border-gray-100">
                         <div id="reply-list-${postCounter}" class="space-y-2 mb-2"></div>
                         <div class="flex items-center gap-2 mt-2">
                             <input type="text" id="reply-input-${postCounter}" class="flex-1 bg-gray-50 border border-gray-200 rounded-full px-3 py-1.5 text-[16px] text-gray-800 focus:outline-none focus:border-gray-300 shadow-sm placeholder:text-[13px]" placeholder="Add a reply...">
-                            <button onclick="submitReply(${postCounter})" class="bg-blue-100 text-blue-600 p-1.5 rounded-full hover:bg-blue-200 transition-colors">
-                                <i data-lucide="send" class="w-3 h-3"></i>
-                            </button>
+                            <button onclick="submitReply(${postCounter})" class="bg-blue-100 text-blue-600 p-1.5 rounded-full hover:bg-blue-200 transition-colors"><i data-lucide="send" class="w-3 h-3"></i></button>
                         </div>
                     </div>
                 </div>
             `;
+            document.getElementById('feed-list').insertAdjacentHTML('afterbegin', newPostHTML);
             
-            const feedList = document.getElementById('feed-list');
-            feedList.insertAdjacentHTML('afterbegin', newPostHTML);
-            
-            // Inject into Accordion
             const targetAccordionContent = document.getElementById(`acc-${categoryId}-content`);
             if(targetAccordionContent) {
                 if(targetAccordionContent.innerHTML.includes('No goals added yet')) {
                     targetAccordionContent.innerHTML = '';
                     targetAccordionContent.classList.remove('text-center');
                 }
-
-                const newEntryHTML = `
+                targetAccordionContent.insertAdjacentHTML('afterbegin', `
                     <div class="bg-white p-3 rounded-lg border border-blue-200 shadow-sm flex gap-2.5 items-start relative overflow-hidden mt-2">
                         <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-400"></div>
                         <div class="w-1.5 h-1.5 rounded-full bg-blue-400 mt-1.5 shrink-0 ml-1"></div>
                         <p class="text-[11px] text-gray-800 font-medium leading-relaxed">${text}</p>
                     </div>
-                `;
-                targetAccordionContent.insertAdjacentHTML('afterbegin', newEntryHTML);
+                `);
                 
-                // Automatically expand the section the user just added text to
                 const accContainer = document.getElementById(`acc-${categoryId}`);
                 const icon = document.getElementById(`icon-${categoryId}`);
-                
                 if (!accContainer.classList.contains('expanded')) {
                     accContainer.classList.add('expanded');
                     icon.style.transform = 'rotate(180deg)';
                 }
-                
-                // Recalculate height to fit new content (using timeout to allow DOM to update)
-                setTimeout(() => {
-                    accContainer.style.maxHeight = accContainer.scrollHeight + "px";
-                }, 10);
-                
+                setTimeout(() => { accContainer.style.maxHeight = accContainer.scrollHeight + "px"; }, 10);
                 document.getElementById('self-badge').classList.remove('hidden');
             }
             
@@ -776,11 +781,512 @@
             document.getElementById('toast-msg').innerText = msg;
             toast.classList.remove('opacity-0');
             toast.classList.add('opacity-100');
-            
             setTimeout(() => {
                 toast.classList.remove('opacity-100');
                 toast.classList.add('opacity-0');
             }, 2500);
+        }
+
+        // =====================================================================
+        // NOW SCREEN - NEW INTERACTION SYSTEM LOGIC
+        // =====================================================================
+
+        const MAIN_CATEGORIES = [
+            { id: 'breathwork', label: 'Breathwork', icon: 'wind' },
+            { id: 'stillness', label: 'Stillness', icon: 'moon' },
+            { id: 'movement', label: 'Movement', icon: 'activity' },
+            { id: 'nature', label: 'Nature', icon: 'leaf' },
+            { id: 'expression', label: 'Expression', icon: 'pen-tool' },
+            { id: 'water', label: 'Water', icon: 'droplets' },
+            { id: 'devotion', label: 'Devotion', icon: 'heart' }
+        ];
+
+        const MICRO_COMMANDS = {
+            breathwork: [
+                { id: 'breathwork-reg', label: 'Regulate', icon: 'arrow-down' },
+                { id: 'breathwork-act', label: 'Activate', icon: 'zap' },
+                { id: 'breathwork-grd', label: 'Ground', icon: 'square' },
+                { id: 'breathwork-opn', label: 'Open', icon: 'maximize' }
+            ],
+            stillness: [
+                { id: 'stillness-guided', label: 'Guided', icon: 'mic' },
+                { id: 'stillness-unguided', label: 'Unguided', icon: 'timer' },
+                { id: 'stillness-rest', label: 'Rest', icon: 'coffee' },
+                { id: 'stillness-bodyscan', label: 'Body Scan', icon: 'user' }
+            ],
+            movement: [
+                { id: 'movement-strength', label: 'Strength', icon: 'dumbbell' },
+                { id: 'movement-jump', label: 'Jump', icon: 'arrow-up' },
+                { id: 'movement-shake', label: 'Shake', icon: 'radio' },
+                { id: 'movement-mobility', label: 'Mobility', icon: 'refresh-cw' },
+                { id: 'movement-stretch', label: 'Stretch', icon: 'move' }
+            ],
+            expression: [
+                { id: 'expression-write', label: 'Write', icon: 'edit-3' },
+                { id: 'expression-speak', label: 'Speak', icon: 'mic' },
+                { id: 'expression-draw', label: 'Draw', icon: 'pen-tool' }
+            ],
+            water: [
+                { id: 'water-cold', label: 'Cold', icon: 'snowflake' },
+                { id: 'water-hot', label: 'Hot', icon: 'flame' },
+                { id: 'water-wash', label: 'Wash', icon: 'droplet' }
+            ],
+            devotion: [
+                { id: 'devotion-recite', label: 'Recite', icon: 'message-circle' },
+                { id: 'devotion-chant', label: 'Chant', icon: 'music' },
+                { id: 'devotion-pray', label: 'Pray', icon: 'sparkles' },
+                { id: 'devotion-sit', label: 'Sit', icon: 'heart' }
+            ]
+        };
+
+        const COMMAND_CONFIG = {
+            // Breathwork (Open Sessions)
+            'breathwork-reg': { type: 'open', prompt: 'Double inhale through the nose,\none long slow exhale through the mouth.\n\nRepeat 1–3 times.' },
+            'breathwork-act': { type: 'open', prompt: 'Rapid sharp belly pumps forcing short explosive exhales through the nose, with passive inhales in between.\n\n30 to 60 pumps, closing with one full deep breath and a brief hold.' },
+            'breathwork-grd': { type: 'open', prompt: '4-count inhale\n4-count full hold\n4-count exhale\n4-count empty hold\n\nRepeat 4 to 6 rounds.' },
+            'breathwork-opn': { type: 'open', prompt: 'Inhale for 4\nHold for 7\nExhale for 8\n\nRepeat 6 to 8 cycles.\n(3.5 to 5 minutes)' },
+            
+            // Stillness (Duration Select)
+            'stillness-guided': { type: 'duration', promptGen: () => `Orientation: ${['Observe', 'Anchor', 'Feel', 'Listen', 'Gratitude', 'Presence', 'Compassion'][Math.floor(Math.random()*7)]}.\n\nFollow the audio.` },
+            'stillness-unguided': { type: 'duration', prompt: 'Timer and silence only.' },
+            'stillness-rest': { type: 'duration', prompt: 'Permission to stop.' },
+            'stillness-bodyscan': { type: 'duration', prompt: 'Sequential attention moving slowly through the body from feet to crown.' },
+
+            // Movement (Duration Select + Confirm)
+            'movement-strength': { type: 'duration', prompt: 'Bodyweight resistance effort — squats, push-ups, holds.', hasConfirm: true },
+            'movement-jump': { type: 'duration', prompt: 'Full body activation through bouncing and expansive movement.', hasConfirm: true },
+            'movement-shake': { type: 'duration', prompt: 'Tension release through free, unstructured movement. Let the body shake and shiver.', hasConfirm: true },
+            'movement-mobility': { type: 'duration', prompt: 'Controlled joint circles and range-of-motion movement.', hasConfirm: true },
+            'movement-stretch': { type: 'duration', prompt: 'Slow lengthening, floor or standing.', hasConfirm: true },
+
+            // Expression (Mobilization Timer -> Session)
+            'expression-write': { type: 'mobilization', duration: 90, promptMob: 'Pick up a pen and paper.', promptSess: '' },
+            'expression-speak': { type: 'mobilization', duration: 90, promptMob: 'Notice what\'s present. Begin when ready.', promptSess: '', hasWaveform: true },
+            'expression-draw': { type: 'mobilization', duration: 90, promptMob: 'Pick up a pencil or pen.', promptSess: '' },
+
+            // Water
+            'water-cold': { type: 'mobilization', duration: 90, promptMob: 'Move toward cold water.', promptSess: 'Let the cold land on your body.\nBreathe through it.\nStay.' },
+            'water-hot': { type: 'mobilization', duration: 90, promptMob: 'Move toward warm water.', promptSess: 'Let the warmth receive you.\nNothing to do.\nJust feel.' },
+            'water-wash': { type: 'timer-only', duration: 120, promptSess: 'Wash your face, your hands, or your feet. Use the water slowly and with full attention.' },
+
+            // Devotion (Duration Select)
+            'devotion-recite': { type: 'duration', prompt: 'Bring your word or phrase to mind.\nBegin when ready.', pulse: true },
+            'devotion-chant': { type: 'duration', prompt: 'Bring your chant or sacred sound.\nLet your voice carry it.' },
+            'devotion-pray': { type: 'duration', prompt: 'Speak, or listen.\nBoth are prayer.' },
+            'devotion-sit': { type: 'duration', prompt: 'Nothing to do.\nSimply be here, turned toward what matters.' }
+        };
+
+        const presenceCircle = document.getElementById('presence-circle');
+        const radialRadius = 100; // px distance from center
+        
+        let currentNowMode = 'MAIN'; // MAIN or SUB
+        let activeCategory = null;
+        let activeMicroCommand = null;
+        let currentNodesData = []; 
+
+        // Drag state
+        let isDragging = false;
+        let startX = 0, startY = 0;
+        let holdTimeout = null;
+        let hoveredNodeId = null;
+
+        // Session state
+        let currentSessionInterval = null;
+        let mobConfirmCallback = null;
+
+        const getEvtPos = (e) => {
+            if (e.touches && e.touches.length > 0) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            if (e.changedTouches && e.changedTouches.length > 0) return { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
+            return { x: e.clientX, y: e.clientY };
+        };
+
+        function resetNowRadial() {
+            currentNowMode = 'MAIN';
+            activeCategory = null;
+            activeMicroCommand = null;
+            
+            document.getElementById('now-radial-container').classList.remove('hidden');
+            document.getElementById('now-duration-container').classList.add('hidden');
+            document.getElementById('now-session-container').classList.add('hidden');
+            document.getElementById('now-session-container').classList.remove('flex');
+            
+            document.getElementById('radial-back-btn').classList.add('hidden');
+            document.getElementById('now-radial-title').innerText = 'Now';
+            document.getElementById('presence-center-icon').setAttribute('data-lucide', 'circle-dot');
+            
+            renderRadialItems(MAIN_CATEGORIES);
+        }
+
+        function renderRadialItems(items) {
+            const wrapper = document.getElementById('radial-icons-wrapper');
+            wrapper.innerHTML = '';
+            currentNodesData = [];
+            const numItems = items.length;
+            
+            items.forEach((item, i) => {
+                const angle = -Math.PI / 2 + (i * 2 * Math.PI / numItems);
+                const x = radialRadius * Math.cos(angle);
+                const y = radialRadius * Math.sin(angle);
+                
+                const el = document.createElement('div');
+                el.className = 'absolute flex flex-col items-center justify-center transition-all duration-300 opacity-0 transform scale-50';
+                el.style.left = `calc(50% + ${x}px)`;
+                el.style.top = `calc(50% + ${y}px)`;
+                el.style.transform = 'translate(-50%, -50%)';
+                
+                el.innerHTML = `
+                    <div class="node-icon-bg w-14 h-14 bg-white rounded-full shadow-md flex items-center justify-center text-gray-700 mb-1.5 border border-gray-100">
+                        <i data-lucide="${item.icon}" class="w-6 h-6"></i>
+                    </div>
+                    <span class="text-[11px] font-semibold tracking-wide uppercase text-gray-500">${item.label}</span>
+                `;
+                wrapper.appendChild(el);
+                
+                // Animation in
+                setTimeout(() => {
+                    el.classList.remove('opacity-0', 'scale-50');
+                    el.classList.add('opacity-100', 'scale-100');
+                }, i * 40);
+
+                currentNodesData.push({ id: item.id, x, y, el });
+            });
+            lucide.createIcons();
+        }
+
+        // Core Drag Events
+        presenceCircle.addEventListener('touchstart', dragStart, {passive: false});
+        presenceCircle.addEventListener('touchmove', drag, {passive: false});
+        presenceCircle.addEventListener('touchend', dragEnd);
+        presenceCircle.addEventListener('mousedown', dragStart);
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('mouseup', dragEnd);
+
+        function dragStart(e) {
+            // Only trigger if inside the screen-now view
+            if(document.getElementById('screen-now').classList.contains('hidden')) return;
+            
+            if (e.type === 'touchstart' && e.target === presenceCircle) e.preventDefault(); 
+            
+            const pos = getEvtPos(e);
+            startX = pos.x;
+            startY = pos.y;
+            isDragging = true;
+            hoveredNodeId = null;
+            
+            presenceCircle.style.transition = 'none';
+            presenceCircle.classList.add('scale-95');
+
+            // Start Fill Animation
+            const fill = document.getElementById('presence-fill');
+            fill.style.transition = 'transform 2.3s linear, opacity 0.2s';
+            fill.style.transform = 'scale(1)';
+            fill.style.opacity = '1';
+
+            // 2.3s Presence Hold Timer
+            holdTimeout = setTimeout(() => {
+                if(isDragging) {
+                    const currentTransform = presenceCircle.style.transform;
+                    // If barely moved
+                    if(currentTransform === 'translate(-50%, -50%)' || currentTransform === '') {
+                        startPresenceTimer();
+                        cancelDrag();
+                    }
+                }
+            }, 2300);
+        }
+
+        function drag(e) {
+            if (!isDragging) return;
+            if (e.type === 'touchmove') e.preventDefault();
+            
+            const pos = getEvtPos(e);
+            const dx = pos.x - startX;
+            const dy = pos.y - startY;
+
+            presenceCircle.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+
+            if (Math.abs(dx) > 10 || Math.abs(dy) > 10) {
+                clearTimeout(holdTimeout); // Cancel hold intent
+            }
+
+            let foundHover = null;
+            currentNodesData.forEach(node => {
+                const dist = Math.hypot(node.x - dx, node.y - dy);
+                const iconBg = node.el.querySelector('.node-icon-bg');
+                if (dist < 45) { // Snap threshold
+                    foundHover = node.id;
+                    iconBg.classList.add('bg-gray-800', 'text-white', 'scale-110');
+                    iconBg.classList.remove('bg-white', 'text-gray-700');
+                } else {
+                    iconBg.classList.remove('bg-gray-800', 'text-white', 'scale-110');
+                    iconBg.classList.add('bg-white', 'text-gray-700');
+                }
+            });
+            hoveredNodeId = foundHover;
+        }
+
+        function dragEnd(e) {
+            if (!isDragging) return;
+            cancelDrag();
+            if (hoveredNodeId) {
+                handleNodeSelection(hoveredNodeId);
+                hoveredNodeId = null;
+            }
+        }
+
+        function cancelDrag() {
+            isDragging = false;
+            clearTimeout(holdTimeout);
+            presenceCircle.classList.remove('scale-95');
+            presenceCircle.style.transition = 'transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+            presenceCircle.style.transform = `translate(-50%, -50%)`;
+            
+            // Reset fill animation
+            const fill = document.getElementById('presence-fill');
+            fill.style.transition = 'transform 0.3s ease-out, opacity 0.2s';
+            fill.style.transform = 'scale(0)';
+            fill.style.opacity = '0';
+            
+            // Reset node styles
+            currentNodesData.forEach(n => {
+                const iconBg = n.el.querySelector('.node-icon-bg');
+                iconBg.classList.remove('bg-gray-800', 'text-white', 'scale-110');
+                iconBg.classList.add('bg-white', 'text-gray-700');
+            });
+        }
+
+        // Logic Handlers
+        function handleNodeSelection(id) {
+            if (currentNowMode === 'MAIN') {
+                if (id === 'nature') {
+                    // Nature exception: skip to mobilization directly
+                    triggerNatureSession();
+                } else {
+                    // Dive into sub-menu
+                    activeCategory = id;
+                    currentNowMode = 'SUB';
+                    const categoryObj = MAIN_CATEGORIES.find(c => c.id === id);
+                    
+                    document.getElementById('radial-back-btn').classList.remove('hidden');
+                    document.getElementById('now-radial-title').innerText = categoryObj.label;
+                    document.getElementById('presence-center-icon').setAttribute('data-lucide', categoryObj.icon);
+                    
+                    renderRadialItems(MICRO_COMMANDS[id]);
+                }
+            } else if (currentNowMode === 'SUB') {
+                activeMicroCommand = id;
+                const config = COMMAND_CONFIG[id];
+                
+                if(config.type === 'duration') {
+                    openDurationSelector();
+                } else {
+                    launchSessionLogic(config, null);
+                }
+            }
+        }
+
+        function openDurationSelector() {
+            document.getElementById('now-radial-container').classList.add('hidden');
+            document.getElementById('now-duration-container').classList.remove('hidden');
+            document.getElementById('now-duration-container').classList.add('flex');
+        }
+
+        function startSession(durationMins) {
+            const config = COMMAND_CONFIG[activeMicroCommand];
+            launchSessionLogic(config, durationMins);
+        }
+
+        function triggerNatureSession() {
+            activeCategory = 'nature';
+            launchSessionLogic({
+                type: 'mobilization', 
+                duration: 150, 
+                promptMob: 'You said yes to this. Here\'s your window to actually move.', 
+                promptSess: 'Look at something far away for a moment.<br><br>Find one thing moving — wind, water, a bird.<br><br>Notice what the air smells like right now.<br><br>Listen to the furthest sound you can hear.<br><br>Put your hand on something — bark, grass, stone.<br><br>Just walk slowly with no particular direction.<br><br>Take your shoes off if you can.' 
+            }, null);
+        }
+
+        function launchSessionLogic(config, durationMins) {
+            document.getElementById('now-radial-container').classList.add('hidden');
+            document.getElementById('now-duration-container').classList.add('hidden');
+            document.getElementById('now-duration-container').classList.remove('flex');
+            
+            const sessCont = document.getElementById('now-session-container');
+            sessCont.classList.remove('hidden');
+            sessCont.classList.add('flex');
+
+            const prmt = document.getElementById('session-prompt');
+            const tmrDisp = document.getElementById('session-timer-display');
+            const tapTmr = document.getElementById('session-tappable-timer');
+            const wvfm = document.getElementById('session-waveform');
+            const clsBtn = document.getElementById('session-close-btn');
+
+            // Reset View
+            tmrDisp.classList.add('hidden');
+            tapTmr.classList.add('hidden');
+            wvfm.classList.add('hidden');
+            clsBtn.classList.add('hidden');
+            prmt.classList.remove('animate-pulse');
+            prmt.style.textAlign = 'center';
+            prmt.style.fontWeight = '500';
+            sessCont.onclick = null; // reset nature tap
+            
+            // Format prompt text (handle newlines)
+            const formatText = (t) => t.replace(/\n/g, '<br>');
+
+            if (config.type === 'open') {
+                prmt.innerHTML = formatText(config.prompt);
+                clsBtn.innerText = "End Session";
+                clsBtn.classList.remove('hidden');
+                clsBtn.onclick = endSession;
+
+            } else if (config.type === 'duration') {
+                if (config.hasConfirm) {
+                    prmt.innerHTML = formatText(config.prompt) + "<br><br><span class='text-gray-400 text-sm'>Ready to start.</span>";
+                    clsBtn.innerText = "Start Session";
+                    clsBtn.classList.remove('hidden');
+                    clsBtn.onclick = () => {
+                        prmt.innerHTML = "Session active. Follow the cues.";
+                        clsBtn.innerText = "End Session";
+                        clsBtn.onclick = endSession;
+                        startVisualTimer(tmrDisp, durationMins * 60);
+                    };
+                } else {
+                    prmt.innerHTML = formatText(typeof config.promptGen === 'function' ? config.promptGen() : config.prompt);
+                    if(config.pulse) prmt.classList.add('animate-pulse');
+                    startVisualTimer(tmrDisp, durationMins * 60);
+                    clsBtn.innerText = "End Session";
+                    clsBtn.classList.remove('hidden');
+                    clsBtn.onclick = endSession;
+                }
+
+            } else if (config.type === 'mobilization') {
+                prmt.innerHTML = formatText(config.promptMob);
+                startMobilizationTimer(tapTmr, config.duration, () => {
+                    prmt.innerHTML = formatText(config.promptSess);
+                    if (config.hasWaveform) wvfm.classList.remove('hidden');
+                    
+                    if(activeCategory === 'nature') {
+                        prmt.style.textAlign = 'left';
+                        prmt.style.fontWeight = '400';
+                        prmt.classList.add('text-gray-600', 'leading-loose');
+                        // Nature ends with a tap anywhere
+                        sessCont.onclick = () => { if(tapTmr.classList.contains('hidden')) endSession(); };
+                    } else {
+                        clsBtn.innerText = "End Session";
+                        clsBtn.classList.remove('hidden');
+                        clsBtn.onclick = endSession;
+                    }
+                });
+
+            } else if (config.type === 'timer-only') {
+                prmt.innerHTML = formatText(config.promptSess);
+                startVisualTimer(tmrDisp, config.duration);
+                clsBtn.innerText = "End Session";
+                clsBtn.classList.remove('hidden');
+                clsBtn.onclick = endSession;
+            }
+        }
+
+        function startVisualTimer(element, seconds) {
+            element.classList.remove('hidden');
+            let remaining = Math.floor(seconds);
+            
+            function update() {
+                const m = Math.floor(remaining / 60);
+                const s = remaining % 60;
+                element.innerText = `${m}:${s.toString().padStart(2, '0')}`;
+                if (remaining <= 0) {
+                    clearInterval(currentSessionInterval);
+                    element.innerText = "Done";
+                }
+                remaining--;
+            }
+            update();
+            currentSessionInterval = setInterval(update, 1000);
+        }
+
+        function startMobilizationTimer(element, seconds, onComplete) {
+            element.classList.remove('hidden');
+            const timeEl = document.getElementById('session-tappable-time');
+            let remaining = Math.floor(seconds);
+            mobConfirmCallback = onComplete;
+
+            function update() {
+                const m = Math.floor(remaining / 60);
+                const s = remaining % 60;
+                timeEl.innerText = `${m}:${s.toString().padStart(2, '0')}`;
+                if (remaining <= 0) {
+                    clearInterval(currentSessionInterval);
+                    element.classList.add('hidden');
+                    if(onComplete) onComplete();
+                }
+                remaining--;
+            }
+            update();
+            currentSessionInterval = setInterval(update, 1000);
+        }
+
+        function confirmMobilization() {
+            clearInterval(currentSessionInterval);
+            document.getElementById('session-tappable-timer').classList.add('hidden');
+            if(mobConfirmCallback) {
+                const cb = mobConfirmCallback;
+                mobConfirmCallback = null;
+                cb();
+            }
+        }
+
+        function endSession() {
+            clearInterval(currentSessionInterval);
+            document.getElementById('now-session-container').onclick = null;
+            const prmt = document.getElementById('session-prompt');
+            prmt.className = 'text-center text-xl text-gray-800 mb-12 max-w-[280px]'; // reset classes
+            resetNowRadial();
+        }
+
+        // --- Mode 1: Presence & Gratitude Timer ---
+        let presenceInterval = null;
+
+        function startPresenceTimer() {
+            const overlay = document.getElementById('presence-overlay');
+            const timeLeftEl = document.getElementById('presence-time-left');
+            const ringEl = document.getElementById('presence-progress');
+            
+            overlay.classList.remove('hidden');
+            overlay.classList.add('flex');
+            setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+            
+            let secondsLeft = 120; // 2 minutes
+            const totalLen = 301.59;
+            
+            function updateRing() {
+                const m = Math.floor(secondsLeft / 60);
+                const s = secondsLeft % 60;
+                timeLeftEl.innerText = `${m}:${s.toString().padStart(2, '0')}`;
+                
+                const offset = totalLen - (secondsLeft / 120) * totalLen;
+                ringEl.style.strokeDashoffset = offset;
+
+                if (secondsLeft <= 0) {
+                    clearInterval(presenceInterval);
+                    endPresenceTimer();
+                }
+                secondsLeft--;
+            }
+            
+            updateRing();
+            presenceInterval = setInterval(updateRing, 1000);
+        }
+
+        function endPresenceTimer() {
+            clearInterval(presenceInterval);
+            const overlay = document.getElementById('presence-overlay');
+            overlay.classList.add('opacity-0');
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+                overlay.classList.remove('flex');
+            }, 500);
         }
 
         // Boot up
