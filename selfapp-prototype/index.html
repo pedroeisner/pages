@@ -343,103 +343,298 @@
 
                 <!-- ================= SCREEN 5: PROFILE (REMEMBER) ================= -->
                 <div id="screen-self" class="screen-content hidden flex-col h-full w-full absolute inset-0 transition-opacity duration-300 overflow-y-auto no-scrollbar pb-[100px] pt-2">
-                    <h1 class="text-xl font-bold text-center mt-2 mb-4 text-gray-900 flex items-center justify-center gap-2">
-                        <i data-lucide="book-open" class="w-5 h-5 text-gray-400"></i> Remember
+                    <h1 class="text-xl font-bold text-center mt-2 mb-1 text-gray-900 flex items-center justify-center gap-2">
+                        <i data-lucide="book-open" class="w-5 h-5 text-gray-400"></i> Journal
                     </h1>
+                    <p class="text-center text-[11px] text-gray-500 px-8 mb-4 italic leading-relaxed">The inner sanctuary. A living scroll to remember who you are.</p>
                     
                     <div class="flex flex-col w-full border-t-2 border-gray-800">
-                        <!-- Category: Today -->
-                        <div class="border-b border-gray-300">
-                            <div class="btn-interactive py-4 px-6 flex justify-between items-center cursor-pointer bg-white hover:bg-gray-50 z-10 relative" onclick="toggleAccordion('today')">
-                                <span class="text-[13px] font-semibold text-gray-800">Today</span>
-                                <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 transition-transform duration-300" id="icon-today"></i>
+                        
+                        <!-- 1. Last Entries -->
+                        <div class="border-b border-gray-200">
+                            <div class="btn-interactive py-2.5 px-4 flex justify-between items-center cursor-pointer bg-white hover:bg-gray-50 z-10 relative" onclick="toggleAccordion('last-entries')">
+                                <span class="text-[13px] font-bold text-gray-900">1. Last Entries</span>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 transition-transform duration-300" id="icon-last-entries" style="transform: rotate(180deg);"></i>
                             </div>
-                            <div id="acc-today" class="smooth-collapse bg-gray-50/50">
-                                <div id="acc-today-content" class="space-y-2 px-6 pb-4 pt-2">
-                                    <div class="bg-white p-3 rounded-lg border border-gray-100 shadow-sm flex gap-2.5 items-start">
-                                        <div class="w-1.5 h-1.5 rounded-full bg-blue-400 mt-1.5 shrink-0"></div>
-                                        <p class="text-[11px] text-gray-700 leading-relaxed">Felt super energized after the morning somatic exercise.</p>
+                            <div id="acc-last-entries" class="smooth-collapse expanded bg-gray-50/30">
+                                <div id="acc-last-entries-content" class="px-4 pb-3 pt-2 space-y-1 shadow-inner">
+                                    <p class="text-[9px] uppercase font-bold text-gray-400 tracking-wider mb-1">Pinned</p>
+                                    <div class="flex gap-2.5 items-center py-1">
+                                        <i data-lucide="pin" class="w-3.5 h-3.5 text-amber-500 shrink-0"></i>
+                                        <p class="text-[12px] text-gray-800 font-medium">Ongoing Process: Trusting the pause</p>
+                                    </div>
+                                    <p class="text-[9px] uppercase font-bold text-gray-400 tracking-wider mb-1 mt-2 pt-1">Recent</p>
+                                    <div class="flex gap-2.5 items-center py-1">
+                                        <span class="text-[10px] font-bold text-gray-400 w-9 shrink-0">Today</span>
+                                        <p class="text-[12px] text-gray-700">Completed Morning Breathwork</p>
+                                    </div>
+                                    <div class="flex gap-2.5 items-center py-1">
+                                        <span class="text-[10px] font-bold text-gray-400 w-9 shrink-0">Yest.</span>
+                                        <p class="text-[12px] text-gray-700">Added new Mantra</p>
+                                    </div>
+                                    <div class="flex gap-2.5 items-center py-1">
+                                        <span class="text-[10px] font-bold text-gray-400 w-9 shrink-0">3d ago</span>
+                                        <p class="text-[12px] text-gray-700">Noted a new recurring pattern</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Category: To-do // ideas -->
-                        <div class="border-b border-gray-300">
-                            <div class="btn-interactive py-4 px-6 flex justify-between items-center cursor-pointer bg-white hover:bg-gray-50 z-10 relative" onclick="toggleAccordion('ideas')">
-                                <span class="text-[13px] font-semibold text-gray-800">To-do // ideas</span>
-                                <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 transition-transform duration-300" id="icon-ideas"></i>
+                        <!-- 2. Today -->
+                        <div class="border-b border-gray-200">
+                            <div class="btn-interactive py-2.5 px-4 flex justify-between items-center cursor-pointer bg-white hover:bg-gray-50 z-10 relative" onclick="toggleAccordion('today')">
+                                <span class="text-[13px] font-bold text-gray-900">2. Today</span>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 transition-transform duration-300" id="icon-today" style="transform: rotate(180deg);"></i>
                             </div>
-                            <div id="acc-ideas" class="smooth-collapse bg-gray-50/50">
-                                <div id="acc-ideas-content" class="space-y-2 px-6 pb-4 pt-2">
-                                    <div class="bg-white p-3 rounded-lg border border-gray-100 shadow-sm flex gap-2.5 items-start">
-                                        <input type="checkbox" class="mt-0.5 rounded text-blue-500 focus:ring-blue-500 w-3 h-3 border-gray-300">
-                                        <p class="text-[11px] text-gray-700 leading-relaxed">Research new breathwork facilitators for next week's session.</p>
+                            <div id="acc-today" class="smooth-collapse expanded bg-gray-50/30">
+                                <div id="acc-today-content" class="px-4 pb-3 pt-2 space-y-1">
+                                    <div class="bg-pink-50 p-2.5 rounded-lg border border-pink-100 flex justify-between items-center mb-2">
+                                        <span class="text-[10px] font-bold text-pink-800 uppercase tracking-wide">Self Love Count</span>
+                                        <div class="flex gap-3 text-pink-600 text-[10px] font-bold">
+                                            <span>Today: 3</span> <span>Ytd: 5</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex gap-2.5 items-center py-1.5">
+                                        <input type="checkbox" checked class="rounded text-green-500 focus:ring-green-500 w-3.5 h-3.5 border-gray-300">
+                                        <p class="text-[12px] text-gray-800 font-medium">Morning Meditation</p>
+                                    </div>
+                                    <div class="flex gap-2.5 items-center py-1.5">
+                                        <input type="checkbox" class="rounded text-blue-500 focus:ring-blue-500 w-3.5 h-3.5 border-gray-300">
+                                        <p class="text-[12px] text-gray-800 font-medium">Read 10 pages</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Category: Actual Mantras (Highlighted) -->
-                        <div class="border-b border-gray-800 border-b-2 bg-blue-50/30">
-                            <div class="btn-interactive py-5 px-6 flex justify-between items-center cursor-pointer z-10 relative" onclick="toggleAccordion('mantras')">
-                                <span class="text-[13px] font-bold text-gray-900">Actual mantras</span>
-                                <i data-lucide="chevron-down" class="w-4 h-4 text-gray-600 transition-transform duration-300 rotate-180" id="icon-mantras"></i>
+                        <!-- 3. Habit Tracker -->
+                        <div class="border-b border-gray-200">
+                            <div class="btn-interactive py-2.5 px-4 flex justify-between items-center cursor-pointer bg-white hover:bg-gray-50 z-10 relative" onclick="toggleAccordion('habit')">
+                                <span class="text-[13px] font-bold text-gray-900">3. Habit Tracker</span>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 transition-transform duration-300" id="icon-habit" style="transform: rotate(180deg);"></i>
                             </div>
-                            <!-- Opened by default via JS initialization -->
-                            <div id="acc-mantras" class="smooth-collapse expanded" style="max-height: 500px;">
-                                <div id="acc-mantras-content" class="space-y-3 px-6 pb-5 pt-1 text-center flex flex-col items-center">
-                                    <div class="bg-white w-full p-4 rounded-xl border border-gray-200 shadow-sm">
-                                        <p class="text-xs font-bold text-gray-800 italic">"stay happy, stay cheerfull, stay loving, stay busy"</p>
+                            <div id="acc-habit" class="smooth-collapse expanded bg-gray-50/30">
+                                <div class="px-4 pb-3 pt-2 overflow-x-auto no-scrollbar">
+                                    <table class="w-full text-left text-[10px] text-gray-600 border-separate border-spacing-y-0.5">
+                                        <thead>
+                                            <tr>
+                                                <th class="pb-1.5 font-medium pl-1 text-[9px] uppercase tracking-wider">Activity</th>
+                                                <th class="pb-1.5 font-medium text-center text-[9px] uppercase tracking-wider">70/30</th>
+                                                <th class="pb-1.5 font-medium text-center text-[9px] uppercase tracking-wider">Tod</th>
+                                                <th class="pb-1.5 font-medium text-center text-[9px] uppercase tracking-wider">Ytd</th>
+                                                <th class="pb-1.5 font-medium text-center text-[9px] uppercase tracking-wider">M</th>
+                                                <th class="pb-1.5 font-medium text-center text-[9px] uppercase tracking-wider">T</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="bg-white/60">
+                                                <td class="py-1.5 pl-1 text-gray-800 font-medium border-y border-l border-gray-100 rounded-l">Meditation</td>
+                                                <td class="py-1.5 text-center border-y border-gray-100"><div class="w-1.5 h-1.5 rounded-full bg-green-500 mx-auto"></div></td>
+                                                <td class="py-1.5 text-center border-y border-gray-100"><i data-lucide="check" class="w-3 h-3 text-green-500 mx-auto"></i></td>
+                                                <td class="py-1.5 text-center border-y border-gray-100">-</td>
+                                                <td class="py-1.5 text-center border-y border-gray-100"><i data-lucide="check" class="w-3 h-3 text-gray-400 mx-auto"></i></td>
+                                                <td class="py-1.5 text-center rounded-r border-y border-r border-gray-100"><i data-lucide="check" class="w-3 h-3 text-gray-400 mx-auto"></i></td>
+                                            </tr>
+                                            <tr class="bg-white/60">
+                                                <td class="py-1.5 pl-1 text-gray-800 font-medium border-y border-l border-gray-100 rounded-l">Reading</td>
+                                                <td class="py-1.5 text-center border-y border-gray-100"><div class="w-1.5 h-1.5 rounded-full bg-gray-300 mx-auto"></div></td>
+                                                <td class="py-1.5 text-center border-y border-gray-100">-</td>
+                                                <td class="py-1.5 text-center border-y border-gray-100"><i data-lucide="check" class="w-3 h-3 text-gray-400 mx-auto"></i></td>
+                                                <td class="py-1.5 text-center border-y border-gray-100">-</td>
+                                                <td class="py-1.5 text-center rounded-r border-y border-r border-gray-100"><i data-lucide="check" class="w-3 h-3 text-gray-400 mx-auto"></i></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 4. Tasks & Goals -->
+                        <div class="border-b border-gray-200">
+                            <div class="btn-interactive py-2.5 px-4 flex justify-between items-center cursor-pointer bg-white hover:bg-gray-50 z-10 relative" onclick="toggleAccordion('goals')">
+                                <span class="text-[13px] font-bold text-gray-900">4. Tasks & Goals</span>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 transition-transform duration-300" id="icon-goals" style="transform: rotate(180deg);"></i>
+                            </div>
+                            <div id="acc-goals" class="smooth-collapse expanded bg-gray-50/30">
+                                <div id="acc-goals-content" class="px-4 pb-3 pt-2 space-y-2">
+                                    <!-- Tasks -->
+                                    <div>
+                                        <p class="text-[9px] uppercase font-bold text-gray-400 tracking-wider mb-1">Tasks</p>
+                                        <div class="flex items-center gap-2 py-1">
+                                            <input type="checkbox" class="rounded text-blue-500 focus:ring-blue-500 w-3.5 h-3.5 border-gray-300">
+                                            <span class="text-[12px] font-medium text-gray-800">Schedule check-in call with mentor</span>
+                                        </div>
                                     </div>
-                                    <div class="bg-white w-full p-4 rounded-xl border border-gray-200 shadow-sm">
-                                        <p class="text-xs font-bold text-gray-800 italic">"only God, only God, only God"</p>
+                                    <div class="w-full h-px bg-gray-200 my-1.5"></div>
+                                    <!-- Goals -->
+                                    <div>
+                                        <p class="text-[9px] uppercase font-bold text-gray-400 tracking-wider mb-1.5">Goals</p>
+                                        <div class="bg-white border border-gray-200 rounded-lg p-2.5 shadow-sm relative overflow-hidden">
+                                            <div class="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
+                                            <h4 class="text-[12px] font-bold text-gray-800 ml-1.5">Launch creative project</h4>
+                                            <p class="text-[9px] text-gray-500 mt-0.5 ml-1.5 flex items-center gap-1"><i data-lucide="activity" class="w-3 h-3"></i> Living thread: 3 updates</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Category: Tasks & goals -->
-                        <div class="border-b border-gray-300">
-                            <div class="btn-interactive py-4 px-6 flex justify-between items-center cursor-pointer bg-white hover:bg-gray-50 z-10 relative" onclick="toggleAccordion('goals')">
-                                <span class="text-[13px] font-semibold text-gray-800">Tasks & goals</span>
-                                <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 transition-transform duration-300" id="icon-goals"></i>
+                        <!-- 5. Mantras -->
+                        <div class="border-b border-gray-200 bg-blue-50/20">
+                            <div class="btn-interactive py-2.5 px-4 flex justify-between items-center cursor-pointer z-10 relative" onclick="toggleAccordion('mantras')">
+                                <span class="text-[13px] font-bold text-gray-900">5. Mantras</span>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-gray-600 transition-transform duration-300" id="icon-mantras" style="transform: rotate(180deg);"></i>
                             </div>
-                            <div id="acc-goals" class="smooth-collapse bg-gray-50/50">
-                                <div id="acc-goals-content" class="space-y-2 px-6 pb-4 pt-2 text-center">
-                                    <p class="text-[11px] text-gray-400 italic">No goals added yet.</p>
+                            <div id="acc-mantras" class="smooth-collapse expanded bg-transparent">
+                                <div id="acc-mantras-content" class="px-4 pb-4 pt-3 flex flex-col items-center space-y-4">
+                                    <p class="font-serif text-[14px] text-center text-gray-800 font-medium italic leading-relaxed">"stay happy, stay cheerfull,<br>stay loving, stay busy"</p>
+                                    <p class="font-serif text-[14px] text-center text-gray-800 font-medium italic leading-relaxed">"only God, only God, only God"</p>
+                                    <button class="text-[9px] text-gray-400 font-bold uppercase tracking-widest mt-2 border-b border-gray-300 pb-0.5 hover:text-gray-600 transition-colors">Archive</button>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Category: Dreams -->
-                        <div class="border-b border-gray-300">
-                            <div class="btn-interactive py-4 px-6 flex justify-between items-center cursor-pointer bg-white hover:bg-gray-50 z-10 relative" onclick="toggleAccordion('dreams')">
-                                <span class="text-[13px] font-semibold text-gray-800">Dreams</span>
-                                <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 transition-transform duration-300" id="icon-dreams"></i>
+                        <!-- 6. Ongoing Processes -->
+                        <div class="border-b border-gray-200">
+                            <div class="btn-interactive py-2.5 px-4 flex justify-between items-center cursor-pointer bg-white hover:bg-gray-50 z-10 relative" onclick="toggleAccordion('processes')">
+                                <span class="text-[13px] font-bold text-gray-900">6. Ongoing Processes</span>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 transition-transform duration-300" id="icon-processes" style="transform: rotate(180deg);"></i>
                             </div>
-                            <div id="acc-dreams" class="smooth-collapse bg-gray-50/50">
-                                <div id="acc-dreams-content" class="space-y-2 px-6 pb-4 pt-2">
-                                    <div class="bg-indigo-50 p-3 rounded-lg border border-indigo-100 shadow-sm flex gap-2.5 items-start">
-                                        <i data-lucide="moon" class="w-3 h-3 text-indigo-400 mt-0.5 shrink-0"></i>
-                                        <p class="text-[11px] text-gray-700 leading-relaxed">Dreamt about walking through an endless forest. Felt peaceful.</p>
+                            <div id="acc-processes" class="smooth-collapse expanded bg-gray-50/30">
+                                <div class="px-4 pb-3 pt-2 space-y-2.5">
+                                    <div>
+                                        <p class="text-[9px] uppercase font-bold text-blue-500 tracking-wider mb-1">Recognized</p>
+                                        <div class="bg-blue-50 border border-blue-100 rounded-lg p-2.5 shadow-sm">
+                                            <h4 class="text-[11px] font-bold text-blue-900">Healing my relationship with rest</h4>
+                                            <p class="text-[10px] text-blue-700 mt-1 italic">Core insight: Rest is not a reward.</p>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase font-bold text-amber-500 tracking-wider mb-1">Emerging</p>
+                                        <div class="bg-amber-50 border border-amber-200 rounded-lg p-2.5 border-dashed shadow-sm">
+                                            <h4 class="text-[11px] font-medium text-amber-800 italic">Feeling a shift around boundaries...</h4>
+                                        </div>
+                                    </div>
+                                    <div class="text-center pt-1">
+                                        <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest cursor-pointer border-b border-gray-300 pb-0.5 hover:text-gray-600 transition-colors">Integrated (2)</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Other Empty Categories -->
-                        <div class="border-b border-gray-300"><div class="py-4 px-6"><span class="text-[13px] font-medium text-gray-600">Self-Map</span></div></div>
-                        <div class="border-b border-gray-300"><div class="py-4 px-6"><span class="text-[13px] font-medium text-gray-600">Ongoing processes</span></div></div>
-                        <div class="border-b border-gray-300"><div class="py-4 px-6"><span class="text-[13px] font-medium text-gray-600">Psico-spiritual understandings</span></div></div>
-                        <div class="border-b border-gray-800 border-b-2"><div class="py-4 px-6"><span class="text-[13px] font-medium text-gray-600">Unconscious Pattern Tracker</span></div></div>
+                        <!-- 7. Self Maps -->
+                        <div class="border-b border-gray-200">
+                            <div class="btn-interactive py-2.5 px-4 flex justify-between items-center cursor-pointer bg-white hover:bg-gray-50 z-10 relative" onclick="toggleAccordion('maps')">
+                                <span class="text-[13px] font-bold text-gray-900">7. Self Maps</span>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 transition-transform duration-300" id="icon-maps" style="transform: rotate(180deg);"></i>
+                            </div>
+                            <div id="acc-maps" class="smooth-collapse expanded bg-gray-50/30">
+                                <div class="px-4 pb-3 pt-2 space-y-1.5">
+                                    <div class="bg-white border border-gray-200 rounded-lg p-2 shadow-sm flex justify-between items-center">
+                                        <span class="text-[11px] font-bold text-gray-800 flex items-center gap-1.5"><i data-lucide="user" class="w-3 h-3 text-gray-400"></i> Personality</span>
+                                        <span class="text-[9px] font-bold text-gray-600 bg-gray-100 px-2 py-0.5 rounded">Enneagram 4</span>
+                                    </div>
+                                    <div class="bg-white border border-gray-200 rounded-lg p-2 shadow-sm flex justify-between items-center">
+                                        <span class="text-[11px] font-bold text-gray-800 flex items-center gap-1.5"><i data-lucide="star" class="w-3 h-3 text-amber-400"></i> Astrology</span>
+                                        <span class="text-[9px] font-bold text-gray-600 bg-gray-100 px-2 py-0.5 rounded">Sun in Aries</span>
+                                    </div>
+                                    <div class="bg-white border border-gray-200 rounded-lg p-2 shadow-sm flex justify-between items-center">
+                                        <span class="text-[11px] font-bold text-gray-800 flex items-center gap-1.5"><i data-lucide="hexagon" class="w-3 h-3 text-purple-400"></i> Human Design</span>
+                                        <span class="text-[9px] font-bold text-gray-600 bg-gray-100 px-2 py-0.5 rounded">Projector</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 8. Free Time Jar -->
+                        <div class="border-b border-gray-200">
+                            <div class="btn-interactive py-2.5 px-4 flex justify-between items-center cursor-pointer bg-white hover:bg-gray-50 z-10 relative" onclick="toggleAccordion('freetime')">
+                                <span class="text-[13px] font-bold text-gray-900">8. Free Time Jar</span>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 transition-transform duration-300" id="icon-freetime" style="transform: rotate(180deg);"></i>
+                            </div>
+                            <div id="acc-freetime" class="smooth-collapse expanded bg-gray-50/30">
+                                <div class="px-4 pb-3 pt-2 space-y-1">
+                                    <div class="flex justify-between items-center py-1.5">
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-1 h-3.5 bg-green-400 rounded-full"></div>
+                                            <span class="text-[12px] text-gray-800 font-medium">Read a chapter of that book</span>
+                                        </div>
+                                        <i data-lucide="play-circle" class="w-4 h-4 text-green-500 cursor-pointer hover:scale-110 transition-transform"></i>
+                                    </div>
+                                    <div class="flex justify-between items-center py-1.5">
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-1 h-3.5 bg-gray-300 rounded-full"></div>
+                                            <span class="text-[12px] text-gray-800 font-medium">Take a walk without phone</span>
+                                        </div>
+                                        <i data-lucide="play-circle" class="w-4 h-4 text-gray-300 cursor-pointer hover:text-green-500 transition-colors"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 9. Life Dreams -->
+                        <div class="border-b border-gray-200">
+                            <div class="btn-interactive py-2.5 px-4 flex justify-between items-center cursor-pointer bg-white hover:bg-gray-50 z-10 relative" onclick="toggleAccordion('dreams')">
+                                <span class="text-[13px] font-bold text-gray-900">9. Life Dreams</span>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 transition-transform duration-300" id="icon-dreams" style="transform: rotate(180deg);"></i>
+                            </div>
+                            <div id="acc-dreams" class="smooth-collapse expanded bg-gray-50/30">
+                                <div id="acc-dreams-content" class="px-4 pb-3 pt-2 space-y-2">
+                                    <div class="bg-[#1e1b4b] text-indigo-50 rounded-xl p-4 shadow-md relative overflow-hidden">
+                                        <div class="absolute top-0 right-0 p-2 opacity-20"><i data-lucide="moon" class="w-6 h-6"></i></div>
+                                        <h4 class="text-[12px] font-bold leading-relaxed relative z-10">A quiet house near the ocean</h4>
+                                        <p class="text-[10px] text-indigo-200 mt-1 italic relative z-10">To feel completely rooted.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 10. My Inner Learnings -->
+                        <div class="border-b border-gray-200">
+                            <div class="btn-interactive py-2.5 px-4 flex justify-between items-center cursor-pointer bg-white hover:bg-gray-50 z-10 relative" onclick="toggleAccordion('learnings')">
+                                <span class="text-[13px] font-bold text-gray-900">10. My Inner Learnings</span>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 transition-transform duration-300" id="icon-learnings" style="transform: rotate(180deg);"></i>
+                            </div>
+                            <div id="acc-learnings" class="smooth-collapse expanded bg-gray-50/30">
+                                <div class="px-4 pb-3 pt-2 space-y-2">
+                                    <div class="bg-white border border-gray-200 rounded-lg p-3 shadow-sm">
+                                        <h4 class="text-[11px] font-bold text-gray-900">Anger as a boundary</h4>
+                                        <p class="text-[10px] text-gray-700 mt-1 leading-relaxed">My anger is just unmet boundaries communicating with me.</p>
+                                        <div class="flex justify-between items-center mt-2 pt-2 border-t border-gray-100">
+                                            <span class="text-[8px] font-bold uppercase tracking-wider text-purple-700 bg-purple-100 px-1.5 py-0.5 rounded-sm">From Feed</span>
+                                            <span class="text-[8px] font-medium text-gray-400 uppercase tracking-widest">April 10</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 11. Recurring Patterns -->
+                        <div class="border-b border-gray-200">
+                            <div class="btn-interactive py-2.5 px-4 flex justify-between items-center cursor-pointer bg-white hover:bg-gray-50 z-10 relative" onclick="toggleAccordion('patterns')">
+                                <span class="text-[13px] font-bold text-gray-900">11. Recurring Patterns</span>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 transition-transform duration-300" id="icon-patterns" style="transform: rotate(180deg);"></i>
+                            </div>
+                            <div id="acc-patterns" class="smooth-collapse expanded bg-gray-50/30">
+                                <div class="px-4 pb-3 pt-2 space-y-2">
+                                    <div class="bg-red-50 border border-red-100 rounded-xl p-3 shadow-sm">
+                                        <div class="flex justify-between items-start mb-1.5">
+                                            <h4 class="text-[12px] font-bold text-red-900">The Fixer</h4>
+                                            <span class="text-[8px] font-bold text-red-600 bg-red-100 px-1.5 py-0.5 rounded uppercase tracking-wider">Active</span>
+                                        </div>
+                                        <p class="text-[10px] text-red-800 mb-1.5 leading-relaxed">Trying to solve others' negative emotions to feel safe.</p>
+                                        <p class="text-[9px] text-red-700 italic mb-2.5 font-medium">Is this still serving you?</p>
+                                        <button class="w-full py-2 bg-red-100 text-red-700 rounded-lg text-[9px] font-bold uppercase tracking-widest hover:bg-red-200 transition-colors" onclick="triggerHereAgain(this)">Here again</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Hidden containers to support Feed Dropdown legacy options safely without breaking JS -->
+                        <div id="acc-ideas" class="hidden expanded"><div id="acc-ideas-content"></div></div>
+                        <i id="icon-ideas" class="hidden"></i>
+
                     </div>
 
-                    <div class="mt-6 flex justify-center pb-6">
-                        <p class="text-xs text-gray-500 font-medium flex items-center gap-1 cursor-pointer hover:text-gray-800 transition-colors">
-                            add / remove profile categories: <i data-lucide="settings" class="w-3 h-3"></i>
-                        </p>
-                    </div>
                 </div>
 
             </div> <!-- End Screens Container -->
@@ -467,7 +662,7 @@
                     <button onclick="switchTab('self')" id="nav-self" class="nav-btn flex flex-col items-center gap-1.5 text-gray-400 w-16 transition-colors duration-200 relative">
                         <div id="self-badge" class="absolute -top-1 right-3 w-2 h-2 bg-red-500 rounded-full border border-white hidden transition-all"></div>
                         <i data-lucide="user" class="w-[22px] h-[22px]"></i>
-                        <span class="text-[9px] font-semibold tracking-wide">Self</span>
+                        <span class="text-[9px] font-semibold tracking-wide">Journal</span>
                     </button>
                 </nav>
             </div>
@@ -692,6 +887,19 @@
             showToast("Saved to Journal");
         }
 
+        function triggerHereAgain(btn) {
+            const originalText = btn.innerText;
+            btn.innerText = "Seen.";
+            btn.classList.replace('bg-red-100', 'bg-gray-800');
+            btn.classList.replace('text-red-700', 'text-white');
+            showToast("Pattern acknowledged.");
+            setTimeout(() => {
+                btn.innerText = originalText;
+                btn.classList.replace('bg-gray-800', 'bg-red-100');
+                btn.classList.replace('text-white', 'text-red-700');
+            }, 3000);
+        }
+
         // --- Feature: Inspire Me Question Generator ---
         function generateQuestion() {
             const textEl = document.getElementById('inspire-text');
@@ -745,7 +953,16 @@
                 activeNav.classList.remove('text-gray-400');
                 activeNav.classList.add('text-black');
             }
-            if(tabId === 'self') document.getElementById('self-badge').classList.add('hidden');
+            if(tabId === 'self') {
+                document.getElementById('self-badge').classList.add('hidden');
+                // Recalculate heights for elements that were display: none (scrollHeight is 0 when hidden)
+                setTimeout(() => {
+                    const openAccs = targetScreen.querySelectorAll('.smooth-collapse.expanded');
+                    openAccs.forEach(acc => {
+                        acc.style.maxHeight = acc.scrollHeight + "px";
+                    });
+                }, 50);
+            }
             lucide.createIcons();
         }
 
