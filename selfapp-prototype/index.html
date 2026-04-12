@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Self App Prototype</title>
+    <title>Wellness App Prototype</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -203,43 +203,26 @@
                 </div>
 
                 <!-- ================= SCREEN 3: FEED ================= -->
-                <div id="screen-feed" class="screen-content hidden flex-col h-full w-full absolute inset-0 transition-opacity duration-300 pt-2">
+                <div id="screen-feed" class="screen-content hidden flex-col h-full w-full absolute inset-0 transition-opacity duration-300 pt-2 bg-white">
                     
                     <!-- Filters -->
-                    <div class="flex overflow-x-auto no-scrollbar gap-2 px-4 py-2 shrink-0">
-                        <button class="border border-gray-400 rounded-full px-4 py-1 text-xs font-medium whitespace-nowrap bg-gray-100">You</button>
-                        <button class="border border-gray-300 rounded-full px-4 py-1 text-xs font-medium whitespace-nowrap btn-interactive">Mentors</button>
-                        <button class="border border-gray-300 rounded-full px-4 py-1 text-xs font-medium whitespace-nowrap btn-interactive">Self App</button>
-                        <button class="border border-gray-300 rounded-full px-4 py-1 text-xs font-medium whitespace-nowrap btn-interactive">Acquaintances</button>
-                        <button class="border border-gray-300 rounded-full px-4 py-1 text-xs font-medium whitespace-nowrap btn-interactive">Communities</button>
-                        <button class="border border-gray-300 rounded-full px-4 py-1 text-xs font-medium whitespace-nowrap btn-interactive flex items-center gap-1">Series <i data-lucide="chevron-down" class="w-3 h-3"></i></button>
-                    </div>
-
-                    <!-- Create Post Area -->
-                    <div class="px-4 py-4 border-b border-t border-gray-100 bg-gray-50/50 shrink-0">
-                        <div class="relative">
-                            <!-- NOTE: text-[16px] is critical here to prevent iOS auto-zoom on focus -->
-                            <textarea id="feed-input" class="w-full bg-white border border-gray-200 rounded-xl p-3 text-[16px] text-gray-800 focus:outline-none focus:ring-1 focus:ring-gray-300 resize-none shadow-sm placeholder:text-[14px]" rows="2" placeholder="What's on your mind?"></textarea>
-                        </div>
-                        <div class="flex justify-between items-center mt-2.5 px-1">
-                            <div class="flex items-center gap-2 text-gray-600">
-                                <i data-lucide="folder-plus" class="w-4 h-4 text-gray-400"></i>
-                                <select id="feed-category" class="text-[13px] font-medium border-none bg-transparent focus:outline-none text-gray-600 cursor-pointer">
-                                    <option value="today">Today</option>
-                                    <option value="ideas">To-do // ideas</option>
-                                    <option value="mantras">Actual mantras</option>
-                                    <option value="dreams">Dreams</option>
-                                    <option value="goals">Tasks & goals</option>
-                                </select>
-                            </div>
-                            <button onclick="addPost()" class="bg-black text-white px-5 py-1.5 rounded-full text-xs font-semibold btn-interactive shadow-md flex items-center gap-1.5 hover:bg-gray-800 transition-colors">
-                                Share <i data-lucide="send" class="w-3 h-3"></i>
-                            </button>
-                        </div>
+                    <div class="flex overflow-x-auto no-scrollbar gap-2 px-4 py-3 shrink-0 border-b border-gray-100 bg-white z-10">
+                        <button class="border border-gray-300 rounded-full px-4 py-1.5 text-[13px] font-medium whitespace-nowrap btn-interactive flex items-center gap-1.5 bg-white text-gray-800 shadow-sm">
+                            Self App <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-gray-400"></i>
+                        </button>
+                        <button class="border border-gray-300 rounded-full px-4 py-1.5 text-[13px] font-medium whitespace-nowrap btn-interactive flex items-center gap-1.5 bg-white text-gray-800 shadow-sm">
+                            Communities <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-gray-400"></i>
+                        </button>
+                        <button class="border border-gray-300 rounded-full px-4 py-1.5 text-[13px] font-medium whitespace-nowrap btn-interactive flex items-center gap-1.5 bg-white text-gray-800 shadow-sm">
+                            Mentors <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-gray-400"></i>
+                        </button>
+                        <button class="border border-gray-300 rounded-full px-4 py-1.5 text-[13px] font-medium whitespace-nowrap btn-interactive flex items-center gap-1.5 bg-white text-gray-800 shadow-sm">
+                            Users <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-gray-400"></i>
+                        </button>
                     </div>
 
                     <!-- Posts List Container -->
-                    <div id="feed-list" class="flex-1 overflow-y-auto no-scrollbar pb-[100px]">
+                    <div id="feed-list" class="flex-1 overflow-y-auto no-scrollbar pb-[100px] bg-gray-50/30">
                         <!-- Populated dynamically via JS to include 50 items -->
                     </div>
                 </div>
@@ -592,35 +575,90 @@
         }
 
         // --- Feed & Posts Logic ---
+        function getCategoryInfo(index) {
+            const USER_CATS = ['Reflection', 'Noticing', 'Question', 'Gratitude', 'Shadow'];
+            const MENTOR_CATS = ['Transmission', 'Invitation', 'Presence'];
+            const APP_CATS = ['Prompt', 'Mirror', 'Reminder', 'Seed'];
+            const COMMUNITIES = ['Morning Breathwork', 'Conscious Creators', 'Shadow Work Circle', 'Somatic Healing'];
+
+            let type, cat, style, community = null;
+
+            // Pseudo-randomly assign sources to simulate the ecosystem
+            if (index % 7 === 0) {
+                type = 'app';
+                cat = APP_CATS[index % APP_CATS.length];
+                style = 'bg-indigo-50 text-indigo-700 border border-indigo-100';
+            } else if (index % 5 === 0) {
+                type = 'mentor';
+                cat = MENTOR_CATS[index % MENTOR_CATS.length];
+                style = 'bg-amber-50 text-amber-700 border border-amber-100';
+            } else {
+                type = 'user';
+                cat = USER_CATS[index % USER_CATS.length];
+                style = 'bg-gray-100 text-gray-600 border border-gray-200';
+                
+                // Assign a shared community to some regular users
+                if (index % 3 === 0) {
+                    community = COMMUNITIES[index % COMMUNITIES.length];
+                }
+            }
+            
+            return { type, cat, style, community };
+        }
+
         function populateFeed() {
             const feedContainer = document.getElementById('feed-list');
             feedContainer.innerHTML = '';
-            spanishFeedPosts.forEach(post => {
+            spanishFeedPosts.forEach((post, index) => {
                 postCounter++;
-                feedContainer.insertAdjacentHTML('beforeend', createPostHTML(post.user, post.text, postCounter));
+                const catInfo = getCategoryInfo(index);
+                feedContainer.insertAdjacentHTML('beforeend', createPostHTML(post.user, post.text, postCounter, catInfo));
             });
         }
 
-        function createPostHTML(user, text, id) {
+        function createPostHTML(user, text, id, catInfo) {
             return `
-                <div class="px-5 py-4 border-b border-gray-200" id="post-${id}">
-                    <p class="text-[13px] text-gray-800 leading-relaxed">
-                        <span class="font-bold">${user}:</span> ${text}
+                <div class="px-5 py-5 border-b border-gray-200 bg-white" id="post-${id}">
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="flex flex-col">
+                            <div class="flex items-center gap-1.5">
+                                <span class="font-bold text-[14px] text-gray-900 leading-none">${user}</span>
+                                ${catInfo.type === 'mentor' ? '<span class="text-[9px] font-bold uppercase tracking-wider text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded-sm">Mentor</span>' : ''}
+                            </div>
+                            ${catInfo.community ? `<span class="text-[11px] text-gray-500 mt-1 flex items-center gap-1"><i data-lucide="users" class="w-3 h-3"></i> ${catInfo.community}</span>` : ''}
+                        </div>
+                        <span class="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${catInfo.style} mt-0.5 shrink-0">
+                            ${catInfo.cat}
+                        </span>
+                    </div>
+                    <p class="text-[14px] text-gray-800 leading-relaxed mb-5">
+                        ${text}
                     </p>
-                    <div class="flex justify-end gap-4 mt-3 text-gray-400">
-                        <button class="flex items-center gap-1 hover:text-gray-600 transition-colors" onclick="toggleReplyBox(${id})">
-                            <i data-lucide="message-circle" class="w-4 h-4"></i>
+                    <div class="flex justify-between items-center pt-3 border-t border-gray-100 text-gray-400 px-1">
+                        <button class="flex items-center gap-1.5 hover:text-blue-500 transition-colors text-[11px] font-medium tracking-wide" onclick="toggleReaction(this, 'text-blue-500')">
+                            <i data-lucide="eye" class="w-4 h-4"></i> I See You
                         </button>
-                        <button class="like-btn flex items-center gap-1 transition-colors" onclick="toggleLike(this)">
-                            <i data-lucide="heart" class="w-4 h-4"></i>
+                        <button class="like-btn flex items-center gap-1.5 transition-colors text-[11px] font-medium tracking-wide" onclick="toggleLike(this)">
+                            <i data-lucide="heart" class="w-4 h-4"></i> Resonated
+                        </button>
+                        <button class="flex items-center gap-1.5 hover:text-green-600 transition-colors text-[11px] font-medium tracking-wide" onclick="toggleReplyBox(${id})">
+                            <i data-lucide="edit-3" class="w-4 h-4"></i> Reflect
+                        </button>
+                        <button class="flex items-center gap-1.5 hover:text-purple-500 transition-colors text-[11px] font-medium tracking-wide" onclick="toggleReaction(this, 'text-purple-500')">
+                            <i data-lucide="bookmark" class="w-4 h-4"></i> Hold
                         </button>
                     </div>
-                    <div id="reply-box-${id}" class="hidden mt-3 pl-2 border-l-2 border-gray-100">
-                        <div id="reply-list-${id}" class="space-y-2 mb-2"></div>
-                        <div class="flex items-center gap-2 mt-2">
-                            <input type="text" id="reply-input-${id}" class="flex-1 bg-gray-50 border border-gray-200 rounded-full px-3 py-1.5 text-[16px] text-gray-800 focus:outline-none focus:border-gray-300 shadow-sm placeholder:text-[13px]" placeholder="Add a reply...">
-                            <button onclick="submitReply(${id})" class="bg-blue-100 text-blue-600 p-1.5 rounded-full hover:bg-blue-200 transition-colors">
-                                <i data-lucide="send" class="w-3 h-3"></i>
+                    
+                    <!-- Private Reflection Box -->
+                    <div id="reply-box-${id}" class="hidden mt-4 p-4 bg-gray-50 rounded-2xl border border-gray-100 shadow-inner">
+                        <p class="text-[11px] text-gray-500 mb-3 font-semibold uppercase tracking-wider flex items-center gap-1">
+                            <i data-lucide="lock" class="w-3 h-3"></i> Private Reflection
+                        </p>
+                        <div id="reply-list-${id}" class="space-y-2 mb-3"></div>
+                        <div class="flex items-center gap-2">
+                            <input type="text" id="reply-input-${id}" class="flex-1 bg-white border border-gray-200 rounded-xl px-3 py-2 text-[16px] text-gray-800 focus:outline-none focus:border-gray-300 shadow-sm placeholder:text-[13px]" placeholder="Add to your journal...">
+                            <button onclick="submitReply(${id})" class="bg-gray-900 text-white p-2.5 rounded-xl hover:bg-gray-800 transition-colors">
+                                <i data-lucide="send" class="w-4 h-4"></i>
                             </button>
                         </div>
                     </div>
@@ -629,6 +667,10 @@
         }
 
         function toggleLike(btnElement) { btnElement.classList.toggle('liked'); }
+
+        function toggleReaction(btnElement, colorClass) {
+            btnElement.classList.toggle(colorClass);
+        }
 
         function toggleReplyBox(postId) {
             const box = document.getElementById(`reply-box-${postId}`);
@@ -641,8 +683,13 @@
             const text = input.value.trim();
             if(!text) return;
             const replyList = document.getElementById(`reply-list-${postId}`);
-            replyList.insertAdjacentHTML('beforeend', `<div class="bg-gray-50 p-2.5 rounded-lg border border-gray-100 mt-1"><p class="text-[12px] text-gray-700"><span class="font-bold">@you:</span> ${text}</p></div>`);
+            replyList.insertAdjacentHTML('beforeend', `
+                <div class="bg-white p-3 rounded-lg border border-gray-200 shadow-sm mt-1">
+                    <p class="text-[13px] text-gray-700 italic font-medium">"${text}"</p>
+                </div>
+            `);
             input.value = '';
+            showToast("Saved to Journal");
         }
 
         // --- Feature: Inspire Me Question Generator ---
@@ -714,66 +761,6 @@
                 content.style.maxHeight = content.scrollHeight + "px";
                 icon.style.transform = 'rotate(180deg)';
             }
-        }
-
-        function addPost() {
-            const input = document.getElementById('feed-input');
-            const categorySelect = document.getElementById('feed-category');
-            const text = input.value.trim();
-            if(!text) return;
-            const categoryId = categorySelect.value;
-            const categoryName = categorySelect.options[categorySelect.selectedIndex].text;
-            
-            postCounter++;
-            const newPostHTML = `
-                <div class="px-5 py-4 border-b border-gray-200 bg-blue-50/50 transition-all shadow-inner" id="post-${postCounter}">
-                    <p class="text-[13px] text-gray-800 leading-relaxed">
-                        <span class="font-bold">@you</span> 
-                        <span class="text-[10px] text-blue-600 font-bold uppercase tracking-wider ml-1 bg-blue-100 px-1.5 py-0.5 rounded-sm">[${categoryName}]</span><br>
-                        ${text}
-                    </p>
-                    <div class="flex justify-end gap-4 mt-3 text-gray-400">
-                        <button class="flex items-center gap-1 hover:text-gray-600 transition-colors" onclick="toggleReplyBox(${postCounter})"><i data-lucide="message-circle" class="w-4 h-4"></i></button>
-                        <button class="like-btn flex items-center gap-1 transition-colors" onclick="toggleLike(this)"><i data-lucide="heart" class="w-4 h-4"></i></button>
-                    </div>
-                    <div id="reply-box-${postCounter}" class="hidden mt-3 pl-2 border-l-2 border-gray-100">
-                        <div id="reply-list-${postCounter}" class="space-y-2 mb-2"></div>
-                        <div class="flex items-center gap-2 mt-2">
-                            <input type="text" id="reply-input-${postCounter}" class="flex-1 bg-gray-50 border border-gray-200 rounded-full px-3 py-1.5 text-[16px] text-gray-800 focus:outline-none focus:border-gray-300 shadow-sm placeholder:text-[13px]" placeholder="Add a reply...">
-                            <button onclick="submitReply(${postCounter})" class="bg-blue-100 text-blue-600 p-1.5 rounded-full hover:bg-blue-200 transition-colors"><i data-lucide="send" class="w-3 h-3"></i></button>
-                        </div>
-                    </div>
-                </div>
-            `;
-            document.getElementById('feed-list').insertAdjacentHTML('afterbegin', newPostHTML);
-            
-            const targetAccordionContent = document.getElementById(`acc-${categoryId}-content`);
-            if(targetAccordionContent) {
-                if(targetAccordionContent.innerHTML.includes('No goals added yet')) {
-                    targetAccordionContent.innerHTML = '';
-                    targetAccordionContent.classList.remove('text-center');
-                }
-                targetAccordionContent.insertAdjacentHTML('afterbegin', `
-                    <div class="bg-white p-3 rounded-lg border border-blue-200 shadow-sm flex gap-2.5 items-start relative overflow-hidden mt-2">
-                        <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-400"></div>
-                        <div class="w-1.5 h-1.5 rounded-full bg-blue-400 mt-1.5 shrink-0 ml-1"></div>
-                        <p class="text-[11px] text-gray-800 font-medium leading-relaxed">${text}</p>
-                    </div>
-                `);
-                
-                const accContainer = document.getElementById(`acc-${categoryId}`);
-                const icon = document.getElementById(`icon-${categoryId}`);
-                if (!accContainer.classList.contains('expanded')) {
-                    accContainer.classList.add('expanded');
-                    icon.style.transform = 'rotate(180deg)';
-                }
-                setTimeout(() => { accContainer.style.maxHeight = accContainer.scrollHeight + "px"; }, 10);
-                document.getElementById('self-badge').classList.remove('hidden');
-            }
-            
-            input.value = '';
-            lucide.createIcons();
-            showToast("Saved to Feed & Remember list");
         }
 
         function showToast(msg) {
