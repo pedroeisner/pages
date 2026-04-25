@@ -707,32 +707,51 @@
 
     document.getElementById('customFileInput').onchange = async (event) => {
       const loading = document.getElementById('loadingModal');
-      loading.classList.add('show');
       const file = event.target.files?.[0];
 
-      // user cancelled → stay in previous source
       if (!file) {
-        loading.classList.remove('show');
         selectedSource = previousSourceSelection;
         render();
         return;
       }
 
-      const text = await file.text();
-      banks.custom = extractCustomWords(text);
+      loading.classList.add('show');
+      const _loadingStart = performance.now();
+      await new Promise(resolve => requestAnimationFrame(resolve));
 
-      if (banks.custom.length < 25) {
-        alert(`I found ${banks.custom.length} usable words. Upload a longer text file or use another language.`);
-        loading.classList.remove('show');
+      try {
+        let text = '';
+        if (file.name.toLowerCase().endsWith('.zip')) {
+          text = await extractTextFromZip(file);
+        } else {
+          text = await file.text();
+        }
+
+        banks.custom = extractCustomWords(text);
+
+        if (banks.custom.length < 25) {
+          alert(`I found ${banks.custom.length} usable words. Upload a longer text file or use another language.`);
+          selectedSource = previousSourceSelection;
+          render();
+          return;
+        }
+
+        previousSourceSelection = selectedSource;
+        selectedSource = 'custom';
+        newGame(true);
+      } catch (error) {
+        alert('Could not read that file. Try exporting the chat again or uploading the .txt file directly.');
         selectedSource = previousSourceSelection;
         render();
-        return;
+      } finally {
+        const _elapsed = performance.now() - _loadingStart;
+        const _min = 2000;
+        if (_elapsed < _min) {
+          await new Promise(r => setTimeout(r, _min - _elapsed));
+        }
+        loading.classList.remove('show');
+        event.target.value = '';
       }
-
-      previousSourceSelection = selectedSource;
-      selectedSource = 'custom';
-      newGame(true);
-      loading.classList.remove('show');
     };
 
     document.getElementById('darkModeToggle').onchange = (event) => {
@@ -880,19 +899,21 @@
       if (window.scrollY < 1) nudgeSafariChromeAway();
     }, { passive: true });
 
-    newGame();
-      async function extractTextFromZip(file) {
+    async function extractTextFromZip(file) {
       if (!window.JSZip) {
         const script = document.createElement('script');
         script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
         document.head.appendChild(script);
-        await new Promise(res => script.onload = res);
+        await new Promise((resolve, reject) => {
+          script.onload = resolve;
+          script.onerror = reject;
+        });
       }
 
       const zip = await JSZip.loadAsync(file);
       let combined = '';
+      const txtFiles = Object.values(zip.files).filter(f => !f.dir && f.name.toLowerCase().endsWith('.txt'));
 
-      const txtFiles = Object.values(zip.files).filter(f => f.name.endsWith('.txt'));
       for (const f of txtFiles) {
         const content = await f.async('string');
         combined += "\n" + content;
@@ -901,43 +922,7 @@
       return combined;
     }
 
-    const originalHandler = document.getElementById('customFileInput').onchange;
-    document.getElementById('customFileInput').onchange = async (event) => {
-      const file = event.target.files?.[0];
-
-      if (!file) {
-        selectedSource = previousSourceSelection;
-        render();
-        return;
-      }
-
-      let text = '';
-
-      if (file.name.endsWith('.zip')) {
-        try {
-          text = await extractTextFromZip(file);
-        } catch (e) {
-          alert('Could not read zip file');
-          loading.classList.remove('show');
-          return;
-        }
-      } else {
-        text = await file.text();
-      }
-
-      banks.custom = extractCustomWords(text);
-
-      if (banks.custom.length < 25) {
-        alert(`I found ${banks.custom.length} usable words. Upload a longer text file or use another language.`);
-        selectedSource = previousSourceSelection;
-        render();
-        return;
-      }
-
-      previousSourceSelection = selectedSource;
-      selectedSource = 'custom';
-      newGame(true);
-    };
+    newGame();
   </script>
 </body>
 </html>
