@@ -37,18 +37,17 @@
     }
 
     body {
-      min-height: calc(100lvh + 420px);
+      min-height: calc(100dvh + 520px);
       overscroll-behavior: none;
     }
 
     .app {
-      position: sticky;
-      top: 0;
+      position: fixed;
+      inset: 0;
       width: 100vw;
-      height: 100lvh;
-      min-height: 100svh;
+      height: 100dvh;
       display: grid;
-      grid-template-rows: 6.1svh 1px 5.8svh minmax(0, 1fr) 9.2svh;
+      grid-template-rows: 6.1dvh 1px 5.8dvh minmax(0, 1fr) 9.2dvh;
       padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
       background: var(--white);
       color: var(--text);
@@ -371,7 +370,7 @@
       </div>
     </footer>
   </div>
-  <div style="height:360px" aria-hidden="true"></div>
+  <div style="height:520px" aria-hidden="true"></div>
 
   <script>
     const banks = {
@@ -789,7 +788,7 @@
     }
 
     function nudgeSafariChromeAway() {
-      const y = Math.min(180, Math.max(80, document.body.scrollHeight - window.innerHeight - 8));
+      const y = Math.min(320, Math.max(140, document.body.scrollHeight - window.innerHeight - 8));
       setTimeout(() => window.scrollTo(0, y), 120);
       setTimeout(() => window.scrollTo(0, y), 550);
       setTimeout(() => window.scrollTo(0, y), 1200);
