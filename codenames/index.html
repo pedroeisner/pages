@@ -37,7 +37,7 @@
     }
 
     body {
-      min-height: calc(100svh + 200px);
+      min-height: calc(100lvh + 420px);
       overscroll-behavior: none;
     }
 
@@ -45,9 +45,10 @@
       position: sticky;
       top: 0;
       width: 100vw;
-      height: 100svh;
+      height: 100lvh;
+      min-height: 100svh;
       display: grid;
-      grid-template-rows: 6.6svh 1px 6.2svh minmax(0, 1fr) 9.6svh;
+      grid-template-rows: 6.1svh 1px 5.8svh minmax(0, 1fr) 9.2svh;
       padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
       background: var(--white);
       color: var(--text);
@@ -110,7 +111,7 @@
       grid-template-columns: repeat(5, 1fr);
       grid-template-rows: repeat(5, 1fr);
       gap: clamp(6px, 0.9vmin, 12px);
-      padding: 0.45vh 1vw 2.3vh;
+      padding: 0.35vh 1vw 1.45vh;
       min-height: 0;
     }
 
@@ -370,7 +371,7 @@
       </div>
     </footer>
   </div>
-  <div style="height:140px"></div>
+  <div style="height:360px" aria-hidden="true"></div>
 
   <script>
     const banks = {
@@ -788,13 +789,17 @@
     }
 
     function nudgeSafariChromeAway() {
-      setTimeout(() => window.scrollTo(0, 2), 150);
-      setTimeout(() => window.scrollTo(0, 2), 600);
-      setTimeout(() => window.scrollTo(0, 2), 1200);
+      const y = Math.min(180, Math.max(80, document.body.scrollHeight - window.innerHeight - 8));
+      setTimeout(() => window.scrollTo(0, y), 120);
+      setTimeout(() => window.scrollTo(0, y), 550);
+      setTimeout(() => window.scrollTo(0, y), 1200);
     }
 
     window.addEventListener('load', nudgeSafariChromeAway);
     window.addEventListener('orientationchange', nudgeSafariChromeAway);
+    window.visualViewport?.addEventListener('resize', () => {
+      if (window.scrollY < 40) nudgeSafariChromeAway();
+    });
     document.addEventListener('touchend', () => {
       if (window.scrollY < 1) nudgeSafariChromeAway();
     }, { passive: true });
