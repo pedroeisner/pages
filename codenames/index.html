@@ -321,6 +321,31 @@
         z-index: 99;
       }
     }
+  
+    .loading-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.35);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+
+    .loading-modal.show {
+      display: flex;
+    }
+
+    .loading-box {
+      background: var(--white);
+      color: var(--text);
+      padding: 1.5em 2em;
+      border-radius: 14px;
+      font-weight: 700;
+      font-size: clamp(14px, 1.2vw, 20px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
   </style>
 </head>
 <body>
@@ -369,6 +394,9 @@
         <button class="control-btn" id="downloadPngBtn">Download</button>
       </div>
     </footer>
+    <div class="loading-modal" id="loadingModal">
+      <div class="loading-box">Loading…</div>
+    </div>
   </div>
   <div style="height:520px" aria-hidden="true"></div>
 
@@ -678,10 +706,13 @@
     });
 
     document.getElementById('customFileInput').onchange = async (event) => {
+      const loading = document.getElementById('loadingModal');
+      loading.classList.add('show');
       const file = event.target.files?.[0];
 
       // user cancelled → stay in previous source
       if (!file) {
+        loading.classList.remove('show');
         selectedSource = previousSourceSelection;
         render();
         return;
@@ -692,6 +723,7 @@
 
       if (banks.custom.length < 25) {
         alert(`I found ${banks.custom.length} usable words. Upload a longer text file or use another language.`);
+        loading.classList.remove('show');
         selectedSource = previousSourceSelection;
         render();
         return;
@@ -700,6 +732,7 @@
       previousSourceSelection = selectedSource;
       selectedSource = 'custom';
       newGame(true);
+      loading.classList.remove('show');
     };
 
     document.getElementById('darkModeToggle').onchange = (event) => {
@@ -885,6 +918,7 @@
           text = await extractTextFromZip(file);
         } catch (e) {
           alert('Could not read zip file');
+          loading.classList.remove('show');
           return;
         }
       } else {
