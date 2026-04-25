@@ -7,6 +7,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="mobile-web-app-capable" content="yes" />
   <title>Codenames</title>
+  <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Codenames%22,%22short_name%22:%22Codenames%22,%22display%22:%22fullscreen%22,%22orientation%22:%22landscape%22,%22start_url%22:%22.%22,%22background_color%22:%22%23ffffff%22,%22theme_color%22:%22%23ffffff%22}" />
   <style>
     :root {
       --red: #d71920;
@@ -27,20 +28,26 @@
     html, body {
       margin: 0;
       width: 100%;
-      height: 100%;
-      overflow: hidden;
+      min-height: 100%;
+      overflow-x: hidden;
+      overflow-y: auto;
       background: white;
       color: var(--text);
       font-family: Arial, Helvetica, sans-serif;
     }
 
-    body { min-height: 100svh; }
+    body {
+      min-height: calc(100svh + 80px);
+      overscroll-behavior: none;
+    }
 
     .app {
+      position: sticky;
+      top: 0;
       width: 100vw;
       height: 100svh;
       display: grid;
-      grid-template-rows: 7.2svh 1px 6.5svh minmax(0, 1fr) 8.8svh;
+      grid-template-rows: 6.6svh 1px 6.2svh minmax(0, 1fr) 9.6svh;
       padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
       background: var(--white);
       color: var(--text);
@@ -103,8 +110,8 @@
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       grid-template-rows: repeat(5, 1fr);
-      gap: clamp(8px, 1.2vmin, 16px);
-      padding: 0.7vh 1vw 1.9vh;
+      gap: clamp(6px, 0.9vmin, 12px);
+      padding: 0.45vh 1vw 2.3vh;
       min-height: 0;
     }
 
@@ -116,7 +123,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: clamp(17px, 2vw, 34px);
+      font-size: clamp(17px, 1.95vw, 33px);
       cursor: pointer;
       transition: transform 120ms ease, box-shadow 120ms ease;
       text-align: center;
@@ -135,7 +142,7 @@
     
 
     .card.image-card span {
-      font-size: clamp(30px, 4.2vw, 64px);
+      font-size: clamp(24px, 3.25vw, 54px);
       line-height: 1;
       filter: none;
       transform: none;
@@ -184,7 +191,7 @@
       align-items: center;
       justify-content: flex-end;
       gap: 0.55vw;
-      padding: 1.2vh 1.25vw 1.1vh;
+      padding: 1.7vh 1.25vw 1.25vh;
     }
 
     .control-btn {
@@ -266,6 +273,15 @@
       opacity: 0.75;
       line-height: 1.25;
       white-space: normal;
+    }
+
+    @media (max-height: 520px) and (orientation: landscape) {
+      header { font-size: clamp(14px, 1.7vw, 22px); }
+      .turn { font-size: clamp(18px, 2vw, 28px); }
+      .score { font-size: clamp(17px, 2vw, 28px); }
+      .card.image-card span { font-size: clamp(22px, 3vw, 48px); }
+      .control-btn { font-size: clamp(9px, 0.8vw, 12px); padding: 0.5em 0.78em; }
+      .source-select { font-size: clamp(9px, 0.8vw, 12px); padding: 0.5em 0.78em; }
     }
 
     @media (orientation: portrait) {
@@ -740,6 +756,17 @@
         }, 'image/png');
       });
     }
+
+    function nudgeSafariChromeAway() {
+      setTimeout(() => window.scrollTo(0, 1), 250);
+      setTimeout(() => window.scrollTo(0, 1), 900);
+    }
+
+    window.addEventListener('load', nudgeSafariChromeAway);
+    window.addEventListener('orientationchange', nudgeSafariChromeAway);
+    document.addEventListener('touchend', () => {
+      if (window.scrollY < 1) nudgeSafariChromeAway();
+    }, { passive: true });
 
     newGame();
   </script>
