@@ -96,7 +96,6 @@
 
     .turn {
       font-size: clamp(22px, 2.3vw, 36px);
-      text-transform: lowercase;
     }
 
     .end-turn {
@@ -189,9 +188,9 @@
       position: relative;
       display: flex;
       align-items: center;
-      justify-content: flex-end;
-      gap: 0.55vw;
-      padding: 1.7vh 1.25vw 1.25vh;
+      justify-content: center;
+      gap: 0;
+      padding: 1.7vh max(2vw, env(safe-area-inset-right)) 1.25vh max(2vw, env(safe-area-inset-left));
     }
 
     .control-btn {
@@ -213,18 +212,43 @@
     .control-btn.active { background: var(--text); color: var(--white); }
     .settings-btn { min-width: 2.5em; padding-inline: 0.75em; }
 
-    .source-select {
-      appearance: none;
-      -webkit-appearance: none;
-      display: inline-flex;
+    .footer-section,
+    .source-picker {
+      display: flex;
       align-items: center;
-      justify-content: center;
-      min-width: unset;
-      height: auto;
-      padding: 0.55em 0.9em;
+      gap: 0.55vw;
+      margin-left: 1vw;
+      padding-left: 1vw;
+      border-left: 1px solid var(--button-border);
+    }
+
+    .settings-section {
+      margin-left: 0;
+      padding-left: 0;
+      border-left: none;
+    }
+
+    .source-picker {
+      margin-right: 0;
+      padding-right: 0;
+      border-right: none;
+    }
+
+    .source-option {
+      min-width: 2.7em;
+      text-align: center;
+      padding-inline: 0.75em;
       font-size: clamp(10px, 0.9vw, 14px);
       line-height: normal;
-      border-radius: 999px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .file-source-option input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
     }
 
     .settings-panel {
@@ -281,7 +305,7 @@
       .score { font-size: clamp(17px, 2vw, 28px); }
       .card.image-card span { font-size: clamp(22px, 3vw, 48px); }
       .control-btn { font-size: clamp(9px, 0.8vw, 12px); padding: 0.5em 0.78em; }
-      .source-select { font-size: clamp(9px, 0.8vw, 12px); padding: 0.5em 0.78em; }
+      .source-option { font-size: clamp(9px, 0.8vw, 12px); padding: 0.5em 0.78em; }
     }
 
     @media (orientation: portrait) {
@@ -321,22 +345,33 @@
           <input type="checkbox" id="spymasterGuessToggle" />
         </label>
       </div>
-      <button class="control-btn settings-btn" id="settingsBtn">⚙</button>
-      <button class="control-btn active" id="playerBtn">Player</button>
-      <button class="control-btn" id="spymasterBtn">Spymaster</button>
-      <button class="control-btn" id="previousGameBtn">Previous game</button>
-      <button class="control-btn" id="nextBtn">Next game</button>
-      <select class="control-btn source-select" id="languageSelectBottom" title="Language / source">
-        <option value="english">🇬🇧</option>
-        <option value="spanish">🇦🇷</option>
-        <option value="images">🖼️</option>
-        <option value="custom">📄</option>
-      </select>
-      <button class="control-btn" id="downloadPngBtn">Download PNG</button>
+      <div class="footer-section settings-section">
+        <button class="control-btn settings-btn" id="settingsBtn">⚙</button>
+      </div>
+      <div class="footer-section mode-section">
+        <button class="control-btn active" id="playerBtn">Player</button>
+        <button class="control-btn" id="spymasterBtn">Spymaster</button>
+      </div>
+      <div class="footer-section game-section">
+        <button class="control-btn" id="previousGameBtn">Previous game</button>
+        <button class="control-btn" id="nextBtn">Next game</button>
+      </div>
+      <div class="source-picker" id="sourcePicker" title="Language / source">
+        <button class="control-btn source-option active" data-source="english" type="button">🇬🇧</button>
+        <button class="control-btn source-option" data-source="spanish" type="button">🇦🇷</button>
+        <button class="control-btn source-option" data-source="images" type="button">🖼️</button>
+        <label class="control-btn source-option file-source-option" data-source="custom">
+          📄
+          <input type="file" id="customFileInput" accept=".txt,text/plain" />
+        </label>
+      </div>
+      <div class="footer-section download-section">
+        <button class="control-btn" id="downloadPngBtn">Download</button>
+      </div>
     </footer>
   </div>
 
-  <input type="file" id="customFileInput" accept=".txt,text/plain" style="display:none;" />
+
 
   <script>
     const banks = {
@@ -456,20 +491,20 @@
       const spymasterBtn = document.getElementById('spymasterBtn');
       const darkModeToggle = document.getElementById('darkModeToggle');
       const spymasterGuessToggle = document.getElementById('spymasterGuessToggle');
-      const languageSelectBottom = document.getElementById('languageSelectBottom');
+      const sourceOptions = document.querySelectorAll('.source-option');
 
       app.classList.toggle('dark', state.darkMode);
       app.classList.toggle('spymaster', state.spymaster);
       redScore.textContent = state.roles.filter((role, i) => role === 'red' && !state.revealed[i]).length;
       blueScore.textContent = state.roles.filter((role, i) => role === 'blue' && !state.revealed[i]).length;
-      turnText.textContent = `${state.turn}'s turn`;
+      turnText.textContent = `${state.turn.charAt(0).toUpperCase() + state.turn.slice(1)}'s turn`;
       turnText.style.color = state.turn === 'red' ? 'var(--red)' : 'var(--blue)';
       endTurnBtn.textContent = `End ${state.turn}'s turn`;
       playerBtn.classList.toggle('active', !state.spymaster);
       spymasterBtn.classList.toggle('active', state.spymaster);
       darkModeToggle.checked = state.darkMode;
       spymasterGuessToggle.checked = state.spymasterMayGuess;
-      languageSelectBottom.value = selectedSource;
+      sourceOptions.forEach(option => option.classList.toggle('active', option.dataset.source === selectedSource));
       board.innerHTML = '';
 
       state.words.forEach((w,i) => {
@@ -585,23 +620,14 @@
 
     document.getElementById('downloadPngBtn').onclick = downloadPlayerBoardPng;
 
-    document.getElementById('languageSelectBottom').onchange = (event) => {
-      const newValue = event.target.value;
-
-      if (newValue === 'custom' && banks.custom.length < 25) {
-        // store previous before attempting
+    document.querySelectorAll('.source-option[data-source]:not(.file-source-option)').forEach(option => {
+      option.onclick = () => {
         previousSourceSelection = selectedSource;
-        document.getElementById('customFileInput').click();
-        // revert UI immediately until file confirmed
-        event.target.value = selectedSource;
-        return;
-      }
-
-      previousSourceSelection = selectedSource;
-      selectedSource = newValue;
-      newGame(true);
-      render();
-    };
+        selectedSource = option.dataset.source;
+        newGame(true);
+        render();
+      };
+    });
 
     document.getElementById('customFileInput').onchange = async (event) => {
       const file = event.target.files?.[0];
@@ -609,7 +635,7 @@
       // user cancelled → stay in previous source
       if (!file) {
         selectedSource = previousSourceSelection;
-        document.getElementById('languageSelectBottom').value = selectedSource;
+        render();
         return;
       }
 
@@ -619,12 +645,12 @@
       if (banks.custom.length < 25) {
         alert(`I found ${banks.custom.length} usable words. Upload a longer text file or use another language.`);
         selectedSource = previousSourceSelection;
-        document.getElementById('languageSelectBottom').value = selectedSource;
+        render();
         return;
       }
 
+      previousSourceSelection = selectedSource;
       selectedSource = 'custom';
-      document.getElementById('languageSelectBottom').value = 'custom';
       newGame(true);
     };
 
@@ -697,7 +723,7 @@
         ctx.fillText(blueRemaining, 122, 142);
         ctx.textAlign = 'center';
         ctx.fillStyle = state.turn === 'red' ? colors.red : colors.blue;
-        ctx.fillText(`${state.turn}'s turn`, width / 2, 142);
+        ctx.fillText(`${state.turn.charAt(0).toUpperCase() + state.turn.slice(1)}'s turn`, width / 2, 142);
 
         const cols = 5, rows = 5;
         const boardX = 22, boardY = 186, gapX = 34, gapY = 30;
