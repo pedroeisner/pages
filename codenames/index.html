@@ -555,6 +555,47 @@
     }
 
     function extractCustomWords(text) {
+      function basicNormalize(value) {
+        return value.toLowerCase()
+          .replaceAll('á', 'a').replaceAll('à', 'a').replaceAll('ä', 'a')
+          .replaceAll('é', 'e').replaceAll('è', 'e').replaceAll('ë', 'e')
+          .replaceAll('í', 'i').replaceAll('ì', 'i').replaceAll('ï', 'i')
+          .replaceAll('ó', 'o').replaceAll('ò', 'o').replaceAll('ö', 'o')
+          .replaceAll('ú', 'u').replaceAll('ù', 'u').replaceAll('ü', 'u');
+      }
+
+      const capitalizationStats = new Map();
+      text.split(/[^A-Za-zÀ-ÿ]+/).filter(Boolean).forEach(token => {
+        const normalized = basicNormalize(token);
+        const first = token.charAt(0);
+        const isCapitalized = first !== first.toLowerCase() && token !== token.toUpperCase();
+        const stats = capitalizationStats.get(normalized) || { total: 0, capitalized: 0 };
+        stats.total += 1;
+        if (isCapitalized) stats.capitalized += 1;
+        capitalizationStats.set(normalized, stats);
+      });
+
+      const spanishNames = new Set('juan pedro pablo martin matias mati santiago tomas lucas lautaro franco facundo agustin nico nicolas federico fede diego javier sebastian rodrigo ignacio nacho manuel manu gabriel rafael andres alejandro mariano esteban leandro gonzalo joaquin maxi maximiliano luciano emi emiliano ivan luis carlos miguel ricardo daniel fernando eduardo victor mario ramiro ezequiel damian julian valentin felipe benjamin bautista thiago enzo bruno simon gael dylan marcos jorge oscar alberto guillermo gustavo claudio sergio hector osvaldo cristian cristobal francisco pancho pepe jose antonio alvaro jaime raul ruben cesar adrian mauro mauricio axel alan renzo tadeo ian joaco maria sofia martina valentina camila cami lucia luciana luli micaela mica florencia flor agustina agus julieta juli paula pau carolina caro laura andrea ana anita mariana rocio rochi belen pilar josefina juana victoria vicky valeria vale romina romi natalia nati gabriela gabi daniela dani fernanda fer cecilia ceci veronica vero silvina silvi marina paola claudia patricia patri monica moni susana graciela grace ines elena luisa isabel teresa catalina cata renata emilia ema alma olivia emma jazmin abril malena male lara mora zoe mia eva lola salome ambar guadalupe guada milagros mili jimena ximena azul'.split(' '));
+
+      const commonSpanishVerbs = new Set('ser estar tener hacer decir haber poder querer saber poner ver dar ir venir llegar pasar deber parecer quedar creer hablar llevar dejar seguir encontrar llamar pensar salir volver tomar conocer vivir sentir tratar mirar contar empezar esperar buscar existir entrar trabajar escribir perder producir ocurrir entender pedir recibir recordar terminar permitir aparecer conseguir comenzar servir sacar necesitar mantener resultar leer caer cambiar presentar crear abrir considerar oir acabar convertir ganar formar traer partir morir aceptar realizar suponer comprender lograr explicar preguntar tocar reconocer estudiar alcanzar nacer dirigir correr utilizar pagar ayudar gustar jugar comprar vender comer beber dormir caminar mandar enviar subir bajar'.split(' '));
+
+      const commonEnglishVerbs = new Set('be am is are was were been being have has had do does did say go get make know think take see come want look use find give tell work call try ask need feel become leave put keep let begin seem help talk turn start show hear play run move live believe bring happen write provide sit stand lose pay meet include continue set learn change lead understand watch follow stop create speak read allow add spend grow open walk win offer remember love consider appear buy wait serve die send expect build stay fall cut reach kill remain'.split(' '));
+
+      const weakWords = new Set('gente cosas cosa tema temas tiempo parte partes forma formas momento momentos verdad realidad problema problemas manera maneras alguien nadie todos todas mismo misma mismos mismas lugar lugares hecho hechos stuff thing things people someone nothing anything everything today tomorrow yesterday'.split(' '));
+
+      function looksLikeVerb(word) {
+        if (commonSpanishVerbs.has(word) || commonEnglishVerbs.has(word)) return true;
+        const endings = ['ing','ed','ar','er','ir','ando','iendo','ado','ido','aba','abas','aban','aste','iste','amos','emos','imos','aria','arias','arian','eria','erias','erian'];
+        return endings.some(ending => word.endsWith(ending));
+      }
+
+      function looksLikeProperName(word) {
+        if (spanishNames.has(word)) return true;
+        const stats = capitalizationStats.get(word);
+        if (!stats) return false;
+        return (stats.capitalized / stats.total) > 0.5 && stats.total < 20;
+      }
+
       const cleaned = text
         .toLowerCase()
         .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
@@ -571,6 +612,9 @@
         if (word.length < 5 || word.length > 14) return;
         if (stopWords.has(word)) return;
         if (/^(jaja|haha)+$/.test(word)) return;
+        if (weakWords.has(word)) return;
+        if (looksLikeVerb(word)) return;
+        if (looksLikeProperName(word)) return;
 
         const recencyWeight = 0.5 + (index / total);
         counts.set(word, (counts.get(word) || 0) + recencyWeight);
