@@ -37,7 +37,7 @@
     }
 
     body {
-      min-height: calc(100svh + 80px);
+      min-height: calc(100svh + 200px);
       overscroll-behavior: none;
     }
 
@@ -362,7 +362,7 @@
         <button class="control-btn source-option" data-source="images" type="button">🖼️</button>
         <label class="control-btn source-option file-source-option" data-source="custom">
           📄
-          <input type="file" id="customFileInput" accept=".txt,text/plain" />
+          <input type="file" id="customFileInput" accept=".txt,.zip,text/plain,application/zip" />
         </label>
       </div>
       <div class="footer-section download-section">
@@ -370,8 +370,7 @@
       </div>
     </footer>
   </div>
-
-
+  <div style="height:140px"></div>
 
   <script>
     const banks = {
@@ -564,12 +563,17 @@
         .replace(/\d{1,2}:\d{2}/g, ' ')
         .replace(/[^a-záéíóúñü\s]/gi, ' ');
 
+      const words = cleaned.split(' ').filter(Boolean);
       const counts = new Map();
-      cleaned.split(/\s+/).forEach(word => {
+      const total = Math.max(words.length, 1);
+
+      words.forEach((word, index) => {
         if (word.length < 5 || word.length > 14) return;
         if (stopWords.has(word)) return;
         if (/^(jaja|haha)+$/.test(word)) return;
-        counts.set(word, (counts.get(word) || 0) + 1);
+
+        const recencyWeight = 0.5 + (index / total);
+        counts.set(word, (counts.get(word) || 0) + recencyWeight);
       });
 
       const candidates = [...counts.entries()]
@@ -784,8 +788,9 @@
     }
 
     function nudgeSafariChromeAway() {
-      setTimeout(() => window.scrollTo(0, 1), 250);
-      setTimeout(() => window.scrollTo(0, 1), 900);
+      setTimeout(() => window.scrollTo(0, 2), 150);
+      setTimeout(() => window.scrollTo(0, 2), 600);
+      setTimeout(() => window.scrollTo(0, 2), 1200);
     }
 
     window.addEventListener('load', nudgeSafariChromeAway);
@@ -795,6 +800,62 @@
     }, { passive: true });
 
     newGame();
+      async function extractTextFromZip(file) {
+      if (!window.JSZip) {
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+        document.head.appendChild(script);
+        await new Promise(res => script.onload = res);
+      }
+
+      const zip = await JSZip.loadAsync(file);
+      let combined = '';
+
+      const txtFiles = Object.values(zip.files).filter(f => f.name.endsWith('.txt'));
+      for (const f of txtFiles) {
+        const content = await f.async('string');
+        combined += "\n" + content;
+      }
+
+      return combined;
+    }
+
+    const originalHandler = document.getElementById('customFileInput').onchange;
+    document.getElementById('customFileInput').onchange = async (event) => {
+      const file = event.target.files?.[0];
+
+      if (!file) {
+        selectedSource = previousSourceSelection;
+        render();
+        return;
+      }
+
+      let text = '';
+
+      if (file.name.endsWith('.zip')) {
+        try {
+          text = await extractTextFromZip(file);
+        } catch (e) {
+          alert('Could not read zip file');
+          return;
+        }
+      } else {
+        text = await file.text();
+      }
+
+      banks.custom = extractCustomWords(text);
+
+      if (banks.custom.length < 25) {
+        alert(`I found ${banks.custom.length} usable words. Upload a longer text file or use another language.`);
+        selectedSource = previousSourceSelection;
+        render();
+        return;
+      }
+
+      previousSourceSelection = selectedSource;
+      selectedSource = 'custom';
+      newGame(true);
+    };
   </script>
 </body>
 </html>
