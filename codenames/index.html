@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Codenames</title>
+  <style>
+    :root {
+      --red: #d71920;
+      --blue: #315fb8;
+      --neutral: #e8e8e8;
+      --neutral-dark: #d9d9d9;
+      --assassin: #111;
+      --text: #050505;
+      --white: #fff;
+      --border: #f0f0f0;
+      --button-bg: #f8f8f8;
+      --button-border: #c7c7c7;
+      --settings-bg: rgba(255,255,255,0.96);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: white;
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body { min-height: 100svh; }
+
+    .app {
+      width: 100vw;
+      height: 100svh;
+      display: grid;
+      grid-template-rows: 9.5svh 1px 7svh 1fr 6svh;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+      background: var(--white);
+      color: var(--text);
+    }
+
+    .app.dark {
+      --neutral: #2b2b2b;
+      --neutral-dark: #3a3a3a;
+      --text: #f3f3f3;
+      --white: #111;
+      --border: #242424;
+      --button-bg: #222;
+      --button-border: #555;
+      --settings-bg: rgba(18,18,18,0.97);
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      letter-spacing: 0.36em;
+      font-family: Georgia, serif;
+      font-weight: 700;
+      font-size: clamp(16px, 2.1vw, 28px);
+    }
+
+    .rule { background: var(--border); }
+
+    .status {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .score {
+      position: absolute;
+      left: 1.25vw;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: clamp(19px, 2.2vw, 34px);
+    }
+
+    .score .red { color: var(--red); }
+    .score .blue { color: var(--blue); }
+
+    .turn {
+      font-size: clamp(22px, 2.3vw, 36px);
+      text-transform: lowercase;
+    }
+
+    .end-turn {
+      position: absolute;
+      right: 1.25vw;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    main.board {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      grid-template-rows: repeat(5, 1fr);
+      gap: clamp(10px, 2vw, 30px);
+      padding: 1vh 1vw;
+    }
+
+    .card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 8px;
+      background: var(--neutral);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(18px, 2.1vw, 36px);
+      cursor: pointer;
+      transition: transform 120ms ease, box-shadow 120ms ease;
+      text-align: center;
+      padding: 0.25em;
+    }
+
+    .card span { z-index: 2; }
+
+    .card.image-card {
+      /* keep same base look as words */
+      background: var(--neutral);
+      border: none;
+      box-shadow: none;
+    }
+
+    
+
+    .card.image-card span {
+      font-size: clamp(34px, 4.8vw, 72px);
+      line-height: 1;
+      filter: none;
+      transform: none;
+    }
+
+    .app.dark .card.image-card {
+      background: var(--neutral);
+    }
+
+    .card.pending::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      transform-origin: left;
+      animation: fill 3s linear forwards, flash 400ms infinite;
+    }
+
+    @keyframes fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+    @keyframes flash {
+      0% { background: var(--red); }
+      33% { background: var(--blue); }
+      66% { background: #999; }
+      100% { background: var(--red); }
+    }
+
+    .card.reveal-anim { animation: revealPop 400ms ease; }
+    @keyframes revealPop {
+      0% { transform: scale(1); filter: brightness(1); }
+      40% { transform: scale(1.15); filter: brightness(1.4); }
+      100% { transform: scale(1); filter: brightness(1); }
+    }
+
+    .card.revealed.red { background: var(--red); color: white; }
+    .card.revealed.blue { background: var(--blue); color: white; }
+    .card.revealed.neutral { background: #bbb; color: #111; }
+    .card.revealed.assassin { background: black; color: white; }
+
+    .spymaster .card:not(.revealed).red { background: rgba(215, 25, 32, 0.25); }
+    .spymaster .card:not(.revealed).blue { background: rgba(49, 95, 184, 0.25); }
+    .spymaster .card:not(.revealed).neutral { background: rgba(150,150,150,0.25); }
+    .spymaster .card:not(.revealed).assassin { background: rgba(0,0,0,0.4); color: white; }
+
+    footer {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0.55vw;
+      padding: 0 1.25vw 0.55vh;
+    }
+
+    .control-btn {
+      border: 1px solid var(--button-border);
+      border-radius: 999px;
+      background: var(--button-bg);
+      color: var(--text);
+      font-size: clamp(10px, 0.9vw, 14px);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      padding: 0.55em 0.9em;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      text-decoration: none;
+    }
+
+    .control-btn:active { transform: translateY(1px); }
+    .end-turn:active { transform: translateY(-50%); }
+    .control-btn.active { background: var(--text); color: var(--white); }
+    .settings-btn { min-width: 2.5em; padding-inline: 0.75em; }
+
+    .source-select {
+      appearance: none;
+      -webkit-appearance: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: unset;
+      height: auto;
+      padding: 0.55em 0.9em;
+      font-size: clamp(10px, 0.9vw, 14px);
+      line-height: normal;
+      border-radius: 999px;
+    }
+
+    .settings-panel {
+      position: absolute;
+      right: 1.25vw;
+      bottom: 5.6vh;
+      z-index: 5;
+      display: none;
+      flex-direction: column;
+      gap: 0.75em;
+      width: min(420px, 60vw);
+      padding: 0.95em 1.05em;
+      border: 1px solid var(--button-border);
+      border-radius: 14px;
+      background: var(--settings-bg);
+      color: var(--text);
+      box-shadow: 0 10px 28px rgba(0,0,0,0.18);
+      font-size: clamp(12px, 1vw, 16px);
+    }
+
+    .settings-panel.open { display: flex; }
+
+    .setting-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1em;
+      white-space: nowrap;
+    }
+
+    .setting-row select, .setting-row input[type="file"] {
+      max-width: 210px;
+      font-size: 0.9em;
+      color: var(--text);
+    }
+
+    .setting-row input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--blue);
+    }
+
+    .custom-help {
+      margin: -0.25em 0 0;
+      font-size: 0.82em;
+      opacity: 0.75;
+      line-height: 1.25;
+      white-space: normal;
+    }
+
+    @media (orientation: portrait) {
+      body::after {
+        content: 'Rotate to landscape';
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: white;
+        font-size: 24px;
+        z-index: 99;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app" id="app">
+    <header>CODENAMES</header>
+    <div class="rule"></div>
+    <section class="status">
+      <div class="score"><span class="red" id="redScore">9</span> – <span class="blue" id="blueScore">8</span></div>
+      <div class="turn" id="turnText">red's turn</div>
+      <button class="control-btn end-turn" id="endTurnBtn">End turn</button>
+    </section>
+    <main class="board" id="board"></main>
+    <footer>
+      <div class="settings-panel" id="settingsPanel">
+        
+        <label class="setting-row">
+          <span>Dark mode</span>
+          <input type="checkbox" id="darkModeToggle" />
+        </label>
+        <label class="setting-row">
+          <span>Spymaster may guess</span>
+          <input type="checkbox" id="spymasterGuessToggle" />
+        </label>
+      </div>
+      <button class="control-btn settings-btn" id="settingsBtn">⚙</button>
+      <button class="control-btn active" id="playerBtn">Player</button>
+      <button class="control-btn" id="spymasterBtn">Spymaster</button>
+      <button class="control-btn" id="previousGameBtn">Previous game</button>
+      <button class="control-btn" id="nextBtn">Next game</button>
+      <select class="control-btn source-select" id="languageSelectBottom" title="Language / source">
+        <option value="english">🇬🇧</option>
+        <option value="spanish">🇦🇷</option>
+        <option value="images">🖼️</option>
+        <option value="custom">📄</option>
+      </select>
+      <button class="control-btn" id="downloadPngBtn">Download PNG</button>
+    </footer>
+  </div>
+
+  <input type="file" id="customFileInput" accept=".txt,text/plain" style="display:none;" />
+
+  <script>
+    const banks = {
+      english: [
+        'TRIANGLE','PORT','PENGUIN','SCALE','TRUNK','BOOM','BACK','BAT','PISTOL','CROSS',
+        'BERMUDA','FORCE','LINE','SOCK','FIGHTER','EYE','TRIP','SPIDER','PIANO','BAR',
+        'FIGURE','WHIP','GROUND','JACK','SATELLITE','AMAZON','BRIDGE','CASTLE','CLOUD','CROWN',
+        'DRAGON','FAIR','GHOST','GLASS','HONEY','IVORY','JUPITER','KING','LASER','MERCURY',
+        'NINJA','OLIVE','PILOT','QUEEN','ROBOT','SHADOW','TEMPLE','UNICORN','VAN','WHALE'
+      ],
+      spanish: [
+        'PUENTE','TORMENTA','CORONA','PANTALLA','FANTASMA','SOMBRA','MERCADO','ESPEJO','BARRIO','CANCHA',
+        'LINTERNA','MATE','SUBTE','VENTANA','ANILLO','CUEVA','CASTILLO','JAGUAR','COMETA','MONEDA',
+        'BRÚJULA','TANGO','PUERTO','HELADO','LLAVE','DRAGÓN','MÁSCARA','AVIÓN','GUITARRA','PLANETA',
+        'CANGREJO','FLECHA','BANDERA','MISTERIO','PIRÁMIDE','CIRCO','SATÉLITE','BOTE','MURALLA','TREN',
+        'NUBE','RAYO','TESORO','BOSQUE','PÁJARO','DIAMANTE','CABALLO','RELOJ','FUEGO','ISLA'
+      ],
+      images: [
+        '🦊','🎩','🚀','🌵','🧲','🎻','🧊','🦉','🌋','🧩',
+        '🗝️','🦀','🎲','🧭','🏰','🌙','🪁','🐍','🍄','⚓',
+        '🦕','🎭','🔮','🐋','🍕','📚','🧨','🛸','🏀','💎',
+        '🦜','🎸','🧱','🕯️','🐝','🌈','🪐','🛶','🦁','🍀',
+        '🧪','🥁','🗿','🐙','🎯','🚦','🫧','🌻','🧯','🛡️'
+      ],
+      custom: []
+    };
+
+    const stopWords = new Set(`
+      a al algo algunas algunos ante antes como con contra cual cuando de del desde donde dos el ella ellas ellos en entre era eran eres es esa esas ese eso esos esta estaba estaban estamos estan estar estas este esto estos fue fui fuimos ha habia han hasta hay la las le les lo los mas me mi mis muy nada ni no nos o para pero por porque que quien se ser si sin sobre son su sus te tiene todo tu un una uno unos y ya yo
+      the and for are but not you your with from that this have has had was were what when where who why how she her his him they them there here about into onto over under between before after then than very just some any all out can could would should will been being more most
+      jajaja jajajaja haha hahaha https http com www whatsapp sticker imagen audio video
+    `.split(/\s+/).filter(Boolean));
+
+    let state = {};
+    let previousGameState = null;
+    let selectedSource = 'english';
+    let previousSourceSelection = 'english';
+
+    function cloneGameState(source) {
+      return {
+        words: [...source.words],
+        roles: [...source.roles],
+        revealed: [...source.revealed],
+        source: source.source,
+        pending: null,
+        pendingTimer: null,
+        lastRevealed: null,
+        turn: source.turn,
+        spymaster: false,
+        darkMode: source.darkMode || false,
+        spymasterMayGuess: source.spymasterMayGuess || false
+      };
+    }
+
+    function clearPending() {
+      if (state.pendingTimer) clearTimeout(state.pendingTimer);
+      state.pending = null;
+      state.pendingTimer = null;
+    }
+
+    function shuffle(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function getCurrentBank() {
+      const bank = banks[selectedSource] || banks.english;
+      return bank.length >= 25 ? bank : banks.english;
+    }
+
+    function makeRoles() {
+      const startingTeam = Math.random() < 0.5 ? 'red' : 'blue';
+      return {
+        startingTeam,
+        roles: shuffle([
+          ...Array(startingTeam === 'red' ? 9 : 8).fill('red'),
+          ...Array(startingTeam === 'blue' ? 9 : 8).fill('blue'),
+          ...Array(7).fill('neutral'),
+          'assassin'
+        ])
+      };
+    }
+
+    function newGame(saveCurrent = false) {
+      if (saveCurrent && state.words) previousGameState = cloneGameState(state);
+      const setup = makeRoles();
+
+      state = {
+        words: shuffle(getCurrentBank()).slice(0,25),
+        roles: setup.roles,
+        revealed: Array(25).fill(false),
+        source: selectedSource,
+        pending: null,
+        pendingTimer: null,
+        lastRevealed: null,
+        turn: setup.startingTeam,
+        spymaster: false,
+        darkMode: state.darkMode || false,
+        spymasterMayGuess: state.spymasterMayGuess || false
+      };
+
+      render();
+    }
+
+    function render() {
+      const app = document.getElementById('app');
+      const board = document.getElementById('board');
+      const redScore = document.getElementById('redScore');
+      const blueScore = document.getElementById('blueScore');
+      const turnText = document.getElementById('turnText');
+      const endTurnBtn = document.getElementById('endTurnBtn');
+      const playerBtn = document.getElementById('playerBtn');
+      const spymasterBtn = document.getElementById('spymasterBtn');
+      const darkModeToggle = document.getElementById('darkModeToggle');
+      const spymasterGuessToggle = document.getElementById('spymasterGuessToggle');
+      const languageSelectBottom = document.getElementById('languageSelectBottom');
+
+      app.classList.toggle('dark', state.darkMode);
+      app.classList.toggle('spymaster', state.spymaster);
+      redScore.textContent = state.roles.filter((role, i) => role === 'red' && !state.revealed[i]).length;
+      blueScore.textContent = state.roles.filter((role, i) => role === 'blue' && !state.revealed[i]).length;
+      turnText.textContent = `${state.turn}'s turn`;
+      turnText.style.color = state.turn === 'red' ? 'var(--red)' : 'var(--blue)';
+      endTurnBtn.textContent = `End ${state.turn}'s turn`;
+      playerBtn.classList.toggle('active', !state.spymaster);
+      spymasterBtn.classList.toggle('active', state.spymaster);
+      darkModeToggle.checked = state.darkMode;
+      spymasterGuessToggle.checked = state.spymasterMayGuess;
+      languageSelectBottom.value = selectedSource;
+      board.innerHTML = '';
+
+      state.words.forEach((w,i) => {
+        const el = document.createElement('div');
+        const role = state.roles[i];
+        const isImage = state.source === 'images';
+
+        el.className = 'card ' + role + (isImage ? ' image-card' : '') +
+          (state.revealed[i] ? ' revealed' : '') +
+          (state.lastRevealed === i ? ' reveal-anim' : '') +
+          (state.pending === i ? ' pending' : '');
+
+        el.innerHTML = `<span>${w}</span>`;
+        el.onclick = () => handleCardClick(i);
+        board.appendChild(el);
+      });
+    }
+
+    function handleCardClick(i) {
+      if (state.spymaster && !state.spymasterMayGuess) return;
+
+      if (state.pending === i) {
+        clearPending();
+        render();
+        return;
+      }
+
+      if (state.pending !== null) clearPending();
+
+      if (state.revealed[i]) {
+        state.revealed[i] = false;
+        if (state.lastRevealed === i) state.lastRevealed = null;
+        render();
+        return;
+      }
+
+      state.pending = i;
+      state.lastRevealed = null;
+      render();
+
+      state.pendingTimer = setTimeout(() => {
+        if (state.pending !== i) return;
+        state.revealed[i] = true;
+        state.pending = null;
+        state.pendingTimer = null;
+        state.lastRevealed = i;
+        render();
+      }, 2850);
+    }
+
+    function extractCustomWords(text) {
+      const cleaned = text
+        .toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/https?:\/\/\S+/g, ' ')
+        .replace(/\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}/g, ' ')
+        .replace(/\d{1,2}:\d{2}/g, ' ')
+        .replace(/[^a-záéíóúñü\s]/gi, ' ');
+
+      const counts = new Map();
+      cleaned.split(/\s+/).forEach(word => {
+        if (word.length < 5 || word.length > 14) return;
+        if (stopWords.has(word)) return;
+        if (/^(jaja|haha)+$/.test(word)) return;
+        counts.set(word, (counts.get(word) || 0) + 1);
+      });
+
+      const candidates = [...counts.entries()]
+        .filter(([word, count]) => count >= 2 || word.length >= 7)
+        .sort((a, b) => (b[1] - a[1]) || (b[0].length - a[0].length))
+        .map(([word]) => word.toUpperCase());
+
+      return [...new Set(candidates)].slice(0, 80);
+    }
+
+    document.getElementById('endTurnBtn').onclick = () => {
+      clearPending();
+      state.turn = state.turn === 'red' ? 'blue' : 'red';
+      render();
+    };
+
+    document.getElementById('settingsBtn').onclick = () => {
+      document.getElementById('settingsPanel').classList.toggle('open');
+    };
+
+    document.getElementById('playerBtn').onclick = () => {
+      state.spymaster = false;
+      state.lastRevealed = null;
+      render();
+    };
+
+    document.getElementById('spymasterBtn').onclick = () => {
+      state.spymaster = true;
+      state.lastRevealed = null;
+      render();
+    };
+
+    document.getElementById('previousGameBtn').onclick = () => {
+      if (!previousGameState) {
+        alert('No previous game yet.');
+        return;
+      }
+      clearPending();
+      state = cloneGameState(previousGameState);
+      selectedSource = state.source || selectedSource;
+      render();
+    };
+
+    document.getElementById('nextBtn').onclick = () => {
+      clearPending();
+      newGame(true);
+    };
+
+    document.getElementById('downloadPngBtn').onclick = downloadPlayerBoardPng;
+
+    document.getElementById('languageSelectBottom').onchange = (event) => {
+      const newValue = event.target.value;
+
+      if (newValue === 'custom' && banks.custom.length < 25) {
+        // store previous before attempting
+        previousSourceSelection = selectedSource;
+        document.getElementById('customFileInput').click();
+        // revert UI immediately until file confirmed
+        event.target.value = selectedSource;
+        return;
+      }
+
+      previousSourceSelection = selectedSource;
+      selectedSource = newValue;
+      newGame(true);
+      render();
+    };
+
+    document.getElementById('customFileInput').onchange = async (event) => {
+      const file = event.target.files?.[0];
+
+      // user cancelled → stay in previous source
+      if (!file) {
+        selectedSource = previousSourceSelection;
+        document.getElementById('languageSelectBottom').value = selectedSource;
+        return;
+      }
+
+      const text = await file.text();
+      banks.custom = extractCustomWords(text);
+
+      if (banks.custom.length < 25) {
+        alert(`I found ${banks.custom.length} usable words. Upload a longer text file or use another language.`);
+        selectedSource = previousSourceSelection;
+        document.getElementById('languageSelectBottom').value = selectedSource;
+        return;
+      }
+
+      selectedSource = 'custom';
+      document.getElementById('languageSelectBottom').value = 'custom';
+      newGame(true);
+    };
+
+    document.getElementById('darkModeToggle').onchange = (event) => {
+      state.darkMode = event.target.checked;
+      state.lastRevealed = null;
+      render();
+    };
+
+    document.getElementById('spymasterGuessToggle').onchange = (event) => {
+      state.spymasterMayGuess = event.target.checked;
+      state.lastRevealed = null;
+      render();
+    };
+
+    function roundRect(ctx, x, y, width, height, radius) {
+      ctx.beginPath();
+      ctx.moveTo(x + radius, y);
+      ctx.lineTo(x + width - radius, y);
+      ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+      ctx.lineTo(x + width, y + height - radius);
+      ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+      ctx.lineTo(x + radius, y + height);
+      ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+      ctx.lineTo(x, y + radius);
+      ctx.quadraticCurveTo(x, y, x + radius, y);
+      ctx.closePath();
+    }
+
+    function downloadPlayerBoardPng() {
+      return new Promise((resolve) => {
+        const width = 1920;
+        const height = 1080;
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+
+        const isDark = state.darkMode;
+        const colors = {
+          bg: isDark ? '#111111' : '#ffffff',
+          text: isDark ? '#f3f3f3' : '#050505',
+          neutral: isDark ? '#2b2b2b' : '#e8e8e8',
+          border: isDark ? '#242424' : '#f0f0f0',
+          red: '#d71920',
+          blue: '#315fb8',
+          gray: '#bbbbbb',
+          assassin: '#000000'
+        };
+
+        ctx.fillStyle = colors.bg;
+        ctx.fillRect(0, 0, width, height);
+        ctx.fillStyle = colors.text;
+        ctx.font = '700 42px Georgia, serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('CODENAMES', width / 2, 54);
+        ctx.fillStyle = colors.border;
+        ctx.fillRect(0, 96, width, 2);
+
+        const redRemaining = state.roles.filter((role, i) => role === 'red' && !state.revealed[i]).length;
+        const blueRemaining = state.roles.filter((role, i) => role === 'blue' && !state.revealed[i]).length;
+        ctx.font = '44px Arial, Helvetica, sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillStyle = colors.red;
+        ctx.fillText(redRemaining, 32, 142);
+        ctx.fillStyle = isDark ? '#888888' : '#777777';
+        ctx.fillText('–', 86, 142);
+        ctx.fillStyle = colors.blue;
+        ctx.fillText(blueRemaining, 122, 142);
+        ctx.textAlign = 'center';
+        ctx.fillStyle = state.turn === 'red' ? colors.red : colors.blue;
+        ctx.fillText(`${state.turn}'s turn`, width / 2, 142);
+
+        const cols = 5, rows = 5;
+        const boardX = 22, boardY = 186, gapX = 34, gapY = 30;
+        const cardW = (width - boardX * 2 - gapX * (cols - 1)) / cols;
+        const cardH = (height - boardY - 28 - gapY * (rows - 1)) / rows;
+
+        state.words.forEach((word, i) => {
+          const col = i % cols;
+          const row = Math.floor(i / cols);
+          const x = boardX + col * (cardW + gapX);
+          const y = boardY + row * (cardH + gapY);
+          const role = state.roles[i];
+          const revealed = state.revealed[i];
+          let fill = colors.neutral;
+          let textColor = colors.text;
+          if (revealed) {
+            if (role === 'red') fill = colors.red;
+            if (role === 'blue') fill = colors.blue;
+            if (role === 'neutral') fill = colors.gray;
+            if (role === 'assassin') fill = colors.assassin;
+            textColor = role === 'neutral' ? '#111111' : '#ffffff';
+          }
+
+          ctx.fillStyle = fill;
+          roundRect(ctx, x, y, cardW, cardH, 12);
+          ctx.fill();
+          ctx.fillStyle = textColor;
+          ctx.font = state.source === 'images' ? '76px Arial, sans-serif' : '700 38px Arial, Helvetica, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(word, x + cardW / 2, y + cardH / 2);
+        });
+
+        canvas.toBlob(async (blob) => {
+          if (!blob) { resolve(false); return; }
+          const fileName = `codenames-board-${Date.now()}.png`;
+          const file = new File([blob], fileName, { type: 'image/png' });
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            try {
+              await navigator.share({ files: [file], title: 'Codenames board' });
+              resolve(true);
+              return;
+            } catch (error) {
+              if (error.name === 'AbortError') { resolve(false); return; }
+            }
+          }
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = fileName;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          setTimeout(() => URL.revokeObjectURL(url), 1000);
+          resolve(true);
+        }, 'image/png');
+      });
+    }
+
+    newGame();
+  </script>
+</body>
+</html>
