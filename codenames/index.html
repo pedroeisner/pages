@@ -613,15 +613,29 @@
     function getCompactCustomBoardCode() {
       if (state.source !== 'custom' || !state.seed || !Array.isArray(state.words) || state.words.length !== 25) return null;
       // Custom boards cannot be reconstructed from a seed alone on another device,
-      // so the URL stores only the final 25 words plus the role seed.
-      // No revealed tiles, view mode, JSON keys, or role names are included.
-      return `${state.seed}.${state.words.map(word => word.toLowerCase()).join('.')}`;
+      // so the URL stores the final 25 words plus the role seed. The words are
+      // packed into a base64url payload so they are not visible in the URL and
+      // so spaces/accents/emoji cannot break link detection in chat apps.
+      return '1' + base64UrlEncode([state.seed, ...state.words.map(word => word.toLowerCase())].join('\n'));
     }
 
     function buildCustomStateFromCode(code) {
-      const parts = String(code || '').split('.').filter(Boolean);
-      const seed = parts.shift();
-      const words = parts.map(word => word.toUpperCase());
+      const rawCode = String(code || '');
+      let seed;
+      let words;
+
+      if (rawCode.startsWith('1')) {
+        const decoded = base64UrlDecode(rawCode.slice(1));
+        const parts = decoded.split('\n').map(part => part.trim()).filter(Boolean);
+        seed = parts.shift();
+        words = parts.map(word => word.toUpperCase());
+      } else {
+        // Backward compatibility for older links that used visible dot-separated words.
+        const parts = rawCode.split('.').filter(Boolean);
+        seed = parts.shift();
+        words = parts.map(word => word.toUpperCase());
+      }
+
       if (!seed || seed.length < 8 || words.length !== 25 || words.some(word => !word || word.length > 24)) {
         throw new Error('Invalid custom board');
       }
