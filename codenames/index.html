@@ -14,6 +14,7 @@
       --blue: #315fb8;
       --neutral: #e8e8e8;
       --neutral-dark: #d9d9d9;
+      --revealed-neutral: #ecd99f;
       --assassin: #111;
       --text: #050505;
       --white: #fff;
@@ -56,6 +57,7 @@
     .app.dark {
       --neutral: #2b2b2b;
       --neutral-dark: #3a3a3a;
+      --revealed-neutral: #d8c27f;
       --text: #f3f3f3;
       --white: #111;
       --border: #242424;
@@ -119,6 +121,7 @@
       overflow: hidden;
       border-radius: 8px;
       background: var(--neutral);
+      color: var(--text);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -127,28 +130,14 @@
       transition: transform 120ms ease, box-shadow 120ms ease;
       text-align: center;
       padding: 0.25em;
+      user-select: none;
     }
 
     .card span { z-index: 2; }
 
-    .card.image-card {
-      /* keep same base look as words */
-      background: var(--neutral);
-      border: none;
-      box-shadow: none;
-    }
-
-    
-
     .card.image-card span {
       font-size: clamp(24px, 3.25vw, 54px);
       line-height: 1;
-      filter: none;
-      transform: none;
-    }
-
-    .app.dark .card.image-card {
-      background: var(--neutral);
     }
 
     .card.pending::before {
@@ -176,13 +165,37 @@
 
     .card.revealed.red { background: var(--red); color: white; }
     .card.revealed.blue { background: var(--blue); color: white; }
-    .card.revealed.neutral { background: #bbb; color: #111; }
+    .card.revealed.neutral { background: var(--revealed-neutral); color: #111; }
     .card.revealed.assassin { background: black; color: white; }
 
     .spymaster .card:not(.revealed).red { background: rgba(215, 25, 32, 0.25); }
     .spymaster .card:not(.revealed).blue { background: rgba(49, 95, 184, 0.25); }
-    .spymaster .card:not(.revealed).neutral { background: rgba(150,150,150,0.25); }
+    .spymaster .card:not(.revealed).neutral { background: rgba(216, 185, 103, 0.42); }
     .spymaster .card:not(.revealed).assassin { background: rgba(0,0,0,0.4); color: white; }
+
+    .screen-shake { animation: screenShake 520ms ease-in-out; }
+    @keyframes screenShake {
+      0%, 100% { transform: translate(0, 0); }
+      12% { transform: translate(-10px, 5px); }
+      24% { transform: translate(9px, -6px); }
+      36% { transform: translate(-7px, -4px); }
+      48% { transform: translate(8px, 4px); }
+      60% { transform: translate(-5px, 3px); }
+      72% { transform: translate(4px, -3px); }
+      84% { transform: translate(-2px, 2px); }
+    }
+
+    .effects-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100dvh;
+      z-index: 800;
+      pointer-events: none;
+      display: none;
+    }
+
+    .effects-canvas.show { display: block; }
 
     footer {
       position: relative;
@@ -205,6 +218,7 @@
       cursor: pointer;
       box-shadow: 0 2px 8px rgba(0,0,0,0.08);
       text-decoration: none;
+      white-space: nowrap;
     }
 
     .control-btn:active { transform: translateY(1px); }
@@ -222,17 +236,7 @@
       border-left: 1px solid var(--button-border);
     }
 
-    .settings-section {
-      margin-left: 0;
-      padding-left: 0;
-      border-left: none;
-    }
-
-    .source-picker {
-      margin-right: 0;
-      padding-right: 0;
-      border-right: none;
-    }
+    .settings-section { margin-left: 0; padding-left: 0; border-left: none; }
 
     .source-option {
       min-width: 2.7em;
@@ -279,24 +283,32 @@
       white-space: nowrap;
     }
 
-    .setting-row select, .setting-row input[type="file"] {
-      max-width: 210px;
-      font-size: 0.9em;
-      color: var(--text);
-    }
-
     .setting-row input[type="checkbox"] {
       width: 18px;
       height: 18px;
       accent-color: var(--blue);
     }
 
-    .custom-help {
-      margin: -0.25em 0 0;
-      font-size: 0.82em;
-      opacity: 0.75;
-      line-height: 1.25;
-      white-space: normal;
+    .loading-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.35);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+
+    .loading-modal.show { display: flex; }
+
+    .loading-box {
+      background: var(--white);
+      color: var(--text);
+      padding: 1.5em 2em;
+      border-radius: 14px;
+      font-weight: 700;
+      font-size: clamp(14px, 1.2vw, 20px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     }
 
     @media (max-height: 520px) and (orientation: landscape) {
@@ -304,8 +316,7 @@
       .turn { font-size: clamp(18px, 2vw, 28px); }
       .score { font-size: clamp(17px, 2vw, 28px); }
       .card.image-card span { font-size: clamp(22px, 3vw, 48px); }
-      .control-btn { font-size: clamp(9px, 0.8vw, 12px); padding: 0.5em 0.78em; }
-      .source-option { font-size: clamp(9px, 0.8vw, 12px); padding: 0.5em 0.78em; }
+      .control-btn, .source-option { font-size: clamp(9px, 0.8vw, 12px); padding: 0.5em 0.78em; }
     }
 
     @media (orientation: portrait) {
@@ -321,31 +332,6 @@
         z-index: 99;
       }
     }
-  
-    .loading-modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.35);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 999;
-    }
-
-    .loading-modal.show {
-      display: flex;
-    }
-
-    .loading-box {
-      background: var(--white);
-      color: var(--text);
-      padding: 1.5em 2em;
-      border-radius: 14px;
-      font-weight: 700;
-      font-size: clamp(14px, 1.2vw, 20px);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    }
-
   </style>
 </head>
 <body>
@@ -354,13 +340,12 @@
     <div class="rule"></div>
     <section class="status">
       <div class="score"><span class="red" id="redScore">9</span> – <span class="blue" id="blueScore">8</span></div>
-      <div class="turn" id="turnText">red's turn</div>
-      <button class="control-btn end-turn" id="endTurnBtn">End turn</button>
+      <div class="turn" id="turnText">Red's turn</div>
+      <button class="control-btn end-turn" id="endTurnBtn">End red's turn</button>
     </section>
     <main class="board" id="board"></main>
     <footer>
       <div class="settings-panel" id="settingsPanel">
-        
         <label class="setting-row">
           <span>Dark mode</span>
           <input type="checkbox" id="darkModeToggle" />
@@ -394,43 +379,20 @@
         <button class="control-btn" id="downloadPngBtn">Download</button>
       </div>
     </footer>
-    <div class="loading-modal" id="loadingModal">
-      <div class="loading-box">Loading…</div>
-    </div>
+    <canvas class="effects-canvas" id="effectsCanvas"></canvas>
+    <div class="loading-modal" id="loadingModal"><div class="loading-box">Loading…</div></div>
   </div>
   <div style="height:520px" aria-hidden="true"></div>
 
   <script>
     const banks = {
-      english: [
-        'TRIANGLE','PORT','PENGUIN','SCALE','TRUNK','BOOM','BACK','BAT','PISTOL','CROSS',
-        'BERMUDA','FORCE','LINE','SOCK','FIGHTER','EYE','TRIP','SPIDER','PIANO','BAR',
-        'FIGURE','WHIP','GROUND','JACK','SATELLITE','AMAZON','BRIDGE','CASTLE','CLOUD','CROWN',
-        'DRAGON','FAIR','GHOST','GLASS','HONEY','IVORY','JUPITER','KING','LASER','MERCURY',
-        'NINJA','OLIVE','PILOT','QUEEN','ROBOT','SHADOW','TEMPLE','UNICORN','VAN','WHALE'
-      ],
-      spanish: [
-        'PUENTE','TORMENTA','CORONA','PANTALLA','FANTASMA','SOMBRA','MERCADO','ESPEJO','BARRIO','CANCHA',
-        'LINTERNA','MATE','SUBTE','VENTANA','ANILLO','CUEVA','CASTILLO','JAGUAR','COMETA','MONEDA',
-        'BRÚJULA','TANGO','PUERTO','HELADO','LLAVE','DRAGÓN','MÁSCARA','AVIÓN','GUITARRA','PLANETA',
-        'CANGREJO','FLECHA','BANDERA','MISTERIO','PIRÁMIDE','CIRCO','SATÉLITE','BOTE','MURALLA','TREN',
-        'NUBE','RAYO','TESORO','BOSQUE','PÁJARO','DIAMANTE','CABALLO','RELOJ','FUEGO','ISLA'
-      ],
-      images: [
-        '🦊','🎩','🚀','🌵','🧲','🎻','🧊','🦉','🌋','🧩',
-        '🗝️','🦀','🎲','🧭','🏰','🌙','🪁','🐍','🍄','⚓',
-        '🦕','🎭','🔮','🐋','🍕','📚','🧨','🛸','🏀','💎',
-        '🦜','🎸','🧱','🕯️','🐝','🌈','🪐','🛶','🦁','🍀',
-        '🧪','🥁','🗿','🐙','🎯','🚦','🫧','🌻','🧯','🛡️'
-      ],
+      english: ['TRIANGLE','PORT','PENGUIN','SCALE','TRUNK','BOOM','BACK','BAT','PISTOL','CROSS','BERMUDA','FORCE','LINE','SOCK','FIGHTER','EYE','TRIP','SPIDER','PIANO','BAR','FIGURE','WHIP','GROUND','JACK','SATELLITE','AMAZON','BRIDGE','CASTLE','CLOUD','CROWN','DRAGON','FAIR','GHOST','GLASS','HONEY','IVORY','JUPITER','KING','LASER','MERCURY','NINJA','OLIVE','PILOT','QUEEN','ROBOT','SHADOW','TEMPLE','UNICORN','VAN','WHALE'],
+      spanish: ['PUENTE','TORMENTA','CORONA','PANTALLA','FANTASMA','SOMBRA','MERCADO','ESPEJO','BARRIO','CANCHA','LINTERNA','MATE','SUBTE','VENTANA','ANILLO','CUEVA','CASTILLO','JAGUAR','COMETA','MONEDA','BRÚJULA','TANGO','PUERTO','HELADO','LLAVE','DRAGÓN','MÁSCARA','AVIÓN','GUITARRA','PLANETA','CANGREJO','FLECHA','BANDERA','MISTERIO','PIRÁMIDE','CIRCO','SATÉLITE','BOTE','MURALLA','TREN','NUBE','RAYO','TESORO','BOSQUE','PÁJARO','DIAMANTE','CABALLO','RELOJ','FUEGO','ISLA'],
+      images: ['🦊','🎩','🚀','🌵','🧲','🎻','🧊','🦉','🌋','🧩','🗝️','🦀','🎲','🧭','🏰','🌙','🪁','🐍','🍄','⚓','🦕','🎭','🔮','🐋','🍕','📚','🧨','🛸','🏀','💎','🦜','🎸','🧱','🕯️','🐝','🌈','🪐','🛶','🦁','🍀','🧪','🥁','🗿','🐙','🎯','🚦','🫧','🌻','🧯','🛡️'],
       custom: []
     };
 
-    const stopWords = new Set(`
-      a al algo algunas algunos ante antes como con contra cual cuando de del desde donde dos el ella ellas ellos en entre era eran eres es esa esas ese eso esos esta estaba estaban estamos estan estar estas este esto estos fue fui fuimos ha habia han hasta hay la las le les lo los mas me mi mis muy nada ni no nos o para pero por porque que quien se ser si sin sobre son su sus te tiene todo tu un una uno unos y ya yo
-      the and for are but not you your with from that this have has had was were what when where who why how she her his him they them there here about into onto over under between before after then than very just some any all out can could would should will been being more most
-      jajaja jajajaja haha hahaha https http com www whatsapp sticker imagen audio video
-    `.split(/\s+/).filter(Boolean));
+    const stopWords = new Set(`a al algo algunas algunos ante antes como con contra cual cuando de del desde donde dos el ella ellas ellos en entre era eran eres es esa esas ese eso esos esta estaba estaban estamos estan estar estas este esto estos fue fui fuimos ha habia han hasta hay la las le les lo los mas me mi mis muy nada ni no nos o para pero por porque que quien se ser si sin sobre son su sus te tiene todo tu un una uno unos y ya yo the and for are but not you your with from that this have has had was were what when where who why how she her his him they them there here about into onto over under between before after then than very just some any all out can could would should will been being more most jajaja jajajaja haha hahaha https http com www whatsapp sticker imagen audio video`.split(/\s+/).filter(Boolean));
 
     let state = {};
     let previousGameState = null;
@@ -489,7 +451,6 @@
     function newGame(saveCurrent = false) {
       if (saveCurrent && state.words) previousGameState = cloneGameState(state);
       const setup = makeRoles();
-
       state = {
         words: shuffle(getCurrentBank()).slice(0,25),
         roles: setup.roles,
@@ -503,7 +464,6 @@
         darkMode: state.darkMode || false,
         spymasterMayGuess: state.spymasterMayGuess || false
       };
-
       render();
     }
 
@@ -538,12 +498,7 @@
         const el = document.createElement('div');
         const role = state.roles[i];
         const isImage = state.source === 'images';
-
-        el.className = 'card ' + role + (isImage ? ' image-card' : '') +
-          (state.revealed[i] ? ' revealed' : '') +
-          (state.lastRevealed === i ? ' reveal-anim' : '') +
-          (state.pending === i ? ' pending' : '');
-
+        el.className = 'card ' + role + (isImage ? ' image-card' : '') + (state.revealed[i] ? ' revealed' : '') + (state.lastRevealed === i ? ' reveal-anim' : '') + (state.pending === i ? ' pending' : '');
         el.innerHTML = `<span>${w}</span>`;
         el.onclick = () => handleCardClick(i);
         board.appendChild(el);
@@ -552,46 +507,136 @@
 
     function handleCardClick(i) {
       if (state.spymaster && !state.spymasterMayGuess) return;
-
-      if (state.pending === i) {
-        clearPending();
-        render();
-        return;
-      }
-
+      if (state.pending === i) { clearPending(); render(); return; }
       if (state.pending !== null) clearPending();
-
       if (state.revealed[i]) {
         state.revealed[i] = false;
         if (state.lastRevealed === i) state.lastRevealed = null;
         render();
         return;
       }
-
       state.pending = i;
       state.lastRevealed = null;
       render();
-
       state.pendingTimer = setTimeout(() => {
         if (state.pending !== i) return;
+        const revealedRole = state.roles[i];
         state.revealed[i] = true;
         state.pending = null;
         state.pendingTimer = null;
         state.lastRevealed = i;
         render();
+        handleRevealOutcome(revealedRole);
       }, 2850);
     }
 
-    function extractCustomWords(text) {
-      function basicNormalize(value) {
-        return value.toLowerCase()
-          .replaceAll('á', 'a').replaceAll('à', 'a').replaceAll('ä', 'a')
-          .replaceAll('é', 'e').replaceAll('è', 'e').replaceAll('ë', 'e')
-          .replaceAll('í', 'i').replaceAll('ì', 'i').replaceAll('ï', 'i')
-          .replaceAll('ó', 'o').replaceAll('ò', 'o').replaceAll('ö', 'o')
-          .replaceAll('ú', 'u').replaceAll('ù', 'u').replaceAll('ü', 'u');
-      }
+    function teamRemaining(team) {
+      return state.roles.filter((role, index) => role === team && !state.revealed[index]).length;
+    }
 
+    function handleRevealOutcome(role) {
+      if (role === 'assassin') { launchBombExplosion(); return; }
+      if (role === 'red' && teamRemaining('red') === 0) launchFireworks('red');
+      if (role === 'blue' && teamRemaining('blue') === 0) launchFireworks('blue');
+    }
+
+    function launchBombExplosion() {
+      const app = document.getElementById('app');
+      app.classList.remove('screen-shake');
+      void app.offsetWidth;
+      app.classList.add('screen-shake');
+      const canvas = document.getElementById('effectsCanvas');
+      const ctx = canvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      canvas.style.width = width + 'px';
+      canvas.style.height = height + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      canvas.classList.add('show');
+      const particles = [];
+      for (let p = 0; p < 900; p++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 6 + Math.random() * 22;
+        particles.push({ x: Math.random() * width, y: Math.random() * height, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, life: 45 + Math.random() * 55, size: 3 + Math.random() * 10, color: Math.random() < 0.55 ? '#111111' : (Math.random() < 0.5 ? '#ff8a00' : '#666666') });
+      }
+      let frame = 0;
+      function animate() {
+        frame++;
+        ctx.clearRect(0, 0, width, height);
+        particles.forEach(p => {
+          p.x += p.vx; p.y += p.vy; p.vx *= 0.94; p.vy *= 0.94; p.vy += 0.08; p.life -= 1;
+          ctx.globalAlpha = Math.max(p.life / 80, 0);
+          ctx.fillStyle = p.color;
+          ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
+        });
+        ctx.globalAlpha = Math.max(0.6 - frame / 60, 0);
+        ctx.fillStyle = frame < 10 ? 'white' : 'rgba(255,140,0,0.4)';
+        ctx.fillRect(0, 0, width, height);
+        ctx.globalAlpha = 1;
+        if (frame < 120) requestAnimationFrame(animate);
+        else { canvas.classList.remove('show'); ctx.clearRect(0, 0, width, height); app.classList.remove('screen-shake'); }
+      }
+      animate();
+    }
+
+    function launchFireworks(team) {
+      const canvas = document.getElementById('effectsCanvas');
+      const ctx = canvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      canvas.style.width = width + 'px';
+      canvas.style.height = height + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      canvas.classList.add('show');
+      const color = team === 'red' ? '#d71920' : '#315fb8';
+      const accent = team === 'red' ? '#ffef6e' : '#ffffff';
+      const particles = [];
+      for (let b = 0; b < 22; b++) {
+        const cx = width * (0.12 + Math.random() * 0.76);
+        const cy = height * (0.12 + Math.random() * 0.62);
+        for (let p = 0; p < 72; p++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = 2.8 + Math.random() * 10;
+          particles.push({ x: cx, y: cy, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, life: 90 + Math.random() * 60, size: 2.2 + Math.random() * 5.2, color: Math.random() < 0.78 ? color : accent });
+        }
+      }
+      let frame = 0;
+      function animate() {
+        frame++;
+        ctx.clearRect(0, 0, width, height);
+        ctx.globalCompositeOperation = 'lighter';
+        particles.forEach(p => {
+          p.x += p.vx; p.y += p.vy; p.vy += 0.055; p.vx *= 0.985; p.vy *= 0.985; p.life -= 1;
+          ctx.globalAlpha = Math.max(p.life / 80, 0);
+          ctx.fillStyle = p.color;
+          ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
+        });
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.globalAlpha = 1;
+        const label = `${team.toUpperCase()} WINS!`;
+        const fontSize = Math.min(width, height) * 0.105;
+        ctx.font = `900 ${fontSize}px Arial, Helvetica, sans-serif`;
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineWidth = Math.max(7, fontSize * 0.08);
+        ctx.strokeStyle = '#ffffff'; ctx.shadowColor = 'rgba(0,0,0,0.65)'; ctx.shadowBlur = 18;
+        ctx.strokeText(label, width / 2, height / 2);
+        ctx.shadowBlur = 0; ctx.fillStyle = team === 'red' ? '#9f0f15' : '#153e92'; ctx.fillText(label, width / 2, height / 2);
+        if (frame < 260) requestAnimationFrame(animate);
+        else { canvas.classList.remove('show'); ctx.clearRect(0, 0, width, height); }
+      }
+      animate();
+    }
+
+    function basicNormalize(value) {
+      return value.toLowerCase().replaceAll('á','a').replaceAll('à','a').replaceAll('ä','a').replaceAll('é','e').replaceAll('è','e').replaceAll('ë','e').replaceAll('í','i').replaceAll('ì','i').replaceAll('ï','i').replaceAll('ó','o').replaceAll('ò','o').replaceAll('ö','o').replaceAll('ú','u').replaceAll('ù','u').replaceAll('ü','u');
+    }
+
+    function extractCustomWords(text) {
       const capitalizationStats = new Map();
       text.split(/[^A-Za-zÀ-ÿ]+/).filter(Boolean).forEach(token => {
         const normalized = basicNormalize(token);
@@ -604,56 +649,46 @@
       });
 
       const spanishNames = new Set('juan pedro pablo martin matias mati santiago tomas lucas lautaro franco facundo agustin nico nicolas federico fede diego javier sebastian rodrigo ignacio nacho manuel manu gabriel rafael andres alejandro mariano esteban leandro gonzalo joaquin maxi maximiliano luciano emi emiliano ivan luis carlos miguel ricardo daniel fernando eduardo victor mario ramiro ezequiel damian julian valentin felipe benjamin bautista thiago enzo bruno simon gael dylan marcos jorge oscar alberto guillermo gustavo claudio sergio hector osvaldo cristian cristobal francisco pancho pepe jose antonio alvaro jaime raul ruben cesar adrian mauro mauricio axel alan renzo tadeo ian joaco maria sofia martina valentina camila cami lucia luciana luli micaela mica florencia flor agustina agus julieta juli paula pau carolina caro laura andrea ana anita mariana rocio rochi belen pilar josefina juana victoria vicky valeria vale romina romi natalia nati gabriela gabi daniela dani fernanda fer cecilia ceci veronica vero silvina silvi marina paola claudia patricia patri monica moni susana graciela grace ines elena luisa isabel teresa catalina cata renata emilia ema alma olivia emma jazmin abril malena male lara mora zoe mia eva lola salome ambar guadalupe guada milagros mili jimena ximena azul'.split(' '));
-
       const commonSpanishVerbs = new Set('ser estar tener hacer decir haber poder querer saber poner ver dar ir venir llegar pasar deber parecer quedar creer hablar llevar dejar seguir encontrar llamar pensar salir volver tomar conocer vivir sentir tratar mirar contar empezar esperar buscar existir entrar trabajar escribir perder producir ocurrir entender pedir recibir recordar terminar permitir aparecer conseguir comenzar servir sacar necesitar mantener resultar leer caer cambiar presentar crear abrir considerar oir acabar convertir ganar formar traer partir morir aceptar realizar suponer comprender lograr explicar preguntar tocar reconocer estudiar alcanzar nacer dirigir correr utilizar pagar ayudar gustar jugar comprar vender comer beber dormir caminar mandar enviar subir bajar'.split(' '));
-
       const commonEnglishVerbs = new Set('be am is are was were been being have has had do does did say go get make know think take see come want look use find give tell work call try ask need feel become leave put keep let begin seem help talk turn start show hear play run move live believe bring happen write provide sit stand lose pay meet include continue set learn change lead understand watch follow stop create speak read allow add spend grow open walk win offer remember love consider appear buy wait serve die send expect build stay fall cut reach kill remain'.split(' '));
-
       const weakWords = new Set('gente cosas cosa tema temas tiempo parte partes forma formas momento momentos verdad realidad problema problemas manera maneras alguien nadie todos todas mismo misma mismos mismas lugar lugares hecho hechos stuff thing things people someone nothing anything everything today tomorrow yesterday'.split(' '));
-
       function looksLikeVerb(word) {
         if (commonSpanishVerbs.has(word) || commonEnglishVerbs.has(word)) return true;
-        const endings = ['ing','ed','ar','er','ir','ando','iendo','ado','ido','aba','abas','aban','aste','iste','amos','emos','imos','aria','arias','arian','eria','erias','erian'];
-        return endings.some(ending => word.endsWith(ending));
+        return ['ing','ed','ar','er','ir','ando','iendo','ado','ido','aba','abas','aban','aste','iste','amos','emos','imos','aria','arias','arian','eria','erias','erian'].some(ending => word.endsWith(ending));
       }
-
       function looksLikeProperName(word) {
         if (spanishNames.has(word)) return true;
         const stats = capitalizationStats.get(word);
         if (!stats) return false;
         return (stats.capitalized / stats.total) > 0.5 && stats.total < 20;
       }
-
-      const cleaned = text
-        .toLowerCase()
-        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-        .replace(/https?:\/\/\S+/g, ' ')
-        .replace(/\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}/g, ' ')
-        .replace(/\d{1,2}:\d{2}/g, ' ')
-        .replace(/[^a-záéíóúñü\s]/gi, ' ');
-
-      const words = cleaned.split(' ').filter(Boolean);
+      const cleaned = basicNormalize(text).replace(/https?:\/\/\S+/g, ' ').replace(/\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}/g, ' ').replace(/\d{1,2}:\d{2}/g, ' ').replace(/[^a-zñü\s]/gi, ' ');
+      const words = cleaned.split(/\s+/).filter(Boolean);
       const counts = new Map();
       const total = Math.max(words.length, 1);
-
       words.forEach((word, index) => {
         if (word.length < 5 || word.length > 14) return;
-        if (stopWords.has(word)) return;
+        if (stopWords.has(word) || weakWords.has(word)) return;
         if (/^(jaja|haha)+$/.test(word)) return;
-        if (weakWords.has(word)) return;
-        if (looksLikeVerb(word)) return;
-        if (looksLikeProperName(word)) return;
-
+        if (looksLikeVerb(word) || looksLikeProperName(word)) return;
         const recencyWeight = 0.5 + (index / total);
         counts.set(word, (counts.get(word) || 0) + recencyWeight);
       });
+      return [...new Set([...counts.entries()].filter(([word, count]) => count >= 2 || word.length >= 7).sort((a, b) => (b[1] - a[1]) || (b[0].length - a[0].length)).map(([word]) => word.toUpperCase()))].slice(0, 80);
+    }
 
-      const candidates = [...counts.entries()]
-        .filter(([word, count]) => count >= 2 || word.length >= 7)
-        .sort((a, b) => (b[1] - a[1]) || (b[0].length - a[0].length))
-        .map(([word]) => word.toUpperCase());
-
-      return [...new Set(candidates)].slice(0, 80);
+    async function extractTextFromZip(file) {
+      if (!window.JSZip) {
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+        document.head.appendChild(script);
+        await new Promise((resolve, reject) => { script.onload = resolve; script.onerror = reject; });
+      }
+      const zip = await JSZip.loadAsync(file);
+      let combined = '';
+      const txtFiles = Object.values(zip.files).filter(f => !f.dir && f.name.toLowerCase().endsWith('.txt'));
+      for (const f of txtFiles) combined += '\n' + await f.async('string');
+      return combined;
     }
 
     document.getElementById('endTurnBtn').onclick = () => {
@@ -661,224 +696,81 @@
       state.turn = state.turn === 'red' ? 'blue' : 'red';
       render();
     };
-
-    document.getElementById('settingsBtn').onclick = () => {
-      document.getElementById('settingsPanel').classList.toggle('open');
-    };
-
-    document.getElementById('playerBtn').onclick = () => {
-      state.spymaster = false;
-      state.lastRevealed = null;
-      render();
-    };
-
-    document.getElementById('spymasterBtn').onclick = () => {
-      state.spymaster = true;
-      state.lastRevealed = null;
-      render();
-    };
-
+    document.getElementById('settingsBtn').onclick = () => document.getElementById('settingsPanel').classList.toggle('open');
+    document.getElementById('playerBtn').onclick = () => { state.spymaster = false; state.lastRevealed = null; render(); };
+    document.getElementById('spymasterBtn').onclick = () => { state.spymaster = true; state.lastRevealed = null; render(); };
     document.getElementById('previousGameBtn').onclick = () => {
-      if (!previousGameState) {
-        alert('No previous game yet.');
-        return;
-      }
-      clearPending();
-      state = cloneGameState(previousGameState);
-      selectedSource = state.source || selectedSource;
-      render();
+      if (!previousGameState) { alert('No previous game yet.'); return; }
+      clearPending(); state = cloneGameState(previousGameState); selectedSource = state.source || selectedSource; render();
     };
-
-    document.getElementById('nextBtn').onclick = () => {
-      clearPending();
-      newGame(true);
-    };
-
+    document.getElementById('nextBtn').onclick = () => { clearPending(); newGame(true); };
     document.getElementById('downloadPngBtn').onclick = downloadPlayerBoardPng;
-
     document.querySelectorAll('.source-option[data-source]:not(.file-source-option)').forEach(option => {
-      option.onclick = () => {
-        previousSourceSelection = selectedSource;
-        selectedSource = option.dataset.source;
-        newGame(true);
-        render();
-      };
+      option.onclick = () => { previousSourceSelection = selectedSource; selectedSource = option.dataset.source; newGame(true); render(); };
     });
-
     document.getElementById('customFileInput').onchange = async (event) => {
       const loading = document.getElementById('loadingModal');
       const file = event.target.files?.[0];
-
-      if (!file) {
-        selectedSource = previousSourceSelection;
-        render();
-        return;
-      }
-
+      if (!file) { selectedSource = previousSourceSelection; render(); return; }
       loading.classList.add('show');
-      const _loadingStart = performance.now();
+      const start = performance.now();
       await new Promise(resolve => requestAnimationFrame(resolve));
-
       try {
-        let text = '';
-        if (file.name.toLowerCase().endsWith('.zip')) {
-          text = await extractTextFromZip(file);
-        } else {
-          text = await file.text();
-        }
-
+        const text = file.name.toLowerCase().endsWith('.zip') ? await extractTextFromZip(file) : await file.text();
         banks.custom = extractCustomWords(text);
-
         if (banks.custom.length < 25) {
           alert(`I found ${banks.custom.length} usable words. Upload a longer text file or use another language.`);
-          selectedSource = previousSourceSelection;
-          render();
-          return;
+          selectedSource = previousSourceSelection; render(); return;
         }
-
-        previousSourceSelection = selectedSource;
-        selectedSource = 'custom';
-        newGame(true);
+        previousSourceSelection = selectedSource; selectedSource = 'custom'; newGame(true);
       } catch (error) {
         alert('Could not read that file. Try exporting the chat again or uploading the .txt file directly.');
-        selectedSource = previousSourceSelection;
-        render();
+        selectedSource = previousSourceSelection; render();
       } finally {
-        const _elapsed = performance.now() - _loadingStart;
-        const _min = 2000;
-        if (_elapsed < _min) {
-          await new Promise(r => setTimeout(r, _min - _elapsed));
-        }
-        loading.classList.remove('show');
-        event.target.value = '';
+        const elapsed = performance.now() - start;
+        if (elapsed < 2000) await new Promise(r => setTimeout(r, 2000 - elapsed));
+        loading.classList.remove('show'); event.target.value = '';
       }
     };
-
-    document.getElementById('darkModeToggle').onchange = (event) => {
-      state.darkMode = event.target.checked;
-      state.lastRevealed = null;
-      render();
-    };
-
-    document.getElementById('spymasterGuessToggle').onchange = (event) => {
-      state.spymasterMayGuess = event.target.checked;
-      state.lastRevealed = null;
-      render();
-    };
+    document.getElementById('darkModeToggle').onchange = (event) => { state.darkMode = event.target.checked; state.lastRevealed = null; render(); };
+    document.getElementById('spymasterGuessToggle').onchange = (event) => { state.spymasterMayGuess = event.target.checked; state.lastRevealed = null; render(); };
 
     function roundRect(ctx, x, y, width, height, radius) {
-      ctx.beginPath();
-      ctx.moveTo(x + radius, y);
-      ctx.lineTo(x + width - radius, y);
-      ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-      ctx.lineTo(x + width, y + height - radius);
-      ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-      ctx.lineTo(x + radius, y + height);
-      ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-      ctx.lineTo(x, y + radius);
-      ctx.quadraticCurveTo(x, y, x + radius, y);
-      ctx.closePath();
+      ctx.beginPath(); ctx.moveTo(x + radius, y); ctx.lineTo(x + width - radius, y); ctx.quadraticCurveTo(x + width, y, x + width, y + radius); ctx.lineTo(x + width, y + height - radius); ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height); ctx.lineTo(x + radius, y + height); ctx.quadraticCurveTo(x, y + height, x, y + height - radius); ctx.lineTo(x, y + radius); ctx.quadraticCurveTo(x, y, x + radius, y); ctx.closePath();
     }
 
     function downloadPlayerBoardPng() {
       return new Promise((resolve) => {
-        const width = 1920;
-        const height = 1080;
-        const canvas = document.createElement('canvas');
-        canvas.width = width;
-        canvas.height = height;
+        const width = 1920, height = 1080;
+        const canvas = document.createElement('canvas'); canvas.width = width; canvas.height = height;
         const ctx = canvas.getContext('2d');
-
         const isDark = state.darkMode;
-        const colors = {
-          bg: isDark ? '#111111' : '#ffffff',
-          text: isDark ? '#f3f3f3' : '#050505',
-          neutral: isDark ? '#2b2b2b' : '#e8e8e8',
-          border: isDark ? '#242424' : '#f0f0f0',
-          red: '#d71920',
-          blue: '#315fb8',
-          gray: '#bbbbbb',
-          assassin: '#000000'
-        };
-
-        ctx.fillStyle = colors.bg;
-        ctx.fillRect(0, 0, width, height);
-        ctx.fillStyle = colors.text;
-        ctx.font = '700 42px Georgia, serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText('CODENAMES', width / 2, 54);
-        ctx.fillStyle = colors.border;
-        ctx.fillRect(0, 96, width, 2);
-
+        const colors = { bg: isDark ? '#111111' : '#ffffff', text: isDark ? '#f3f3f3' : '#050505', neutral: isDark ? '#2b2b2b' : '#e8e8e8', border: isDark ? '#242424' : '#f0f0f0', red: '#d71920', blue: '#315fb8', gray: '#ecd99f', assassin: '#000000' };
+        ctx.fillStyle = colors.bg; ctx.fillRect(0, 0, width, height);
+        ctx.fillStyle = colors.text; ctx.font = '700 42px Georgia, serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('CODENAMES', width / 2, 54);
+        ctx.fillStyle = colors.border; ctx.fillRect(0, 96, width, 2);
         const redRemaining = state.roles.filter((role, i) => role === 'red' && !state.revealed[i]).length;
         const blueRemaining = state.roles.filter((role, i) => role === 'blue' && !state.revealed[i]).length;
-        ctx.font = '44px Arial, Helvetica, sans-serif';
-        ctx.textAlign = 'left';
-        ctx.fillStyle = colors.red;
-        ctx.fillText(redRemaining, 32, 142);
-        ctx.fillStyle = isDark ? '#888888' : '#777777';
-        ctx.fillText('–', 86, 142);
-        ctx.fillStyle = colors.blue;
-        ctx.fillText(blueRemaining, 122, 142);
-        ctx.textAlign = 'center';
-        ctx.fillStyle = state.turn === 'red' ? colors.red : colors.blue;
-        ctx.fillText(`${state.turn.charAt(0).toUpperCase() + state.turn.slice(1)}'s turn`, width / 2, 142);
-
-        const cols = 5, rows = 5;
-        const boardX = 22, boardY = 186, gapX = 34, gapY = 30;
+        ctx.font = '44px Arial, Helvetica, sans-serif'; ctx.textAlign = 'left'; ctx.fillStyle = colors.red; ctx.fillText(redRemaining, 32, 142); ctx.fillStyle = isDark ? '#888888' : '#777777'; ctx.fillText('–', 86, 142); ctx.fillStyle = colors.blue; ctx.fillText(blueRemaining, 122, 142);
+        ctx.textAlign = 'center'; ctx.fillStyle = state.turn === 'red' ? colors.red : colors.blue; ctx.fillText(`${state.turn.charAt(0).toUpperCase() + state.turn.slice(1)}'s turn`, width / 2, 142);
+        const cols = 5, rows = 5, boardX = 22, boardY = 186, gapX = 34, gapY = 30;
         const cardW = (width - boardX * 2 - gapX * (cols - 1)) / cols;
         const cardH = (height - boardY - 28 - gapY * (rows - 1)) / rows;
-
         state.words.forEach((word, i) => {
-          const col = i % cols;
-          const row = Math.floor(i / cols);
-          const x = boardX + col * (cardW + gapX);
-          const y = boardY + row * (cardH + gapY);
-          const role = state.roles[i];
-          const revealed = state.revealed[i];
-          let fill = colors.neutral;
-          let textColor = colors.text;
-          if (revealed) {
-            if (role === 'red') fill = colors.red;
-            if (role === 'blue') fill = colors.blue;
-            if (role === 'neutral') fill = colors.gray;
-            if (role === 'assassin') fill = colors.assassin;
-            textColor = role === 'neutral' ? '#111111' : '#ffffff';
-          }
-
-          ctx.fillStyle = fill;
-          roundRect(ctx, x, y, cardW, cardH, 12);
-          ctx.fill();
-          ctx.fillStyle = textColor;
-          ctx.font = state.source === 'images' ? '76px Arial, sans-serif' : '700 38px Arial, Helvetica, sans-serif';
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.fillText(word, x + cardW / 2, y + cardH / 2);
+          const x = boardX + (i % cols) * (cardW + gapX), y = boardY + Math.floor(i / cols) * (cardH + gapY);
+          const role = state.roles[i]; let fill = colors.neutral, textColor = colors.text;
+          if (state.revealed[i]) { if (role === 'red') fill = colors.red; if (role === 'blue') fill = colors.blue; if (role === 'neutral') fill = colors.gray; if (role === 'assassin') fill = colors.assassin; textColor = role === 'neutral' ? '#111111' : '#ffffff'; }
+          ctx.fillStyle = fill; roundRect(ctx, x, y, cardW, cardH, 12); ctx.fill();
+          ctx.fillStyle = textColor; ctx.font = state.source === 'images' ? '76px Arial, sans-serif' : '700 38px Arial, Helvetica, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(word, x + cardW / 2, y + cardH / 2);
         });
-
         canvas.toBlob(async (blob) => {
           if (!blob) { resolve(false); return; }
           const fileName = `codenames-board-${Date.now()}.png`;
           const file = new File([blob], fileName, { type: 'image/png' });
           if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            try {
-              await navigator.share({ files: [file], title: 'Codenames board' });
-              resolve(true);
-              return;
-            } catch (error) {
-              if (error.name === 'AbortError') { resolve(false); return; }
-            }
+            try { await navigator.share({ files: [file], title: 'Codenames board' }); resolve(true); return; } catch (error) { if (error.name === 'AbortError') { resolve(false); return; } }
           }
-          const url = URL.createObjectURL(blob);
-          const link = document.createElement('a');
-          link.href = url;
-          link.download = fileName;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          setTimeout(() => URL.revokeObjectURL(url), 1000);
-          resolve(true);
+          const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href = url; link.download = fileName; document.body.appendChild(link); link.click(); document.body.removeChild(link); setTimeout(() => URL.revokeObjectURL(url), 1000); resolve(true);
         }, 'image/png');
       });
     }
@@ -892,35 +784,8 @@
 
     window.addEventListener('load', nudgeSafariChromeAway);
     window.addEventListener('orientationchange', nudgeSafariChromeAway);
-    window.visualViewport?.addEventListener('resize', () => {
-      if (window.scrollY < 40) nudgeSafariChromeAway();
-    });
-    document.addEventListener('touchend', () => {
-      if (window.scrollY < 1) nudgeSafariChromeAway();
-    }, { passive: true });
-
-    async function extractTextFromZip(file) {
-      if (!window.JSZip) {
-        const script = document.createElement('script');
-        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
-        document.head.appendChild(script);
-        await new Promise((resolve, reject) => {
-          script.onload = resolve;
-          script.onerror = reject;
-        });
-      }
-
-      const zip = await JSZip.loadAsync(file);
-      let combined = '';
-      const txtFiles = Object.values(zip.files).filter(f => !f.dir && f.name.toLowerCase().endsWith('.txt'));
-
-      for (const f of txtFiles) {
-        const content = await f.async('string');
-        combined += "\n" + content;
-      }
-
-      return combined;
-    }
+    window.visualViewport?.addEventListener('resize', () => { if (window.scrollY < 40) nudgeSafariChromeAway(); });
+    document.addEventListener('touchend', () => { if (window.scrollY < 1) nudgeSafariChromeAway(); }, { passive: true });
 
     newGame();
   </script>
