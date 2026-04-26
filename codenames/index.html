@@ -45,7 +45,7 @@
     .app {
       position: fixed;
       inset: 0;
-      width: 100vw;
+      width: 100%;
       height: 100dvh;
       display: grid;
       grid-template-rows: 6.1dvh 1px 5.8dvh minmax(0, 1fr) 9.2dvh;
@@ -195,6 +195,7 @@
       justify-content: center;
       gap: 0;
       padding: 1.7vh max(2vw, env(safe-area-inset-right)) 1.25vh max(2vw, env(safe-area-inset-left));
+      overflow-x: auto;
     }
 
     .control-btn {
@@ -352,6 +353,9 @@
         <button class="control-btn active" id="playerBtn">Player</button>
         <button class="control-btn" id="spymasterBtn">Spymaster</button>
       </div>
+      <div class="footer-section share-section">
+        <button class="control-btn" id="shareGameBtn">Share board</button>
+      </div>
       <div class="footer-section game-section">
         <button class="control-btn" id="previousGameBtn">Previous game</button>
         <button class="control-btn" id="nextBtn">Next game</button>
@@ -374,6 +378,7 @@
   </div>
   <div style="height:520px" aria-hidden="true"></div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
   <script>
     const banks = {
       english: ['TRIANGLE','PORT','PENGUIN','SCALE','TRUNK','BOOM','BACK','BAT','PISTOL','CROSS','BERMUDA','FORCE','LINE','SOCK','FIGHTER','EYE','TRIP','SPIDER','PIANO','BAR','FIGURE','WHIP','GROUND','JACK','SATELLITE','AMAZON','BRIDGE','CASTLE','CLOUD','CROWN','DRAGON','FAIR','GHOST','GLASS','HONEY','IVORY','JUPITER','KING','LASER','MERCURY','NINJA','OLIVE','PILOT','QUEEN','ROBOT','SHADOW','TEMPLE','UNICORN','VAN','WHALE'],
@@ -397,6 +402,28 @@
     let previousGameState = null;
     let selectedSource = 'english';
     let previousSourceSelection = 'english';
+
+    const els = {
+      app: document.getElementById('app'),
+      board: document.getElementById('board'),
+      redScore: document.getElementById('redScore'),
+      blueScore: document.getElementById('blueScore'),
+      playerBtn: document.getElementById('playerBtn'),
+      spymasterBtn: document.getElementById('spymasterBtn'),
+      settingsBtn: document.getElementById('settingsBtn'),
+      settingsPanel: document.getElementById('settingsPanel'),
+      darkModeToggle: document.getElementById('darkModeToggle'),
+      spymasterGuessToggle: document.getElementById('spymasterGuessToggle'),
+      previousGameBtn: document.getElementById('previousGameBtn'),
+      nextBtn: document.getElementById('nextBtn'),
+      shareGameBtn: document.getElementById('shareGameBtn'),
+      downloadPngBtn: document.getElementById('downloadPngBtn'),
+      customFileInput: document.getElementById('customFileInput'),
+      loadingModal: document.getElementById('loadingModal'),
+      effectsCanvas: document.getElementById('effectsCanvas'),
+      sourceOptions: [...document.querySelectorAll('.source-option')],
+      clickableSourceOptions: [...document.querySelectorAll('.source-option[data-source]:not(.file-source-option)')]
+    };
 
     function cloneGameState(source) {
       return {
@@ -443,21 +470,29 @@
       objects: ['🎩','🧲','🎻','🧊','🧩','🗝️','🎲','🧭','🪁','⚓','🎭','🔮','📚','🧨','🏀','💎','🎸','🧱','🕯️','🧪','🥁','🗿','🎯','🚦','🫧','🧯','🛡️','⚽','🏈','⚾','🎾','🏐','🏉','🎱','🏓','🥊','🥋','🎳','🎮','🎨','🎬','🎤','🎧','🎼','🎹','📷','📱','💻','⌚','📡','🔦','🔧','⚙️','🪓','🔨','🪛','🔩','⚖️','💰','📦','🎁','🛒']
     };
 
+    const dedupedImageCategories = Object.fromEntries(
+      Object.entries(imageCategories).map(([category, items]) => [category, dedupeItems(items)])
+    );
+
     function getBalancedImageBank() {
-      const categories = shuffle(Object.keys(imageCategories));
+      const categories = shuffle(Object.keys(dedupedImageCategories));
       const selected = [];
+      const selectedSet = new Set();
+      const categoryCounts = Object.fromEntries(categories.map(category => [category, 0]));
       const maxPerCategory = 5;
       let categoryIndex = 0;
 
-      while (selected.length < 25) {
+      while (selected.length < 25 && categoryIndex <= 500) {
         const category = categories[categoryIndex % categories.length];
-        const currentCount = selected.filter(item => imageCategories[category].includes(item)).length;
-        if (currentCount < maxPerCategory) {
-          const pool = shuffle(dedupeItems(imageCategories[category])).filter(item => !selected.includes(item));
-          if (pool.length) selected.push(pool[0]);
+        if (categoryCounts[category] < maxPerCategory) {
+          const pool = shuffle(dedupedImageCategories[category]).filter(item => !selectedSet.has(item));
+          if (pool.length) {
+            selected.push(pool[0]);
+            selectedSet.add(pool[0]);
+            categoryCounts[category] += 1;
+          }
         }
         categoryIndex++;
-        if (categoryIndex > 500) break;
       }
 
       return selected.length >= 25 ? selected : shuffle(dedupeItems(banks.images)).slice(0, 25);
@@ -482,6 +517,114 @@
       };
     }
 
+    function base64UrlEncode(value) {
+      const bytes = new TextEncoder().encode(value);
+      let binary = '';
+      bytes.forEach(byte => { binary += String.fromCharCode(byte); });
+      return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
+    }
+
+    function base64UrlDecode(value) {
+      const padded = value.replace(/-/g, '+').replace(/_/g, '/') + '==='.slice((value.length + 3) % 4);
+      const binary = atob(padded);
+      const bytes = Uint8Array.from(binary, char => char.charCodeAt(0));
+      return new TextDecoder().decode(bytes);
+    }
+
+    function encodeSharedPayload(payload) {
+      const json = JSON.stringify(payload);
+      if (window.LZString?.compressToEncodedURIComponent) {
+        return 'lz.' + LZString.compressToEncodedURIComponent(json);
+      }
+      return base64UrlEncode(json);
+    }
+
+    function decodeSharedPayload(value) {
+      if (value.startsWith('lz.')) {
+        if (!window.LZString?.decompressFromEncodedURIComponent) throw new Error('Compression library unavailable');
+        const json = LZString.decompressFromEncodedURIComponent(value.slice(3));
+        if (!json) throw new Error('Invalid compressed shared game');
+        return json;
+      }
+      return base64UrlDecode(value);
+    }
+
+    function validateSharedGame(payload) {
+      if (!payload || payload.v !== 1) return false;
+      if (!Array.isArray(payload.w) || !Array.isArray(payload.r)) return false;
+      if (payload.w.length !== 25 || payload.r.length !== 25) return false;
+      if (payload.x && (!Array.isArray(payload.x) || payload.x.length !== 25)) return false;
+      const validRoles = new Set(['red', 'blue', 'neutral', 'assassin']);
+      return payload.w.every(item => typeof item === 'string') && payload.r.every(role => validRoles.has(role));
+    }
+
+    function getShareableGameUrl() {
+      const payload = {
+        v: 1,
+        w: state.words,
+        r: state.roles,
+        x: state.revealed,
+        s: state.source,
+        t: state.turn
+      };
+      const url = new URL(window.location.href);
+      url.searchParams.set('game', encodeSharedPayload(payload));
+      url.hash = '';
+      return url.toString();
+    }
+
+    function loadSharedGameFromUrl() {
+      const encoded = new URLSearchParams(window.location.search).get('game');
+      if (!encoded) return false;
+      try {
+        const payload = JSON.parse(decodeSharedPayload(encoded));
+        if (!validateSharedGame(payload)) throw new Error('Invalid shared game');
+        selectedSource = payload.s || 'english';
+        previousSourceSelection = selectedSource;
+        state = {
+          words: [...payload.w],
+          roles: [...payload.r],
+          revealed: payload.x ? [...payload.x].map(Boolean) : Array(25).fill(false),
+          source: selectedSource,
+          pending: null,
+          pendingTimer: null,
+          lastRevealed: null,
+          turn: payload.t === 'blue' ? 'blue' : 'red',
+          spymaster: false,
+          darkMode: false,
+          spymasterMayGuess: false
+        };
+        render();
+        return true;
+      } catch (error) {
+        alert('This shared game link could not be loaded. Starting a new game instead.');
+        const url = new URL(window.location.href);
+        url.searchParams.delete('game');
+        window.history.replaceState({}, '', url.toString());
+        return false;
+      }
+    }
+
+    async function shareGameLink() {
+      const link = getShareableGameUrl();
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: 'Codenames game', url: link });
+          return;
+        } catch (error) {
+          if (error.name === 'AbortError') return;
+        }
+      }
+      try {
+        await navigator.clipboard.writeText(link);
+        const original = els.shareGameBtn.textContent;
+        els.shareGameBtn.textContent = 'Copied!';
+        setTimeout(() => { els.shareGameBtn.textContent = original; }, 1400);
+      } catch (error) {
+        window.prompt('Copy this game link:', link);
+      }
+    }
+
     function newGame(saveCurrent = false) {
       if (saveCurrent && state.words) previousGameState = cloneGameState(state);
       const setup = makeRoles();
@@ -502,38 +645,38 @@
     }
 
     function render() {
-      const app = document.getElementById('app');
-      const board = document.getElementById('board');
-      const redScore = document.getElementById('redScore');
-      const blueScore = document.getElementById('blueScore');
-      
-      const playerBtn = document.getElementById('playerBtn');
-      const spymasterBtn = document.getElementById('spymasterBtn');
-      const darkModeToggle = document.getElementById('darkModeToggle');
-      const spymasterGuessToggle = document.getElementById('spymasterGuessToggle');
-      const sourceOptions = document.querySelectorAll('.source-option');
+      els.app.classList.toggle('dark', state.darkMode);
+      els.app.classList.toggle('spymaster', state.spymaster);
+      let redRemaining = 0;
+      let blueRemaining = 0;
+      state.roles.forEach((role, i) => {
+        if (state.revealed[i]) return;
+        if (role === 'red') redRemaining += 1;
+        if (role === 'blue') blueRemaining += 1;
+      });
+      els.redScore.textContent = redRemaining;
+      els.blueScore.textContent = blueRemaining;
 
-      app.classList.toggle('dark', state.darkMode);
-      app.classList.toggle('spymaster', state.spymaster);
-      redScore.textContent = state.roles.filter((role, i) => role === 'red' && !state.revealed[i]).length;
-      blueScore.textContent = state.roles.filter((role, i) => role === 'blue' && !state.revealed[i]).length;
-      
-      playerBtn.classList.toggle('active', !state.spymaster);
-      spymasterBtn.classList.toggle('active', state.spymaster);
-      darkModeToggle.checked = state.darkMode;
-      spymasterGuessToggle.checked = state.spymasterMayGuess;
-      sourceOptions.forEach(option => option.classList.toggle('active', option.dataset.source === selectedSource));
-      board.innerHTML = '';
+      els.playerBtn.classList.toggle('active', !state.spymaster);
+      els.spymasterBtn.classList.toggle('active', state.spymaster);
+      els.darkModeToggle.checked = state.darkMode;
+      els.spymasterGuessToggle.checked = state.spymasterMayGuess;
+      els.sourceOptions.forEach(option => option.classList.toggle('active', option.dataset.source === selectedSource));
 
-      state.words.forEach((w,i) => {
+      const fragment = document.createDocumentFragment();
+      state.words.forEach((w, i) => {
         const el = document.createElement('div');
         const role = state.roles[i];
         const isImage = state.source === 'images';
         el.className = 'card ' + role + (isImage ? ' image-card' : '') + (state.revealed[i] ? ' revealed' : '') + (state.lastRevealed === i ? ' reveal-anim' : '') + (state.pending === i ? ' pending' : '');
-        el.innerHTML = `<span>${w}</span>`;
+        const label = document.createElement('span');
+        label.textContent = w;
+        el.appendChild(label);
         el.onclick = () => handleCardClick(i);
-        board.appendChild(el);
+        fragment.appendChild(el);
       });
+
+      els.board.replaceChildren(fragment);
     }
 
     function handleCardClick(i) {
@@ -572,11 +715,11 @@
     }
 
     function launchBombExplosion() {
-      const app = document.getElementById('app');
+      const app = els.app;
       app.classList.remove('screen-shake');
       void app.offsetWidth;
       app.classList.add('screen-shake');
-      const canvas = document.getElementById('effectsCanvas');
+      const canvas = els.effectsCanvas;
       const ctx = canvas.getContext('2d');
       const dpr = window.devicePixelRatio || 1;
       const width = window.innerWidth;
@@ -614,7 +757,7 @@
     }
 
     function launchFireworks(team) {
-      const canvas = document.getElementById('effectsCanvas');
+      const canvas = els.effectsCanvas;
       const ctx = canvas.getContext('2d');
       const dpr = window.devicePixelRatio || 1;
       const width = window.innerWidth;
@@ -723,20 +866,21 @@
     }
 
     
-    document.getElementById('settingsBtn').onclick = () => document.getElementById('settingsPanel').classList.toggle('open');
-    document.getElementById('playerBtn').onclick = () => { state.spymaster = false; state.lastRevealed = null; render(); };
-    document.getElementById('spymasterBtn').onclick = () => { state.spymaster = true; state.lastRevealed = null; render(); };
-    document.getElementById('previousGameBtn').onclick = () => {
+    els.settingsBtn.onclick = () => els.settingsPanel.classList.toggle('open');
+    els.playerBtn.onclick = () => { state.spymaster = false; state.lastRevealed = null; render(); };
+    els.spymasterBtn.onclick = () => { state.spymaster = true; state.lastRevealed = null; render(); };
+    els.previousGameBtn.onclick = () => {
       if (!previousGameState) { alert('No previous game yet.'); return; }
       clearPending(); state = cloneGameState(previousGameState); selectedSource = state.source || selectedSource; render();
     };
-    document.getElementById('nextBtn').onclick = () => { clearPending(); newGame(true); };
-    document.getElementById('downloadPngBtn').onclick = downloadPlayerBoardPng;
-    document.querySelectorAll('.source-option[data-source]:not(.file-source-option)').forEach(option => {
-      option.onclick = () => { previousSourceSelection = selectedSource; selectedSource = option.dataset.source; newGame(true); render(); };
+    els.nextBtn.onclick = () => { clearPending(); newGame(true); };
+    els.shareGameBtn.onclick = shareGameLink;
+    els.downloadPngBtn.onclick = downloadPlayerBoardPng;
+    els.clickableSourceOptions.forEach(option => {
+      option.onclick = () => { previousSourceSelection = selectedSource; selectedSource = option.dataset.source; newGame(true); };
     });
-    document.getElementById('customFileInput').onchange = async (event) => {
-      const loading = document.getElementById('loadingModal');
+    els.customFileInput.onchange = async (event) => {
+      const loading = els.loadingModal;
       const file = event.target.files?.[0];
       if (!file) { selectedSource = previousSourceSelection; render(); return; }
       loading.classList.add('show');
@@ -759,8 +903,8 @@
         loading.classList.remove('show'); event.target.value = '';
       }
     };
-    document.getElementById('darkModeToggle').onchange = (event) => { state.darkMode = event.target.checked; state.lastRevealed = null; render(); };
-    document.getElementById('spymasterGuessToggle').onchange = (event) => { state.spymasterMayGuess = event.target.checked; state.lastRevealed = null; render(); };
+    els.darkModeToggle.onchange = (event) => { state.darkMode = event.target.checked; state.lastRevealed = null; render(); };
+    els.spymasterGuessToggle.onchange = (event) => { state.spymasterMayGuess = event.target.checked; state.lastRevealed = null; render(); };
 
     function roundRect(ctx, x, y, width, height, radius) {
       ctx.beginPath(); ctx.moveTo(x + radius, y); ctx.lineTo(x + width - radius, y); ctx.quadraticCurveTo(x + width, y, x + width, y + radius); ctx.lineTo(x + width, y + height - radius); ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height); ctx.lineTo(x + radius, y + height); ctx.quadraticCurveTo(x, y + height, x, y + height - radius); ctx.lineTo(x, y + radius); ctx.quadraticCurveTo(x, y, x + radius, y); ctx.closePath();
@@ -814,7 +958,7 @@
     window.visualViewport?.addEventListener('resize', () => { if (window.scrollY < 40) nudgeSafariChromeAway(); });
     document.addEventListener('touchend', () => { if (window.scrollY < 1) nudgeSafariChromeAway(); }, { passive: true });
 
-    newGame();
+    if (!loadSharedGameFromUrl()) newGame();
   </script>
 </body>
 </html>
