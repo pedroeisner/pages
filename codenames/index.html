@@ -378,7 +378,6 @@
   </div>
   <div style="height:520px" aria-hidden="true"></div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
   <script>
     const banks = {
       english: ['TRIANGLE','PORT','PENGUIN','SCALE','TRUNK','BOOM','BACK','BAT','PISTOL','CROSS','BERMUDA','FORCE','LINE','SOCK','FIGHTER','EYE','TRIP','SPIDER','PIANO','BAR','FIGURE','WHIP','GROUND','JACK','SATELLITE','AMAZON','BRIDGE','CASTLE','CLOUD','CROWN','DRAGON','FAIR','GHOST','GLASS','HONEY','IVORY','JUPITER','KING','LASER','MERCURY','NINJA','OLIVE','PILOT','QUEEN','ROBOT','SHADOW','TEMPLE','UNICORN','VAN','WHALE'],
@@ -531,24 +530,6 @@
       return new TextDecoder().decode(bytes);
     }
 
-    function encodeSharedPayload(payload) {
-      const json = JSON.stringify(payload);
-      if (window.LZString?.compressToEncodedURIComponent) {
-        return 'lz.' + LZString.compressToEncodedURIComponent(json);
-      }
-      return base64UrlEncode(json);
-    }
-
-    function decodeSharedPayload(value) {
-      if (value.startsWith('lz.')) {
-        if (!window.LZString?.decompressFromEncodedURIComponent) throw new Error('Compression library unavailable');
-        const json = LZString.decompressFromEncodedURIComponent(value.slice(3));
-        if (!json) throw new Error('Invalid compressed shared game');
-        return json;
-      }
-      return base64UrlDecode(value);
-    }
-
     function validateSharedGame(payload) {
       if (!payload || payload.v !== 1) return false;
       if (!Array.isArray(payload.w) || !Array.isArray(payload.r)) return false;
@@ -568,7 +549,7 @@
         t: state.turn
       };
       const url = new URL(window.location.href);
-      url.searchParams.set('game', encodeSharedPayload(payload));
+      url.searchParams.set('game', base64UrlEncode(JSON.stringify(payload)));
       url.hash = '';
       return url.toString();
     }
@@ -577,7 +558,7 @@
       const encoded = new URLSearchParams(window.location.search).get('game');
       if (!encoded) return false;
       try {
-        const payload = JSON.parse(decodeSharedPayload(encoded));
+        const payload = JSON.parse(base64UrlDecode(encoded));
         if (!validateSharedGame(payload)) throw new Error('Invalid shared game');
         selectedSource = payload.s || 'english';
         previousSourceSelection = selectedSource;
@@ -811,8 +792,45 @@
     }
 
     function extractCustomWords(text) {
+      const originalText = text;
+
+      function normalizeForCompare(value) {
+        return basicNormalize(value).replace(/[^a-zñü\s]/gi, ' ').trim();
+      }
+
+      function tokenizeName(value) {
+        return normalizeForCompare(value).split(/\s+/).filter(token => token.length >= 3);
+      }
+
+      function extractWhatsappSenderWords(rawText) {
+        const senderWords = new Set();
+        const senderCounts = new Map();
+        const lines = rawText.split(/\r?\n/).slice(0, 5000);
+
+        lines.forEach(line => {
+          // Common WhatsApp exports:
+          // 12/31/25, 8:04 PM - Pedro Pérez: message
+          // [12/31/25, 8:04:12 PM] Pedro Pérez: message
+          const match = line.match(/^(?:\[?\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4},?\s+\d{1,2}:\d{2}(?::\d{2})?(?:\s?[AP]M)?\]?\s*-\s*|\[?\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4},?\s+\d{1,2}:\d{2}(?::\d{2})?(?:\s?[AP]M)?\]?\s+)([^:]{2,60}):\s/iu);
+          if (!match) return;
+          const sender = match[1]
+            .replace(/\+?\d[\d\s().-]{6,}/g, ' ')
+            .replace(/[~@]/g, ' ');
+          tokenizeName(sender).forEach(token => {
+            senderCounts.set(token, (senderCounts.get(token) || 0) + 1);
+          });
+        });
+
+        senderCounts.forEach((count, token) => {
+          if (count >= 2) senderWords.add(token);
+        });
+        return senderWords;
+      }
+
+      const whatsappSenderWords = extractWhatsappSenderWords(originalText);
+
       const capitalizationStats = new Map();
-      text.split(/[^A-Za-zÀ-ÿ]+/).filter(Boolean).forEach(token => {
+      originalText.split(/[^A-Za-zÀ-ÿÑñÜü]+/).filter(Boolean).forEach(token => {
         const normalized = basicNormalize(token);
         const first = token.charAt(0);
         const isCapitalized = first !== first.toLowerCase() && token !== token.toUpperCase();
@@ -823,32 +841,144 @@
       });
 
       const spanishNames = new Set('juan pedro pablo martin matias mati santiago tomas lucas lautaro franco facundo agustin nico nicolas federico fede diego javier sebastian rodrigo ignacio nacho manuel manu gabriel rafael andres alejandro mariano esteban leandro gonzalo joaquin maxi maximiliano luciano emi emiliano ivan luis carlos miguel ricardo daniel fernando eduardo victor mario ramiro ezequiel damian julian valentin felipe benjamin bautista thiago enzo bruno simon gael dylan marcos jorge oscar alberto guillermo gustavo claudio sergio hector osvaldo cristian cristobal francisco pancho pepe jose antonio alvaro jaime raul ruben cesar adrian mauro mauricio axel alan renzo tadeo ian joaco maria sofia martina valentina camila cami lucia luciana luli micaela mica florencia flor agustina agus julieta juli paula pau carolina caro laura andrea ana anita mariana rocio rochi belen pilar josefina juana victoria vicky valeria vale romina romi natalia nati gabriela gabi daniela dani fernanda fer cecilia ceci veronica vero silvina silvi marina paola claudia patricia patri monica moni susana graciela grace ines elena luisa isabel teresa catalina cata renata emilia ema alma olivia emma jazmin abril malena male lara mora zoe mia eva lola salome ambar guadalupe guada milagros mili jimena ximena azul'.split(' '));
-      const commonSpanishVerbs = new Set('ser estar tener hacer decir haber poder querer saber poner ver dar ir venir llegar pasar deber parecer quedar creer hablar llevar dejar seguir encontrar llamar pensar salir volver tomar conocer vivir sentir tratar mirar contar empezar esperar buscar existir entrar trabajar escribir perder producir ocurrir entender pedir recibir recordar terminar permitir aparecer conseguir comenzar servir sacar necesitar mantener resultar leer caer cambiar presentar crear abrir considerar oir acabar convertir ganar formar traer partir morir aceptar realizar suponer comprender lograr explicar preguntar tocar reconocer estudiar alcanzar nacer dirigir correr utilizar pagar ayudar gustar jugar comprar vender comer beber dormir caminar mandar enviar subir bajar'.split(' '));
-      const commonEnglishVerbs = new Set('be am is are was were been being have has had do does did say go get make know think take see come want look use find give tell work call try ask need feel become leave put keep let begin seem help talk turn start show hear play run move live believe bring happen write provide sit stand lose pay meet include continue set learn change lead understand watch follow stop create speak read allow add spend grow open walk win offer remember love consider appear buy wait serve die send expect build stay fall cut reach kill remain'.split(' '));
-      const weakWords = new Set('gente cosas cosa tema temas tiempo parte partes forma formas momento momentos verdad realidad problema problemas manera maneras alguien nadie todos todas mismo misma mismos mismas lugar lugares hecho hechos stuff thing things people someone nothing anything everything today tomorrow yesterday'.split(' '));
+      const commonSpanishVerbs = new Set('ser soy sos somos son era eras eran fui fuiste fue fuimos fueron estar estoy estas estás esta está estamos estan están estaba estabas estaban tener tenemos tenes tienes tiene tienen tengo tenia tenían tuvo tuvieron hacer hacemos haces hacen hago hizo hicieron decir digo dice dicen dije haber hay habia había hubo poder puedo podes puede pueden querer quiero queres quieres quiere quieren saber sabes sabe saben poner pongo pone ponen ver veo ven dar doy dan ir voy vas va vamos van venir viene vienen llegar llego llegó llegas llega llegan llegamos llegado pasar pasa pasan deber debe deben parecer parece quedan quedar creer creo creen hablar habla hablan llevar lleva dejan dejar seguir sigue encontrar encuentro encuentran llamar llama llaman pensar piensa salir salio salió salen volver vuelve tomar toma conocer conoce vivir vive sentir siente tratar trata mirar mira contar cuenta empezar empieza esperar espera buscar busca buscando existir existe entrar entra trabajar trabaja escribir escribe perder pierde producir produce ocurrir ocurre entender entiende pedir pide recibir recibe recordar recuerda terminar termina permitir permite aparecer aparece conseguir consigue comenzar comienza servir sirve sacar saca necesitar necesita mantener mantiene resultar resulta leer lee caer cae cambiar cambia presentar presenta crear crea abrir abre considerar considera oir oír oye acabar acaba convertir convierte ganar gana formar forma traer trae partir parte morir muere aceptar acepta realizar realiza suponer supone comprender comprende lograr logra explicar explica preguntar pregunta tocar toca reconocer reconoce estudiar estudia alcanzar alcanza nacer nace dirigir dirige correr corre utilizar utiliza pagar paga ayudar ayuda gustar gusta jugar juega comprar compra vender vende comer come beber bebe dormir duerme caminar camina mandar manda enviar envia envía subir sube bajar baja alquilar alquila reservar reserva reservarse ofreciendo ofrecer ofrezco ofrece conseguir ofrecer encontrar buscar necesitar consultar responder confirmar cancelar pagar cobrar interesa interesado disponible disponibles votado votar omitido omitir unido unirse salio salir entro entrar cambiado cambiar borrado borrar eliminado eliminar'.split(' '));
+      const commonEnglishVerbs = new Set('be am is are was were been being have has had do does did say go get make know think take see come want look use find give tell work call try ask need feel become leave put keep let begin seem help talk turn start show hear play run move live believe bring happen write provide sit stand lose pay meet include continue set learn change lead understand watch follow stop create speak read allow add spend grow open walk win offer remember love consider appear buy wait serve die send expect build stay fall cut reach kill remain rent book reserve looking found available interested omitted voted joined left created changed deleted removed edited'.split(' '));
+      const weakWords = new Set('despues después tenemos tenemo gente cosas cosa tema temas tiempo parte partes forma formas momento momentos verdad realidad problema problemas manera maneras alguien nadie todos todas mismo misma mismos mismas lugar lugares hecho hechos buena buenas bueno buenos hola gracias dale perfecto genial favor perdon perdón disculpa disculpas mensaje mensajes grupo privado whatsapp sticker imagen audio video disponible disponibles interesado interesada interesa busco busca buscando oferta ofrezco necesito necesita alguien nada cualquier cualquiera todavía todavia ahora today tomorrow yesterday stuff thing things people someone nothing anything everything thanks hello hi okay ok please maybe still already mas más menos bastante demasiado demasiada demasiados demasiadas mucho mucha muchos muchas poco poca pocos pocas alguno alguna algunos algunas ningun ningún ninguna todos todas otro otra otros otras cada ambos ambas algo casi siempre nunca tambien también entonces igual tipo manera onda capaz somos'.split(' '));
+      const whatsappNoise = new Set('omitted voted joined left created changed deleted removed edited message messages media audio video image images photo photos sticker stickers poll polls call calls missed group admin admins invite link links whatsapp encryption encrypted security code changed subject description icon notification notifications pinned unpinned reacted reaction forwarded contact contacts location live deletedmessage multimedia omitido omitida omitidos omitidas votado votada votaron unido unida salio salió entro entró agrego agregó elimino eliminó cambio cambió creado creada borrado borrada llamada llamadas perdida perdidas encuesta encuestas grupo enlace enlaces invitacion invitación ubicacion ubicación reenviado reenviada reaccion reacción reacciono reaccionó administrador administradores asunto descripcion descripción'.split(' '));
+      const monthsAndDays = new Set('january february march april may june july august september october november december monday tuesday wednesday thursday saturday sunday enero febrero marzo abril mayo junio julio agosto septiembre octubre noviembre diciembre lunes martes miercoles miércoles jueves viernes sabado sábado domingo'.split(' '));
+      const spanishFunctionWords = new Set('somos soy sos son eras era eran fui fue fuimos fueron estoy estas estás esta está estamos estan están estaba estaban tener tenemos tenes tienes tiene tienen menos bastante alguno alguna algunos algunas ningun ningún ninguna muchas muchos mucha mucho pocas pocos poca poco demasiado demasiada demasiados demasiadas cada ambos ambas entre desde hasta hacia para pero porque aunque mientras donde dónde cuando cuándo como cómo quien quién quienes quiénes cual cuál cuales cuáles esto esta este estos estas eso esa ese esos esas aquello aquella aquel aquellos aquellas nuestro nuestra nuestros nuestras'.split(' '));
+      const placeNoise = new Set('departamento depto habitacion habitación cuarto alquiler subalquiler precio expensas amenities disponible disponibilidad buscar busqueda búsqueda reserva booking airbnb opentable whatsapp instagram facebook email gmail hotmail telefono teléfono celu celular'.split(' '));
+      const strongConcreteHints = new Set('casa puente castillo bosque isla tren avion avión barco puerto cancha guitarra piano mercado espejo corona llave moneda fuego nube rayo tesoro caballo pajaro pájaro diamante ventana pantalla tormenta barrio cueva cometa brujula brújula tango mascara máscara planeta cangrejo flecha bandera misterio piramide pirámide circo satelite satélite bote muralla dragon dragón linterna mate subte anillo jaguar helado'.split(' '));
+
       function looksLikeVerb(word) {
         if (commonSpanishVerbs.has(word) || commonEnglishVerbs.has(word)) return true;
-        return ['ing','ed','ar','er','ir','ando','iendo','ado','ido','aba','abas','aban','aste','iste','amos','emos','imos','aria','arias','arian','eria','erias','erian'].some(ending => word.endsWith(ending));
+        return ['ing','ed','ando','iendo','ado','ido','aba','abas','aban','aste','iste','amos','emos','imos','aria','arias','arian','eria','erias','erian'].some(ending => word.endsWith(ending));
       }
+
+      function looksLikeAbstractOrProcess(word) {
+        return ['mente','tion','sion','ness','idad','ismo','cion','ción','amiento','imiento','acion','ación'].some(ending => word.endsWith(ending));
+      }
+
       function looksLikeProperName(word) {
-        if (spanishNames.has(word)) return true;
+        if (spanishNames.has(word) || whatsappSenderWords.has(word)) return true;
         const stats = capitalizationStats.get(word);
         if (!stats) return false;
-        return (stats.capitalized / stats.total) > 0.5 && stats.total < 20;
+        return (stats.capitalized / stats.total) > 0.55 && stats.total < 20;
       }
-      const cleaned = basicNormalize(text).replace(/https?:\/\/\S+/g, ' ').replace(/\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}/g, ' ').replace(/\d{1,2}:\d{2}/g, ' ').replace(/[^a-zñü\s]/gi, ' ');
-      const words = cleaned.split(/\s+/).filter(Boolean);
+
+      function getWordFamilyKey(word) {
+        // Used only for deduping similar variants. The displayed word is never modified.
+        let key = word;
+
+        // Conservative plural handling:
+        // - perros/perras -> perro/perra
+        // - canciones -> cancion
+        // - avoid breaking words like viernes, despues, ingles
+        const protectedEsEndings = new Set(['despues','viernes','ingles','mes','pais','tesis','crisis']);
+        if (key.length > 6 && key.endsWith('es') && !protectedEsEndings.has(key)) {
+          if (key.endsWith('ces')) key = key.slice(0, -3) + 'z';
+          else if (key.endsWith('iones')) key = key.slice(0, -2);
+          else if (/[bcdfghjklmnñpqrstvwxyz]es$/.test(key)) key = key.slice(0, -2);
+        } else if (key.length > 5 && key.endsWith('s') && !key.endsWith('us') && !key.endsWith('is')) {
+          key = key.slice(0, -1);
+        }
+
+        // Conservative Spanish gender handling:
+        // perro/perra -> perr, amigo/amiga -> amig
+        // only for words long enough to avoid damaging short words.
+        if (key.length > 5 && /[oa]$/.test(key)) key = key.slice(0, -1);
+
+        return key;
+      }
+
+      function isGoodShape(word) {
+        if (word.length < 5 || word.length > 13) return false;
+        if (/(.)\1\1/.test(word)) return false;
+        if (/^(jaja|haha|jeje|hehe)+$/.test(word)) return false;
+        if (/^[aeiou]+$/.test(word)) return false;
+        if (!/[aeiou]/.test(word)) return false;
+        if (['despu','tenemo'].includes(word)) return false;
+        return true;
+      }
+
+      function wordScore(word, count, docFrequency, firstIndex, total) {
+        let score = Math.log1p(count) * 2.4;
+
+        if (word.length >= 7 && word.length <= 10) score *= 1.18;
+        if (word.length > 11) score *= 0.86;
+        if (strongConcreteHints.has(word)) score *= 1.35;
+        if (/[aeiou][bcdfghjklmnñpqrstvwxyz][aeiou]/.test(word)) score *= 1.05;
+
+        const stats = capitalizationStats.get(word);
+        const capitalizedRatio = stats ? stats.capitalized / stats.total : 0;
+        if (capitalizedRatio > 0.35) score *= 0.7;
+
+        const recencyWeight = 0.9 + (firstIndex / total) * 0.15;
+        score *= recencyWeight;
+
+        if (docFrequency === 1 && count < 2.2) score *= 0.55;
+        if (count > 18) score *= 0.8;
+        return score;
+      }
+
+      const cleaned = basicNormalize(originalText)
+        .replace(/<media omitted>|media omitted|image omitted|video omitted|audio omitted|sticker omitted/gi, ' ')
+        .replace(/https?:\/\/\S+/g, ' ')
+        .replace(/\b\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}\b/g, ' ')
+        .replace(/\b\d{1,2}:\d{2}(?:\s?[ap]m)?\b/gi, ' ')
+        .replace(/\b\d+[.,]?\d*\s?(usd|ars|eur|pesos?|dolares?|dólares?|k|m2|m²|amb|ambientes?)\b/gi, ' ')
+        .replace(/\b[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}\b/gi, ' ')
+        .replace(/[^a-zñü\s]/gi, ' ');
+
+      const rawTokens = cleaned.split(/\s+/).filter(Boolean);
       const counts = new Map();
-      const total = Math.max(words.length, 1);
-      words.forEach((word, index) => {
-        if (word.length < 5 || word.length > 14) return;
-        if (stopWords.has(word) || weakWords.has(word)) return;
-        if (/^(jaja|haha)+$/.test(word)) return;
-        if (looksLikeVerb(word) || looksLikeProperName(word)) return;
-        const recencyWeight = 0.5 + (index / total);
-        counts.set(word, (counts.get(word) || 0) + recencyWeight);
+      const firstSeen = new Map();
+      const total = Math.max(rawTokens.length, 1);
+
+      rawTokens.forEach((rawWord, index) => {
+        const word = rawWord;
+        if (!isGoodShape(word)) return;
+        if (stopWords.has(word) || weakWords.has(word) || spanishFunctionWords.has(word) || whatsappNoise.has(word) || monthsAndDays.has(word) || placeNoise.has(word)) return;
+        if (looksLikeVerb(word) || looksLikeAbstractOrProcess(word) || looksLikeProperName(word)) return;
+
+        if (/^(www|http|https|com|net|org|jpeg|jpg|png|mov|mp4|opus|webp)$/.test(word)) return;
+
+        const previous = counts.get(word) || 0;
+        const rarityBoost = previous === 0 ? 1 : 0.85;
+        counts.set(word, previous + rarityBoost);
+        if (!firstSeen.has(word)) firstSeen.set(word, index);
       });
-      return [...new Set([...counts.entries()].filter(([word, count]) => count >= 2 || word.length >= 7).sort((a, b) => (b[1] - a[1]) || (b[0].length - a[0].length)).map(([word]) => word.toUpperCase()))].slice(0, 80);
+
+      const rankedWords = [...counts.entries()]
+        .map(([word, count]) => [word, wordScore(word, count, count, firstSeen.get(word) || 0, total)])
+        .filter(([word, score]) => score >= 1.35)
+        .sort((a, b) => {
+          const [wordA, scoreA] = a;
+          const [wordB, scoreB] = b;
+          const diff = scoreB - scoreA;
+          if (Math.abs(diff) > 0.2) return diff;
+          return (wordB.length - wordA.length) || ((firstSeen.get(wordA) || 0) - (firstSeen.get(wordB) || 0));
+        });
+
+      function isLaughLikeWord(word) {
+        return word.includes('jaja') || word.includes('haha');
+      }
+
+      const seenFamilies = new Set();
+      const finalWords = [];
+      let hasLaughLikeWord = false;
+      rankedWords.forEach(([word]) => {
+        const familyKey = getWordFamilyKey(word);
+        if (seenFamilies.has(familyKey)) return;
+        if (isLaughLikeWord(word)) {
+          if (hasLaughLikeWord) return;
+          hasLaughLikeWord = true;
+        }
+        seenFamilies.add(familyKey);
+        finalWords.push(word.toUpperCase());
+      });
+
+      return finalWords.slice(0, 80);
     }
 
     async function extractTextFromZip(file) {
@@ -858,11 +988,36 @@
         document.head.appendChild(script);
         await new Promise((resolve, reject) => { script.onload = resolve; script.onerror = reject; });
       }
+
       const zip = await JSZip.loadAsync(file);
       let combined = '';
-      const txtFiles = Object.values(zip.files).filter(f => !f.dir && f.name.toLowerCase().endsWith('.txt'));
-      for (const f of txtFiles) combined += '\n' + await f.async('string');
+      const textLikeFiles = Object.values(zip.files).filter(f => {
+        if (f.dir) return false;
+        const name = f.name.toLowerCase();
+        return name.endsWith('.txt') || name.endsWith('.text') || name.endsWith('.csv');
+      });
+
+      for (const f of textLikeFiles) {
+        try {
+          combined += '\n' + await f.async('string');
+        } catch (error) {
+          const buffer = await f.async('arraybuffer');
+          combined += '\n' + new TextDecoder('utf-8', { fatal: false }).decode(buffer);
+        }
+      }
+
+      if (!combined.trim()) throw new Error('No readable text files found in zip');
       return combined;
+    }
+
+    async function readCustomTextFile(file) {
+      if (file.name.toLowerCase().endsWith('.zip')) return extractTextFromZip(file);
+      try {
+        return await file.text();
+      } catch (error) {
+        const buffer = await file.arrayBuffer();
+        return new TextDecoder('utf-8', { fatal: false }).decode(buffer);
+      }
     }
 
     
@@ -887,7 +1042,7 @@
       const start = performance.now();
       await new Promise(resolve => requestAnimationFrame(resolve));
       try {
-        const text = file.name.toLowerCase().endsWith('.zip') ? await extractTextFromZip(file) : await file.text();
+        const text = await readCustomTextFile(file);
         banks.custom = extractCustomWords(text);
         if (banks.custom.length < 25) {
           alert(`I found ${banks.custom.length} usable words. Upload a longer text file or use another language.`);
