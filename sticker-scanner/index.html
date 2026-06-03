@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Aginet Device Scanner</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f0f4f8;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px;
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #1a202c;
+      margin-bottom: 4px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: #718096;
+      margin-bottom: 24px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      margin-bottom: 16px;
+    }
+
+    /* API Key setup */
+    #apiKeySection label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #4a5568;
+      margin-bottom: 8px;
+    }
+
+    #apiKeySection input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 14px;
+      color: #2d3748;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    #apiKeySection input:focus {
+      border-color: #667eea;
+    }
+
+    .save-btn {
+      margin-top: 10px;
+      width: 100%;
+      padding: 10px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .save-btn:hover { background: #5a67d8; }
+
+    /* Image capture area */
+    #captureSection {
+      display: none;
+    }
+
+    .preview-wrap {
+      position: relative;
+      width: 100%;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #edf2f7;
+      min-height: 160px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+    }
+
+    #preview {
+      width: 100%;
+      display: none;
+      border-radius: 12px;
+    }
+
+    .placeholder-text {
+      color: #a0aec0;
+      font-size: 14px;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 13px;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn:active { transform: scale(0.97); }
+
+    .btn-camera {
+      background: #667eea;
+      color: white;
+    }
+
+    .btn-gallery {
+      background: #edf2f7;
+      color: #4a5568;
+    }
+
+    .btn-scan {
+      width: 100%;
+      margin-top: 12px;
+      background: #38a169;
+      color: white;
+      padding: 15px;
+      font-size: 16px;
+    }
+
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    /* Results */
+    #resultsSection {
+      display: none;
+    }
+
+    .field-card {
+      background: white;
+      border-radius: 16px;
+      padding: 18px 20px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .field-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #a0aec0;
+      margin-bottom: 4px;
+    }
+
+    .field-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1a202c;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.02em;
+    }
+
+    .copy-btn {
+      flex-shrink: 0;
+      padding: 10px 18px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .copy-btn:active { transform: scale(0.95); }
+
+    .copy-btn.copied {
+      background: #38a169;
+    }
+
+    /* Loading */
+    .spinner {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      border: 2.5px solid rgba(255,255,255,0.4);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .error-msg {
+      color: #e53e3e;
+      font-size: 13px;
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    .reset-link {
+      color: #667eea;
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: underline;
+      text-align: center;
+      display: block;
+      margin-top: 8px;
+    }
+
+    #fileInput { display: none; }
+    #cameraInput { display: none; }
+  </style>
+</head>
+<body>
+
+  <h1>Aginet Scanner</h1>
+  <p class="subtitle">Scan a device sticker to extract MAC &amp; S/N</p>
+
+  <!-- Step 1: API Key -->
+  <div class="card" id="apiKeySection">
+    <label for="apiKeyInput">Anthropic API Key</label>
+    <input type="password" id="apiKeyInput" placeholder="sk-ant-..." autocomplete="off" />
+    <button class="save-btn" onclick="saveKey()">Save &amp; Continue</button>
+    <p style="font-size:12px;color:#a0aec0;margin-top:8px;">Stored only in your browser's localStorage.</p>
+  </div>
+
+  <!-- Step 2: Capture -->
+  <div class="card" id="captureSection">
+    <div class="preview-wrap">
+      <p class="placeholder-text" id="placeholderText">📷 No image selected</p>
+      <img id="preview" alt="Sticker preview" />
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-camera" onclick="document.getElementById('cameraInput').click()">
+        📷 Camera
+      </button>
+      <button class="btn btn-gallery" onclick="document.getElementById('fileInput').click()">
+        🖼 Gallery
+      </button>
+    </div>
+    <button class="btn btn-scan" id="scanBtn" onclick="scanImage()" disabled>
+      Scan Sticker
+    </button>
+    <p class="error-msg" id="errorMsg"></p>
+    <input type="file" id="cameraInput" accept="image/*" capture="environment" onchange="loadImage(event)" />
+    <input type="file" id="fileInput" accept="image/*" onchange="loadImage(event)" />
+  </div>
+
+  <!-- Step 3: Results -->
+  <div id="resultsSection">
+    <div class="field-card">
+      <div>
+        <div class="field-label">MAC Address</div>
+        <div class="field-value" id="macValue">—</div>
+      </div>
+      <button class="copy-btn" id="copyMac" onclick="copyField('macValue', 'copyMac')">Copy</button>
+    </div>
+    <div class="field-card">
+      <div>
+        <div class="field-label">Serial Number</div>
+        <div class="field-value" id="snValue">—</div>
+      </div>
+      <button class="copy-btn" id="copySn" onclick="copyField('snValue', 'copySn')">Copy</button>
+    </div>
+    <a class="reset-link" onclick="resetScan()">← Scan another device</a>
+  </div>
+
+  <script>
+    let apiKey = localStorage.getItem('anthropic_api_key') || '';
+    let imageBase64 = '';
+    let imageMime = 'image/jpeg';
+
+    // Init
+    if (apiKey) {
+      showCapture();
+    }
+
+    function saveKey() {
+      const val = document.getElementById('apiKeyInput').value.trim();
+      if (!val.startsWith('sk-')) {
+        alert('Please enter a valid Anthropic API key (starts with sk-).');
+        return;
+      }
+      localStorage.setItem('anthropic_api_key', val);
+      apiKey = val;
+      showCapture();
+    }
+
+    function showCapture() {
+      document.getElementById('apiKeySection').style.display = 'none';
+      document.getElementById('captureSection').style.display = 'block';
+    }
+
+    function loadImage(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      imageMime = file.type || 'image/jpeg';
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const dataUrl = e.target.result;
+        imageBase64 = dataUrl.split(',')[1];
+
+        const img = document.getElementById('preview');
+        img.src = dataUrl;
+        img.style.display = 'block';
+        document.getElementById('placeholderText').style.display = 'none';
+        document.getElementById('scanBtn').disabled = false;
+        document.getElementById('errorMsg').textContent = '';
+      };
+      reader.readAsDataURL(file);
+
+      // Reset input so same file can be re-selected
+      event.target.value = '';
+    }
+
+    async function scanImage() {
+      const btn = document.getElementById('scanBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Scanning…';
+      document.getElementById('errorMsg').textContent = '';
+
+      try {
+        const response = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'x-api-key': apiKey,
+            'anthropic-version': '2023-06-01',
+            'content-type': 'application/json',
+            'anthropic-dangerous-direct-browser-calls': 'true',
+          },
+          body: JSON.stringify({
+            model: 'claude-haiku-4-5-20251001',
+            max_tokens: 256,
+            messages: [{
+              role: 'user',
+              content: [
+                {
+                  type: 'image',
+                  source: { type: 'base64', media_type: imageMime, data: imageBase64 }
+                },
+                {
+                  type: 'text',
+                  text: `Extract the MAC address and Serial Number from this device sticker label.
+Return ONLY valid JSON with exactly these two fields, nothing else:
+{"mac": "XX-XX-XX-XX-XX-XX", "sn": "XXXXXXXXX"}
+If a value is not found, use null.`
+                }
+              ]
+            }]
+          })
+        });
+
+        if (!response.ok) {
+          const err = await response.json();
+          throw new Error(err.error?.message || `API error ${response.status}`);
+        }
+
+        const data = await response.json();
+        const text = data.content[0].text.trim();
+
+        // Extract JSON from response
+        const match = text.match(/\{[\s\S]*\}/);
+        if (!match) throw new Error('Could not parse response from Claude.');
+
+        const result = JSON.parse(match[0]);
+
+        document.getElementById('macValue').textContent = result.mac || 'Not found';
+        document.getElementById('snValue').textContent = result.sn || 'Not found';
+
+        document.getElementById('captureSection').style.display = 'none';
+        document.getElementById('resultsSection').style.display = 'block';
+
+      } catch (err) {
+        document.getElementById('errorMsg').textContent = '⚠️ ' + err.message;
+        btn.disabled = false;
+        btn.textContent = 'Scan Sticker';
+      }
+    }
+
+    async function copyField(valueId, btnId) {
+      const text = document.getElementById(valueId).textContent;
+      if (text === '—' || text === 'Not found') return;
+
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch {
+        // Fallback for older iOS
+        const el = document.createElement('textarea');
+        el.value = text;
+        el.style.position = 'fixed';
+        el.style.opacity = '0';
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+      }
+
+      const btn = document.getElementById(btnId);
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = 'Copy';
+        btn.classList.remove('copied');
+      }, 2000);
+    }
+
+    function resetScan() {
+      imageBase64 = '';
+      const img = document.getElementById('preview');
+      img.style.display = 'none';
+      img.src = '';
+      document.getElementById('placeholderText').style.display = 'block';
+      document.getElementById('scanBtn').disabled = true;
+      document.getElementById('scanBtn').textContent = 'Scan Sticker';
+      document.getElementById('errorMsg').textContent = '';
+      document.getElementById('resultsSection').style.display = 'none';
+      document.getElementById('captureSection').style.display = 'block';
+    }
+  </script>
+</body>
+</html>
