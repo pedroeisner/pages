@@ -1,1 +1,1 @@
-URL: https://pedroeisner.github.io/[folder-name]
+URL: https://pedroeisner.github.io/pages/[folder-name]
