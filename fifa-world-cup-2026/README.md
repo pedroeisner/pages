@@ -5,7 +5,7 @@ This repo generates a public `.ics` calendar feed for FIFA World Cup 2026.
 It is designed to be subscribed to from Google Calendar using a stable raw GitHub URL:
 
 ```text
-https://raw.githubusercontent.com/pedroeisner/pages/fifa-world-cup-2026/worldcup2026.ics
+https://raw.githubusercontent.com/pedroeisner/pages/main/fifa-world-cup-2026/worldcup2026.ics
 ```
 
 ## What updates automatically
@@ -37,7 +37,7 @@ It commits `worldcup2026.ics` back to the repo only when the generated file chan
 Google Calendar > Other calendars > + > From URL > paste:
 
 ```text
-https://raw.githubusercontent.com/<OWNER>/<REPO>/main/worldcup2026.ics
+https://raw.githubusercontent.com/pedroeisner/pages/main/fifa-world-cup-2026/worldcup2026.ics
 ```
 
 Google Calendar controls refresh timing; updates are not instant.
