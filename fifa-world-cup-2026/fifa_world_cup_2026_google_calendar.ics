@@ -1,0 +1,1224 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+PRODID:-//OpenAI//FIFA World Cup 2026 Custom Calendar//EN
+X-WR-CALNAME:FIFA World Cup 2026
+X-WR-TIMEZONE:UTC
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-1@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260611T190000Z
+DTEND:20260611T210000Z
+SUMMARY:🇲🇽 Mexico - 🇿🇦 South Africa
+LOCATION:Estadio Azteca\, Mexico City
+DESCRIPTION:Stage: Group Stage\nMatch: 1\nGroup: Group A\nGroup teams: Me
+ xico\, South Africa\, South Korea\, Czech Republic
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-2@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260612T020000Z
+DTEND:20260612T040000Z
+SUMMARY:🇰🇷 South Korea - 🇨🇿 Czech Republic
+LOCATION:Estadio Akron\, Zapopan
+DESCRIPTION:Stage: Group Stage\nMatch: 2\nGroup: Group A\nGroup teams: Me
+ xico\, South Africa\, South Korea\, Czech Republic
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-3@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260612T190000Z
+DTEND:20260612T210000Z
+SUMMARY:🇨🇦 Canada - 🇧🇦 Bosnia and Herzegovina
+LOCATION:BMO Field / Toronto Stadium\, Toronto
+DESCRIPTION:Stage: Group Stage\nMatch: 3\nGroup: Group B\nGroup teams: Ca
+ nada\, Bosnia and Herzegovina\, Qatar\, Switzerland
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-4@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260613T010000Z
+DTEND:20260613T030000Z
+SUMMARY:🇺🇸 United States - 🇵🇾 Paraguay
+LOCATION:SoFi Stadium\, Inglewood
+DESCRIPTION:Stage: Group Stage\nMatch: 4\nGroup: Group D\nGroup teams: Un
+ ited States\, Paraguay\, Australia\, Turkey
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-8@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260613T190000Z
+DTEND:20260613T210000Z
+SUMMARY:🇶🇦 Qatar - 🇨🇭 Switzerland
+LOCATION:Levi's Stadium\, Santa Clara
+DESCRIPTION:Stage: Group Stage\nMatch: 8\nGroup: Group B\nGroup teams: Ca
+ nada\, Bosnia and Herzegovina\, Qatar\, Switzerland
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-7@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260613T220000Z
+DTEND:20260614T000000Z
+SUMMARY:🇧🇷 Brazil - 🇲🇦 Morocco
+LOCATION:MetLife Stadium\, East Rutherford
+DESCRIPTION:Stage: Group Stage\nMatch: 7\nGroup: Group C\nGroup teams: Br
+ azil\, Morocco\, Haiti\, Scotland
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-5@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260614T010000Z
+DTEND:20260614T030000Z
+SUMMARY:🇭🇹 Haiti - 🏴 Scotland
+LOCATION:Gillette Stadium\, Foxborough
+DESCRIPTION:Stage: Group Stage\nMatch: 5\nGroup: Group C\nGroup teams: Br
+ azil\, Morocco\, Haiti\, Scotland
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-6@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260614T040000Z
+DTEND:20260614T060000Z
+SUMMARY:🇦🇺 Australia - 🇹🇷 Turkey
+LOCATION:BC Place\, Vancouver
+DESCRIPTION:Stage: Group Stage\nMatch: 6\nGroup: Group D\nGroup teams: Un
+ ited States\, Paraguay\, Australia\, Turkey
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-10@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260614T170000Z
+DTEND:20260614T190000Z
+SUMMARY:🇩🇪 Germany - 🇨🇼 Curaçao
+LOCATION:NRG Stadium\, Houston
+DESCRIPTION:Stage: Group Stage\nMatch: 10\nGroup: Group E\nGroup teams: G
+ ermany\, Curaçao\, Ivory Coast\, Ecuador
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-11@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260614T200000Z
+DTEND:20260614T220000Z
+SUMMARY:🇳🇱 Netherlands - 🇯🇵 Japan
+LOCATION:AT&T Stadium\, Arlington
+DESCRIPTION:Stage: Group Stage\nMatch: 11\nGroup: Group F\nGroup teams: N
+ etherlands\, Japan\, Sweden\, Tunisia
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-9@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260614T230000Z
+DTEND:20260615T010000Z
+SUMMARY:🇨🇮 Ivory Coast - 🇪🇨 Ecuador
+LOCATION:Lincoln Financial Field\, Philadelphia
+DESCRIPTION:Stage: Group Stage\nMatch: 9\nGroup: Group E\nGroup teams: Ge
+ rmany\, Curaçao\, Ivory Coast\, Ecuador
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-12@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260615T020000Z
+DTEND:20260615T040000Z
+SUMMARY:🇸🇪 Sweden - 🇹🇳 Tunisia
+LOCATION:Estadio BBVA\, Guadalupe
+DESCRIPTION:Stage: Group Stage\nMatch: 12\nGroup: Group F\nGroup teams: N
+ etherlands\, Japan\, Sweden\, Tunisia
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-14@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260615T160000Z
+DTEND:20260615T180000Z
+SUMMARY:🇪🇸 Spain - 🇨🇻 Cape Verde
+LOCATION:Mercedes-Benz Stadium\, Atlanta
+DESCRIPTION:Stage: Group Stage\nMatch: 14\nGroup: Group H\nGroup teams: S
+ pain\, Cape Verde\, Saudi Arabia\, Uruguay
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-16@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260615T190000Z
+DTEND:20260615T210000Z
+SUMMARY:🇧🇪 Belgium - 🇪🇬 Egypt
+LOCATION:Lumen Field\, Seattle
+DESCRIPTION:Stage: Group Stage\nMatch: 16\nGroup: Group G\nGroup teams: B
+ elgium\, Egypt\, Iran\, New Zealand
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-13@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260615T220000Z
+DTEND:20260616T000000Z
+SUMMARY:🇸🇦 Saudi Arabia - 🇺🇾 Uruguay
+LOCATION:Hard Rock Stadium\, Miami Gardens
+DESCRIPTION:Stage: Group Stage\nMatch: 13\nGroup: Group H\nGroup teams: S
+ pain\, Cape Verde\, Saudi Arabia\, Uruguay
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-15@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260616T010000Z
+DTEND:20260616T030000Z
+SUMMARY:🇮🇷 Iran - 🇳🇿 New Zealand
+LOCATION:SoFi Stadium\, Inglewood
+DESCRIPTION:Stage: Group Stage\nMatch: 15\nGroup: Group G\nGroup teams: B
+ elgium\, Egypt\, Iran\, New Zealand
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-17@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260616T190000Z
+DTEND:20260616T210000Z
+SUMMARY:🇫🇷 France - 🇸🇳 Senegal
+LOCATION:MetLife Stadium\, East Rutherford
+DESCRIPTION:Stage: Group Stage\nMatch: 17\nGroup: Group I\nGroup teams: F
+ rance\, Senegal\, Iraq\, Norway
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-18@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260616T220000Z
+DTEND:20260617T000000Z
+SUMMARY:🇮🇶 Iraq - 🇳🇴 Norway
+LOCATION:Gillette Stadium\, Foxborough
+DESCRIPTION:Stage: Group Stage\nMatch: 18\nGroup: Group I\nGroup teams: F
+ rance\, Senegal\, Iraq\, Norway
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-19@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260617T010000Z
+DTEND:20260617T030000Z
+SUMMARY:🇦🇷 Argentina - 🇩🇿 Algeria
+LOCATION:Arrowhead Stadium\, Kansas City
+DESCRIPTION:Stage: Group Stage\nMatch: 19\nGroup: Group J\nGroup teams: A
+ rgentina\, Algeria\, Austria\, Jordan
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-20@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260617T040000Z
+DTEND:20260617T060000Z
+SUMMARY:🇦🇹 Austria - 🇯🇴 Jordan
+LOCATION:Levi's Stadium\, Santa Clara
+DESCRIPTION:Stage: Group Stage\nMatch: 20\nGroup: Group J\nGroup teams: A
+ rgentina\, Algeria\, Austria\, Jordan
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-23@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260617T170000Z
+DTEND:20260617T190000Z
+SUMMARY:🇵🇹 Portugal - 🇨🇩 DR Congo
+LOCATION:NRG Stadium\, Houston
+DESCRIPTION:Stage: Group Stage\nMatch: 23\nGroup: Group K\nGroup teams: P
+ ortugal\, DR Congo\, Uzbekistan\, Colombia
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-22@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260617T200000Z
+DTEND:20260617T220000Z
+SUMMARY:🏴 England - 🇭🇷 Croatia
+LOCATION:AT&T Stadium\, Arlington
+DESCRIPTION:Stage: Group Stage\nMatch: 22\nGroup: Group L\nGroup teams: E
+ ngland\, Croatia\, Ghana\, Panama
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-21@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260617T230000Z
+DTEND:20260618T010000Z
+SUMMARY:🇬🇭 Ghana - 🇵🇦 Panama
+LOCATION:BMO Field / Toronto Stadium\, Toronto
+DESCRIPTION:Stage: Group Stage\nMatch: 21\nGroup: Group L\nGroup teams: E
+ ngland\, Croatia\, Ghana\, Panama
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-24@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260618T020000Z
+DTEND:20260618T040000Z
+SUMMARY:🇺🇿 Uzbekistan - 🇨🇴 Colombia
+LOCATION:Estadio Azteca\, Mexico City
+DESCRIPTION:Stage: Group Stage\nMatch: 24\nGroup: Group K\nGroup teams: P
+ ortugal\, DR Congo\, Uzbekistan\, Colombia
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-25@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260618T160000Z
+DTEND:20260618T180000Z
+SUMMARY:🇨🇿 Czech Republic - 🇿🇦 South Africa
+LOCATION:Mercedes-Benz Stadium\, Atlanta
+DESCRIPTION:Stage: Group Stage\nMatch: 25\nGroup: Group A\nGroup teams: M
+ exico\, South Africa\, South Korea\, Czech Republic
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-26@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260618T190000Z
+DTEND:20260618T210000Z
+SUMMARY:🇨🇭 Switzerland - 🇧🇦 Bosnia and Herzegovina
+LOCATION:SoFi Stadium\, Inglewood
+DESCRIPTION:Stage: Group Stage\nMatch: 26\nGroup: Group B\nGroup teams: C
+ anada\, Bosnia and Herzegovina\, Qatar\, Switzerland
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-27@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260618T220000Z
+DTEND:20260619T000000Z
+SUMMARY:🇨🇦 Canada - 🇶🇦 Qatar
+LOCATION:BC Place\, Vancouver
+DESCRIPTION:Stage: Group Stage\nMatch: 27\nGroup: Group B\nGroup teams: C
+ anada\, Bosnia and Herzegovina\, Qatar\, Switzerland
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-28@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260619T010000Z
+DTEND:20260619T030000Z
+SUMMARY:🇲🇽 Mexico - 🇰🇷 South Korea
+LOCATION:Estadio Akron\, Zapopan
+DESCRIPTION:Stage: Group Stage\nMatch: 28\nGroup: Group A\nGroup teams: M
+ exico\, South Africa\, South Korea\, Czech Republic
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-32@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260619T190000Z
+DTEND:20260619T210000Z
+SUMMARY:🇺🇸 United States - 🇦🇺 Australia
+LOCATION:Lumen Field\, Seattle
+DESCRIPTION:Stage: Group Stage\nMatch: 32\nGroup: Group D\nGroup teams: U
+ nited States\, Paraguay\, Australia\, Turkey
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-30@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260619T220000Z
+DTEND:20260620T000000Z
+SUMMARY:🏴 Scotland - 🇲🇦 Morocco
+LOCATION:Gillette Stadium\, Foxborough
+DESCRIPTION:Stage: Group Stage\nMatch: 30\nGroup: Group C\nGroup teams: B
+ razil\, Morocco\, Haiti\, Scotland
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-31@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260620T030000Z
+DTEND:20260620T050000Z
+SUMMARY:🇹🇷 Turkey - 🇵🇾 Paraguay
+LOCATION:Levi's Stadium\, Santa Clara
+DESCRIPTION:Stage: Group Stage\nMatch: 31\nGroup: Group D\nGroup teams: U
+ nited States\, Paraguay\, Australia\, Turkey
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-29@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260620T003000Z
+DTEND:20260620T023000Z
+SUMMARY:🇧🇷 Brazil - 🇭🇹 Haiti
+LOCATION:Lincoln Financial Field\, Philadelphia
+DESCRIPTION:Stage: Group Stage\nMatch: 29\nGroup: Group C\nGroup teams: B
+ razil\, Morocco\, Haiti\, Scotland
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-35@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260620T170000Z
+DTEND:20260620T190000Z
+SUMMARY:🇳🇱 Netherlands - 🇸🇪 Sweden
+LOCATION:NRG Stadium\, Houston
+DESCRIPTION:Stage: Group Stage\nMatch: 35\nGroup: Group F\nGroup teams: N
+ etherlands\, Japan\, Sweden\, Tunisia
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-33@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260620T200000Z
+DTEND:20260620T220000Z
+SUMMARY:🇩🇪 Germany - 🇨🇮 Ivory Coast
+LOCATION:BMO Field / Toronto Stadium\, Toronto
+DESCRIPTION:Stage: Group Stage\nMatch: 33\nGroup: Group E\nGroup teams: G
+ ermany\, Curaçao\, Ivory Coast\, Ecuador
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-34@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260621T000000Z
+DTEND:20260621T020000Z
+SUMMARY:🇪🇨 Ecuador - 🇨🇼 Curaçao
+LOCATION:Arrowhead Stadium\, Kansas City
+DESCRIPTION:Stage: Group Stage\nMatch: 34\nGroup: Group E\nGroup teams: G
+ ermany\, Curaçao\, Ivory Coast\, Ecuador
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-36@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260621T040000Z
+DTEND:20260621T060000Z
+SUMMARY:🇹🇳 Tunisia - 🇯🇵 Japan
+LOCATION:Estadio BBVA\, Guadalupe
+DESCRIPTION:Stage: Group Stage\nMatch: 36\nGroup: Group F\nGroup teams: N
+ etherlands\, Japan\, Sweden\, Tunisia
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-38@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260621T160000Z
+DTEND:20260621T180000Z
+SUMMARY:🇪🇸 Spain - 🇸🇦 Saudi Arabia
+LOCATION:Mercedes-Benz Stadium\, Atlanta
+DESCRIPTION:Stage: Group Stage\nMatch: 38\nGroup: Group H\nGroup teams: S
+ pain\, Cape Verde\, Saudi Arabia\, Uruguay
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-39@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260621T190000Z
+DTEND:20260621T210000Z
+SUMMARY:🇧🇪 Belgium - 🇮🇷 Iran
+LOCATION:SoFi Stadium\, Inglewood
+DESCRIPTION:Stage: Group Stage\nMatch: 39\nGroup: Group G\nGroup teams: B
+ elgium\, Egypt\, Iran\, New Zealand
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-37@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260621T220000Z
+DTEND:20260622T000000Z
+SUMMARY:🇺🇾 Uruguay - 🇨🇻 Cape Verde
+LOCATION:Hard Rock Stadium\, Miami Gardens
+DESCRIPTION:Stage: Group Stage\nMatch: 37\nGroup: Group H\nGroup teams: S
+ pain\, Cape Verde\, Saudi Arabia\, Uruguay
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-40@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260622T010000Z
+DTEND:20260622T030000Z
+SUMMARY:🇳🇿 New Zealand - 🇪🇬 Egypt
+LOCATION:BC Place\, Vancouver
+DESCRIPTION:Stage: Group Stage\nMatch: 40\nGroup: Group G\nGroup teams: B
+ elgium\, Egypt\, Iran\, New Zealand
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-43@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260622T170000Z
+DTEND:20260622T190000Z
+SUMMARY:🇦🇷 Argentina - 🇦🇹 Austria
+LOCATION:AT&T Stadium\, Arlington
+DESCRIPTION:Stage: Group Stage\nMatch: 43\nGroup: Group J\nGroup teams: A
+ rgentina\, Algeria\, Austria\, Jordan
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-42@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260622T210000Z
+DTEND:20260622T230000Z
+SUMMARY:🇫🇷 France - 🇮🇶 Iraq
+LOCATION:Lincoln Financial Field\, Philadelphia
+DESCRIPTION:Stage: Group Stage\nMatch: 42\nGroup: Group I\nGroup teams: F
+ rance\, Senegal\, Iraq\, Norway
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-41@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260623T000000Z
+DTEND:20260623T020000Z
+SUMMARY:🇳🇴 Norway - 🇸🇳 Senegal
+LOCATION:MetLife Stadium\, East Rutherford
+DESCRIPTION:Stage: Group Stage\nMatch: 41\nGroup: Group I\nGroup teams: F
+ rance\, Senegal\, Iraq\, Norway
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-44@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260623T030000Z
+DTEND:20260623T050000Z
+SUMMARY:🇯🇴 Jordan - 🇩🇿 Algeria
+LOCATION:Levi's Stadium\, Santa Clara
+DESCRIPTION:Stage: Group Stage\nMatch: 44\nGroup: Group J\nGroup teams: A
+ rgentina\, Algeria\, Austria\, Jordan
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-47@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260623T170000Z
+DTEND:20260623T190000Z
+SUMMARY:🇵🇹 Portugal - 🇺🇿 Uzbekistan
+LOCATION:NRG Stadium\, Houston
+DESCRIPTION:Stage: Group Stage\nMatch: 47\nGroup: Group K\nGroup teams: P
+ ortugal\, DR Congo\, Uzbekistan\, Colombia
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-45@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260623T200000Z
+DTEND:20260623T220000Z
+SUMMARY:🏴 England - 🇬🇭 Ghana
+LOCATION:Gillette Stadium\, Foxborough
+DESCRIPTION:Stage: Group Stage\nMatch: 45\nGroup: Group L\nGroup teams: E
+ ngland\, Croatia\, Ghana\, Panama
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-46@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260623T230000Z
+DTEND:20260624T010000Z
+SUMMARY:🇵🇦 Panama - 🇭🇷 Croatia
+LOCATION:BMO Field / Toronto Stadium\, Toronto
+DESCRIPTION:Stage: Group Stage\nMatch: 46\nGroup: Group L\nGroup teams: E
+ ngland\, Croatia\, Ghana\, Panama
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-48@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260624T020000Z
+DTEND:20260624T040000Z
+SUMMARY:🇨🇴 Colombia - 🇨🇩 DR Congo
+LOCATION:Estadio Akron\, Zapopan
+DESCRIPTION:Stage: Group Stage\nMatch: 48\nGroup: Group K\nGroup teams: P
+ ortugal\, DR Congo\, Uzbekistan\, Colombia
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-51@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260624T190000Z
+DTEND:20260624T210000Z
+SUMMARY:🇨🇭 Switzerland - 🇨🇦 Canada
+LOCATION:BC Place\, Vancouver
+DESCRIPTION:Stage: Group Stage\nMatch: 51\nGroup: Group B\nGroup teams: C
+ anada\, Bosnia and Herzegovina\, Qatar\, Switzerland
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-52@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260624T190000Z
+DTEND:20260624T210000Z
+SUMMARY:🇧🇦 Bosnia and Herzegovina - 🇶🇦 Qatar
+LOCATION:Lumen Field\, Seattle
+DESCRIPTION:Stage: Group Stage\nMatch: 52\nGroup: Group B\nGroup teams: C
+ anada\, Bosnia and Herzegovina\, Qatar\, Switzerland
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-49@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260624T220000Z
+DTEND:20260625T000000Z
+SUMMARY:🏴 Scotland - 🇧🇷 Brazil
+LOCATION:Hard Rock Stadium\, Miami Gardens
+DESCRIPTION:Stage: Group Stage\nMatch: 49\nGroup: Group C\nGroup teams: B
+ razil\, Morocco\, Haiti\, Scotland
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-50@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260624T220000Z
+DTEND:20260625T000000Z
+SUMMARY:🇲🇦 Morocco - 🇭🇹 Haiti
+LOCATION:Mercedes-Benz Stadium\, Atlanta
+DESCRIPTION:Stage: Group Stage\nMatch: 50\nGroup: Group C\nGroup teams: B
+ razil\, Morocco\, Haiti\, Scotland
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-53@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260625T010000Z
+DTEND:20260625T030000Z
+SUMMARY:🇨🇿 Czech Republic - 🇲🇽 Mexico
+LOCATION:Estadio Azteca\, Mexico City
+DESCRIPTION:Stage: Group Stage\nMatch: 53\nGroup: Group A\nGroup teams: M
+ exico\, South Africa\, South Korea\, Czech Republic
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-54@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260625T010000Z
+DTEND:20260625T030000Z
+SUMMARY:🇿🇦 South Africa - 🇰🇷 South Korea
+LOCATION:Estadio BBVA\, Guadalupe
+DESCRIPTION:Stage: Group Stage\nMatch: 54\nGroup: Group A\nGroup teams: M
+ exico\, South Africa\, South Korea\, Czech Republic
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-55@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260625T200000Z
+DTEND:20260625T220000Z
+SUMMARY:🇨🇼 Curaçao - 🇨🇮 Ivory Coast
+LOCATION:Lincoln Financial Field\, Philadelphia
+DESCRIPTION:Stage: Group Stage\nMatch: 55\nGroup: Group E\nGroup teams: G
+ ermany\, Curaçao\, Ivory Coast\, Ecuador
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-56@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260625T200000Z
+DTEND:20260625T220000Z
+SUMMARY:🇪🇨 Ecuador - 🇩🇪 Germany
+LOCATION:MetLife Stadium\, East Rutherford
+DESCRIPTION:Stage: Group Stage\nMatch: 56\nGroup: Group E\nGroup teams: G
+ ermany\, Curaçao\, Ivory Coast\, Ecuador
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-57@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260625T230000Z
+DTEND:20260626T010000Z
+SUMMARY:🇯🇵 Japan - 🇸🇪 Sweden
+LOCATION:AT&T Stadium\, Arlington
+DESCRIPTION:Stage: Group Stage\nMatch: 57\nGroup: Group F\nGroup teams: N
+ etherlands\, Japan\, Sweden\, Tunisia
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-58@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260625T230000Z
+DTEND:20260626T010000Z
+SUMMARY:🇹🇳 Tunisia - 🇳🇱 Netherlands
+LOCATION:Arrowhead Stadium\, Kansas City
+DESCRIPTION:Stage: Group Stage\nMatch: 58\nGroup: Group F\nGroup teams: N
+ etherlands\, Japan\, Sweden\, Tunisia
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-59@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260626T020000Z
+DTEND:20260626T040000Z
+SUMMARY:🇹🇷 Turkey - 🇺🇸 United States
+LOCATION:SoFi Stadium\, Inglewood
+DESCRIPTION:Stage: Group Stage\nMatch: 59\nGroup: Group D\nGroup teams: U
+ nited States\, Paraguay\, Australia\, Turkey
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-60@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260626T020000Z
+DTEND:20260626T040000Z
+SUMMARY:🇵🇾 Paraguay - 🇦🇺 Australia
+LOCATION:Levi's Stadium\, Santa Clara
+DESCRIPTION:Stage: Group Stage\nMatch: 60\nGroup: Group D\nGroup teams: U
+ nited States\, Paraguay\, Australia\, Turkey
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-61@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260626T190000Z
+DTEND:20260626T210000Z
+SUMMARY:🇳🇴 Norway - 🇫🇷 France
+LOCATION:Gillette Stadium\, Foxborough
+DESCRIPTION:Stage: Group Stage\nMatch: 61\nGroup: Group I\nGroup teams: F
+ rance\, Senegal\, Iraq\, Norway
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-62@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260626T190000Z
+DTEND:20260626T210000Z
+SUMMARY:🇸🇳 Senegal - 🇮🇶 Iraq
+LOCATION:BMO Field / Toronto Stadium\, Toronto
+DESCRIPTION:Stage: Group Stage\nMatch: 62\nGroup: Group I\nGroup teams: F
+ rance\, Senegal\, Iraq\, Norway
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-66@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260627T000000Z
+DTEND:20260627T020000Z
+SUMMARY:🇺🇾 Uruguay - 🇪🇸 Spain
+LOCATION:Estadio Akron\, Zapopan
+DESCRIPTION:Stage: Group Stage\nMatch: 66\nGroup: Group H\nGroup teams: S
+ pain\, Cape Verde\, Saudi Arabia\, Uruguay
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-65@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260627T000000Z
+DTEND:20260627T020000Z
+SUMMARY:🇨🇻 Cape Verde - 🇸🇦 Saudi Arabia
+LOCATION:NRG Stadium\, Houston
+DESCRIPTION:Stage: Group Stage\nMatch: 65\nGroup: Group H\nGroup teams: S
+ pain\, Cape Verde\, Saudi Arabia\, Uruguay
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-63@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260627T030000Z
+DTEND:20260627T050000Z
+SUMMARY:🇪🇬 Egypt - 🇮🇷 Iran
+LOCATION:Lumen Field\, Seattle
+DESCRIPTION:Stage: Group Stage\nMatch: 63\nGroup: Group G\nGroup teams: B
+ elgium\, Egypt\, Iran\, New Zealand
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-64@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260627T030000Z
+DTEND:20260627T050000Z
+SUMMARY:🇳🇿 New Zealand - 🇧🇪 Belgium
+LOCATION:BC Place\, Vancouver
+DESCRIPTION:Stage: Group Stage\nMatch: 64\nGroup: Group G\nGroup teams: B
+ elgium\, Egypt\, Iran\, New Zealand
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-67@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260627T210000Z
+DTEND:20260627T230000Z
+SUMMARY:🇵🇦 Panama - 🏴 England
+LOCATION:MetLife Stadium\, East Rutherford
+DESCRIPTION:Stage: Group Stage\nMatch: 67\nGroup: Group L\nGroup teams: E
+ ngland\, Croatia\, Ghana\, Panama
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-68@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260627T210000Z
+DTEND:20260627T230000Z
+SUMMARY:🇭🇷 Croatia - 🇬🇭 Ghana
+LOCATION:Lincoln Financial Field\, Philadelphia
+DESCRIPTION:Stage: Group Stage\nMatch: 68\nGroup: Group L\nGroup teams: E
+ ngland\, Croatia\, Ghana\, Panama
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-71@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260627T233000Z
+DTEND:20260628T013000Z
+SUMMARY:🇨🇴 Colombia - 🇵🇹 Portugal
+LOCATION:Hard Rock Stadium\, Miami Gardens
+DESCRIPTION:Stage: Group Stage\nMatch: 71\nGroup: Group K\nGroup teams: P
+ ortugal\, DR Congo\, Uzbekistan\, Colombia
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-72@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260627T233000Z
+DTEND:20260628T013000Z
+SUMMARY:🇨🇩 DR Congo - 🇺🇿 Uzbekistan
+LOCATION:Mercedes-Benz Stadium\, Atlanta
+DESCRIPTION:Stage: Group Stage\nMatch: 72\nGroup: Group K\nGroup teams: P
+ ortugal\, DR Congo\, Uzbekistan\, Colombia
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-69@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260628T020000Z
+DTEND:20260628T040000Z
+SUMMARY:🇩🇿 Algeria - 🇦🇹 Austria
+LOCATION:Arrowhead Stadium\, Kansas City
+DESCRIPTION:Stage: Group Stage\nMatch: 69\nGroup: Group J\nGroup teams: A
+ rgentina\, Algeria\, Austria\, Jordan
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-70@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260628T020000Z
+DTEND:20260628T040000Z
+SUMMARY:🇯🇴 Jordan - 🇦🇷 Argentina
+LOCATION:AT&T Stadium\, Arlington
+DESCRIPTION:Stage: Group Stage\nMatch: 70\nGroup: Group J\nGroup teams: A
+ rgentina\, Algeria\, Austria\, Jordan
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-73@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260628T190000Z
+DTEND:20260628T220000Z
+SUMMARY:Runner-up Group A - Runner-up Group B
+LOCATION:SoFi Stadium\, Inglewood
+DESCRIPTION:Stage: Round of 32\nMatch: 73
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-76@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260629T170000Z
+DTEND:20260629T200000Z
+SUMMARY:Winner Group C - Runner-up Group F
+LOCATION:NRG Stadium\, Houston
+DESCRIPTION:Stage: Round of 32\nMatch: 76
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-74@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260629T203000Z
+DTEND:20260629T233000Z
+SUMMARY:Winner Group E - 3rd Group A/B/C/D/F
+LOCATION:Gillette Stadium\, Foxborough
+DESCRIPTION:Stage: Round of 32\nMatch: 74
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-75@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260630T010000Z
+DTEND:20260630T040000Z
+SUMMARY:Winner Group F - Runner-up Group C
+LOCATION:Estadio BBVA\, Guadalupe
+DESCRIPTION:Stage: Round of 32\nMatch: 75
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-78@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260630T170000Z
+DTEND:20260630T200000Z
+SUMMARY:Runner-up Group E - Runner-up Group I
+LOCATION:AT&T Stadium\, Arlington
+DESCRIPTION:Stage: Round of 32\nMatch: 78
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-77@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260630T210000Z
+DTEND:20260701T000000Z
+SUMMARY:Winner Group I - 3rd Group C/D/F/G/H
+LOCATION:MetLife Stadium\, East Rutherford
+DESCRIPTION:Stage: Round of 32\nMatch: 77
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-79@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260701T010000Z
+DTEND:20260701T040000Z
+SUMMARY:Winner Group A - 3rd Group C/E/F/H/I
+LOCATION:Estadio Azteca\, Mexico City
+DESCRIPTION:Stage: Round of 32\nMatch: 79
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-80@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260701T160000Z
+DTEND:20260701T190000Z
+SUMMARY:Winner Group L - 3rd Group E/H/I/J/K
+LOCATION:Mercedes-Benz Stadium\, Atlanta
+DESCRIPTION:Stage: Round of 32\nMatch: 80
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-82@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260701T200000Z
+DTEND:20260701T230000Z
+SUMMARY:Winner Group G - 3rd Group A/E/H/I/J
+LOCATION:Lumen Field\, Seattle
+DESCRIPTION:Stage: Round of 32\nMatch: 82
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-81@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260702T000000Z
+DTEND:20260702T030000Z
+SUMMARY:Winner Group D - 3rd Group B/E/F/I/J
+LOCATION:Levi's Stadium\, Santa Clara
+DESCRIPTION:Stage: Round of 32\nMatch: 81
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-84@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260702T190000Z
+DTEND:20260702T220000Z
+SUMMARY:Winner Group H - Runner-up Group J
+LOCATION:SoFi Stadium\, Inglewood
+DESCRIPTION:Stage: Round of 32\nMatch: 84
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-83@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260702T230000Z
+DTEND:20260703T020000Z
+SUMMARY:Runner-up Group K - Runner-up Group L
+LOCATION:BMO Field / Toronto Stadium\, Toronto
+DESCRIPTION:Stage: Round of 32\nMatch: 83
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-85@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260703T030000Z
+DTEND:20260703T060000Z
+SUMMARY:Winner Group B - 3rd Group E/F/G/I/J
+LOCATION:BC Place\, Vancouver
+DESCRIPTION:Stage: Round of 32\nMatch: 85
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-88@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260703T180000Z
+DTEND:20260703T210000Z
+SUMMARY:Runner-up Group D - Runner-up Group G
+LOCATION:AT&T Stadium\, Arlington
+DESCRIPTION:Stage: Round of 32\nMatch: 88
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-86@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260703T220000Z
+DTEND:20260704T010000Z
+SUMMARY:Winner Group J - Runner-up Group H
+LOCATION:Hard Rock Stadium\, Miami Gardens
+DESCRIPTION:Stage: Round of 32\nMatch: 86
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-87@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260704T013000Z
+DTEND:20260704T043000Z
+SUMMARY:Winner Group K - 3rd Group D/E/I/J/L
+LOCATION:Arrowhead Stadium\, Kansas City
+DESCRIPTION:Stage: Round of 32\nMatch: 87
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-90@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260704T170000Z
+DTEND:20260704T200000Z
+SUMMARY:Winner Match 73 - Winner Match 75
+LOCATION:NRG Stadium\, Houston
+DESCRIPTION:Stage: Round of 16\nMatch: 90
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-89@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260704T210000Z
+DTEND:20260705T000000Z
+SUMMARY:Winner Match 74 - Winner Match 77
+LOCATION:Lincoln Financial Field\, Philadelphia
+DESCRIPTION:Stage: Round of 16\nMatch: 89
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-91@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260705T200000Z
+DTEND:20260705T230000Z
+SUMMARY:Winner Match 76 - Winner Match 78
+LOCATION:MetLife Stadium\, East Rutherford
+DESCRIPTION:Stage: Round of 16\nMatch: 91
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-92@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260706T000000Z
+DTEND:20260706T030000Z
+SUMMARY:Winner Match 79 - Winner Match 80
+LOCATION:Estadio Azteca\, Mexico City
+DESCRIPTION:Stage: Round of 16\nMatch: 92
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-93@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260706T190000Z
+DTEND:20260706T220000Z
+SUMMARY:Winner Match 83 - Winner Match 84
+LOCATION:AT&T Stadium\, Arlington
+DESCRIPTION:Stage: Round of 16\nMatch: 93
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-94@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260707T000000Z
+DTEND:20260707T030000Z
+SUMMARY:Winner Match 81 - Winner Match 82
+LOCATION:Lumen Field\, Seattle
+DESCRIPTION:Stage: Round of 16\nMatch: 94
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-95@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260707T160000Z
+DTEND:20260707T190000Z
+SUMMARY:Winner Match 86 - Winner Match 88
+LOCATION:Mercedes-Benz Stadium\, Atlanta
+DESCRIPTION:Stage: Round of 16\nMatch: 95
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-96@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260707T200000Z
+DTEND:20260707T230000Z
+SUMMARY:Winner Match 85 - Winner Match 87
+LOCATION:BC Place\, Vancouver
+DESCRIPTION:Stage: Round of 16\nMatch: 96
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-97@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260709T200000Z
+DTEND:20260709T230000Z
+SUMMARY:Winner Match 89 - Winner Match 90
+LOCATION:Gillette Stadium\, Foxborough
+DESCRIPTION:Stage: Quarter-finals\nMatch: 97
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-98@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260710T190000Z
+DTEND:20260710T220000Z
+SUMMARY:Winner Match 93 - Winner Match 94
+LOCATION:SoFi Stadium\, Inglewood
+DESCRIPTION:Stage: Quarter-finals\nMatch: 98
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-99@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260711T210000Z
+DTEND:20260712T000000Z
+SUMMARY:Winner Match 91 - Winner Match 92
+LOCATION:Hard Rock Stadium\, Miami Gardens
+DESCRIPTION:Stage: Quarter-finals\nMatch: 99
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-100@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260712T010000Z
+DTEND:20260712T040000Z
+SUMMARY:Winner Match 95 - Winner Match 96
+LOCATION:Arrowhead Stadium\, Kansas City
+DESCRIPTION:Stage: Quarter-finals\nMatch: 100
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-101@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260714T190000Z
+DTEND:20260714T220000Z
+SUMMARY:Winner Match 97 - Winner Match 98
+LOCATION:AT&T Stadium\, Arlington
+DESCRIPTION:Stage: Semi-finals\nMatch: 101
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-102@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260715T190000Z
+DTEND:20260715T220000Z
+SUMMARY:Winner Match 99 - Winner Match 100
+LOCATION:Mercedes-Benz Stadium\, Atlanta
+DESCRIPTION:Stage: Semi-finals\nMatch: 102
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-103@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260718T210000Z
+DTEND:20260719T000000Z
+SUMMARY:Loser Match 101 - Loser Match 102
+LOCATION:Hard Rock Stadium\, Miami Gardens
+DESCRIPTION:Stage: Third-place play-off\nMatch: 103
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fifa-world-cup-2026-match-104@openai.local
+DTSTAMP:20260610T031144Z
+DTSTART:20260719T190000Z
+DTEND:20260719T220000Z
+SUMMARY:Winner Match 101 - Winner Match 102
+LOCATION:MetLife Stadium\, East Rutherford
+DESCRIPTION:Stage: Final\nMatch: 104
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+END:VCALENDAR
