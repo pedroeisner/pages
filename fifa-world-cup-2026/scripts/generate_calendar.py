@@ -4,8 +4,6 @@
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 import re, uuid
-import requests
-from bs4 import BeautifulSoup
 
 flags = {
 'Mexico':'🇲🇽','South Africa':'🇿🇦','South Korea':'🇰🇷','Czech Republic':'🇨🇿','Canada':'🇨🇦','Bosnia and Herzegovina':'🇧🇦','Qatar':'🇶🇦','Switzerland':'🇨🇭',
@@ -180,176 +178,6 @@ ko = [
 ]
 events += [m(*x, group=None, dur=3) for x in ko]
 
-
-# --- Dynamic Wikipedia updater (free, no API key) ---------------------------
-# Best-effort: Wikipedia is free and usually updated quickly during major
-# tournaments, but it is not an official API.
-WIKI_KNOCKOUT_URL = "https://en.wikipedia.org/wiki/2026_FIFA_World_Cup_knockout_stage"
-WIKI_GROUP_URL = "https://en.wikipedia.org/wiki/2026_FIFA_World_Cup_Group_{group}"
-
-# Section order currently used by Wikipedia's knockout-stage article.
-WIKI_KNOCKOUT_SECTION_MATCHES = [
-    73, 76, 74, 75, 78, 77, 79, 80,
-    82, 81, 84, 83, 85, 88, 86, 87,
-    90, 89, 91, 92, 93, 94, 95, 96,
-    97, 98, 99, 100, 101, 102, 103, 104,
-]
-
-TEAM_ALIASES = {
-    "Czechia": "Czech Republic",
-    "USA": "United States",
-    "Côte d'Ivoire": "Ivory Coast",
-    "Cote d'Ivoire": "Ivory Coast",
-    "Democratic Republic of the Congo": "DR Congo",
-    "Korea Republic": "South Korea",
-}
-
-PLACEHOLDER_WORDS = ("Winner", "Runner-up", "3rd", "Best 3rd", "Loser", "Match", "Group")
-
-def clean_text(x):
-    x = re.sub(r"\[[^\]]*\]", "", str(x))
-    x = re.sub(r"\s+", " ", x).strip()
-    return x
-
-
-def norm_team(x):
-    x = clean_text(x)
-    return TEAM_ALIASES.get(x, x)
-
-
-def is_placeholder(x):
-    return any(w in str(x) for w in PLACEHOLDER_WORDS)
-
-
-def short_placeholder(x):
-    x = str(x)
-    x = re.sub(r"Best\s+", "", x)
-    x = re.sub(r"Winner Group ([A-L])", r"1\1", x)
-    x = re.sub(r"Runner-up Group ([A-L])", r"2\1", x)
-    x = re.sub(r"3rd Group ([A-L](?:/[A-L])*)", r"3\1", x)
-    x = re.sub(r"Winner Match (\d+)", r"W\1", x)
-    x = re.sub(r"Loser Match (\d+)", r"L\1", x)
-    return x
-
-
-def stage_label(e):
-    if e.get('group'):
-        return f"Group {e['group']}"
-    return {
-        'Round of 32': 'Round of 32',
-        'Round of 16': 'Round of 16',
-        'Quarter-finals': 'Quarterfinal',
-        'Semi-finals': 'Semifinal',
-        'Third-place play-off': 'Third Place',
-        'Final': 'Final',
-    }.get(e['stage'], e['stage'])
-
-
-def side_title(t):
-    t = norm_team(t)
-    if not is_placeholder(t) and t in flags:
-        return f"{flags[t]} {t}"
-    return short_placeholder(t)
-
-
-def parse_wiki_match_headings():
-    """Return {match_no: (team1, team2)} from Wikipedia headings, when real teams appear."""
-    try:
-        html = requests.get(WIKI_KNOCKOUT_URL, timeout=8).text
-        soup = BeautifulSoup(html, 'html.parser')
-        headings = []
-        for tag in soup.find_all(['h3', 'h4']):
-            txt = clean_text(tag.get_text(' ', strip=True))
-            if ' vs ' in txt:
-                headings.append(txt)
-        resolved = {}
-        for no, heading in zip(WIKI_KNOCKOUT_SECTION_MATCHES, headings):
-            if ' vs ' not in heading:
-                continue
-            a, b = [norm_team(x) for x in re.split(r"\s+vs\s+", heading, maxsplit=1)]
-            if a and b and not is_placeholder(a) and not is_placeholder(b):
-                resolved[no] = (a, b)
-        return resolved
-    except Exception as exc:
-        print(f"Wikipedia knockout update skipped: {exc}")
-        return {}
-
-
-def parse_completed_group(group):
-    """Return {1: team, 2: team, 3: team} only if the group table appears complete."""
-    try:
-        html = requests.get(WIKI_GROUP_URL.format(group=group), timeout=8).text
-        soup = BeautifulSoup(html, 'html.parser')
-        for table in soup.find_all('table'):
-            text = clean_text(table.get_text(' ', strip=True))
-            if not ('Pos' in text and 'Team' in text and ('Pld' in text or 'Played' in text)):
-                continue
-            rows = table.find_all('tr')
-            teams, plds = [], []
-            for row in rows[1:]:
-                cells = row.find_all(['th', 'td'])
-                if len(cells) < 3:
-                    continue
-                vals = [clean_text(c.get_text(' ', strip=True)) for c in cells]
-                pos = vals[0]
-                if not pos or not pos[0].isdigit():
-                    continue
-                team = None
-                for c in cells[1:3]:
-                    link = c.find('a')
-                    cand = clean_text(link.get_text(' ', strip=True) if link else c.get_text(' ', strip=True))
-                    if cand and not cand.isdigit() and cand not in ('Qualification', 'Qualified'):
-                        team = norm_team(cand)
-                        break
-                pld = None
-                for v in vals:
-                    if v.isdigit() and int(v) <= 3:
-                        pld = int(v)
-                        break
-                if team:
-                    teams.append(team)
-                    if pld is not None:
-                        plds.append(pld)
-            if len(teams) >= 3 and len(plds) >= 4 and min(plds[:4]) >= 3:
-                return {1: teams[0], 2: teams[1], 3: teams[2]}
-        return {}
-    except Exception as exc:
-        print(f"Wikipedia Group {group} update skipped: {exc}")
-        return {}
-
-
-def resolve_placeholders_from_groups():
-    # Do not spend time scraping group tables before group winners can exist.
-    if datetime.utcnow().date() < datetime(2026, 6, 24).date():
-        return
-    placements = {g: parse_completed_group(g) for g in groups}
-    for e in events:
-        for side in ('t1','t2'):
-            value = e[side]
-            m1 = re.fullmatch(r"Winner Group ([A-L])", value)
-            m2 = re.fullmatch(r"Runner-up Group ([A-L])", value)
-            m3 = re.fullmatch(r"3rd Group ([A-L])", value)
-            if m1 and placements.get(m1.group(1), {}).get(1):
-                e[side] = placements[m1.group(1)][1]
-            elif m2 and placements.get(m2.group(1), {}).get(2):
-                e[side] = placements[m2.group(1)][2]
-            elif m3 and placements.get(m3.group(1), {}).get(3):
-                e[side] = placements[m3.group(1)][3]
-
-
-def apply_wikipedia_updates():
-    resolve_placeholders_from_groups()
-    resolved = parse_wiki_match_headings()
-    by_no = {e['no']: e for e in events}
-    for no, (a, b) in resolved.items():
-        if no in by_no:
-            by_no[no]['t1'] = a
-            by_no[no]['t2'] = b
-    if resolved:
-        print(f"Applied Wikipedia knockout updates for {len(resolved)} matches")
-
-apply_wikipedia_updates()
-
 def esc(s):
     return str(s).replace('\\','\\\\').replace('\n','\\n').replace(';','\\;').replace(',','\\,')
 
@@ -368,7 +196,9 @@ def dt_utc(date,time,offset):
     return local.replace(tzinfo=tz).astimezone(timezone.utc)
 
 def summary(e):
-    return f"[{stage_label(e)}] {side_title(e['t1'])} - {side_title(e['t2'])}"
+    def side(t):
+        return f"{flags.get(t,'🏆')} {t}" if (t in flags) else t
+    return f"{side(e['t1'])} - {side(e['t2'])}"
 
 def desc(e):
     parts=[f"Stage: {e['stage']}", f"Match: {e['no']}"]
@@ -376,16 +206,14 @@ def desc(e):
         teams=', '.join(groups[e['group']])
         parts.append(f"Group: Group {e['group']}")
         parts.append(f"Group teams: {teams}")
-    parts.append("Auto-updated hourly from the static schedule plus best-effort Wikipedia public pages.")
     return '\n'.join(parts)
 
-
-lines=['BEGIN:VCALENDAR','VERSION:2.0','CALSCALE:GREGORIAN','METHOD:PUBLISH','PRODID:-//Pedro//FIFA World Cup 2026 Custom Calendar//EN','X-WR-CALNAME:FIFA World Cup 2026','X-WR-TIMEZONE:UTC']
+lines=['BEGIN:VCALENDAR','VERSION:2.0','CALSCALE:GREGORIAN','METHOD:PUBLISH','PRODID:-//OpenAI//FIFA World Cup 2026 Custom Calendar//EN','X-WR-CALNAME:FIFA World Cup 2026','X-WR-TIMEZONE:UTC']
 now=datetime.utcnow().strftime('%Y%m%dT%H%M%SZ')
 for e in sorted(events, key=lambda x: (x['date'], x['time'], x['no'])):
     start=dt_utc(e['date'], e['time'], e['offset'])
     end=start+timedelta(hours=e['dur'])
-    uid=f"fifa-world-cup-2026-match-{e['no']}@pedroeisner.github.io"
+    uid=f"fifa-world-cup-2026-match-{e['no']}@openai.local"
     loc=f"{e['venue']}, {e['city']}"
     for line in ['BEGIN:VEVENT',f'UID:{uid}',f'DTSTAMP:{now}',f'DTSTART:{start.strftime("%Y%m%dT%H%M%SZ")}',f'DTEND:{end.strftime("%Y%m%dT%H%M%SZ")}',f'SUMMARY:{esc(summary(e))}',f'LOCATION:{esc(loc)}',f'DESCRIPTION:{esc(desc(e))}', 'STATUS:CONFIRMED','TRANSP:OPAQUE','END:VEVENT']:
         lines.append(fold(line))
