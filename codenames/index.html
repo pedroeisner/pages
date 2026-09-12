@@ -96,6 +96,7 @@
     .score .red { color: var(--red); }
     .score .blue { color: var(--blue); }
     
+    /* Hide score in Spymaster mode */
     .app.spymaster .score { 
       display: none; 
     }
@@ -401,10 +402,10 @@
         <button class="control-btn source-option" data-source="spanish" type="button">🇪🇸</button>
         <button class="control-btn source-option" data-source="images" type="button">🖼️</button>
         
-        <!-- Standardized buttons for hidden inputs -->
         <button class="control-btn source-option file-source-option" id="btnUploadPhotos" data-source="custom_images" title="Upload WhatsApp ZIP with photos" type="button">📸</button>
         <button class="control-btn source-option file-source-option" id="btnUploadChat" data-source="custom" title="Upload Chat Text" type="button">📄</button>
         
+        <!-- Hidden Inputs for clean identical buttons -->
         <input type="file" id="customImageInput" accept=".zip,application/zip" style="display: none;" />
         <input type="file" id="customFileInput" accept=".txt,.zip,text/plain,application/zip" style="display: none;" />
       </div>
@@ -418,6 +419,11 @@
   <div style="height:520px" aria-hidden="true"></div>
 
   <script>
+    // --- CLOUDINARY CONFIGURATION ---
+    const CLOUDINARY_CLOUD_NAME = 'tchfkyl7'; 
+    const CLOUDINARY_UPLOAD_PRESET = 'codenames_temp'; 
+    // --------------------------------
+
     const banks = {
       english: ['TRIANGLE','PORT','PENGUIN','SCALE','TRUNK','BOOM','BACK','BAT','PISTOL','CROSS','BERMUDA','FORCE','LINE','SOCK','FIGHTER','EYE','TRIP','SPIDER','PIANO','BAR','FIGURE','WHIP','GROUND','JACK','SATELLITE','AMAZON','BRIDGE','CASTLE','CLOUD','CROWN','DRAGON','FAIR','GHOST','GLASS','HONEY','IVORY','JUPITER','KING','LASER','MERCURY','NINJA','OLIVE','PILOT','QUEEN','ROBOT','SHADOW','TEMPLE','UNICORN','VAN','WHALE'],
       spanish: ['PUENTE','TORMENTA','CORONA','PANTALLA','FANTASMA','SOMBRA','MERCADO','ESPEJO','BARRIO','CANCHA','LINTERNA','MATE','SUBTE','VENTANA','ANILLO','CUEVA','CASTILLO','JAGUAR','COMETA','MONEDA','BRÚJULA','TANGO','PUERTO','HELADO','LLAVE','DRAGÓN','MÁSCARA','AVIÓN','GUITARRA','PLANETA','CANGREJO','FLECHA','BANDERA','MISTERIO','PIRÁMIDE','CIRCO','SATÉLITE','BOTE','MURALLA','TREN','NUBE','RAYO','TESORO','BOSQUE','PÁJARO','DIAMANTE','CABALLO','RELOJ','FUEGO','ISLA'],
@@ -439,9 +445,10 @@
 
     let state = {};
     let previousGameState = null;
-    let selectedSource = 'english'; // Default source is English
+    let selectedSource = 'english'; // Default to english ALWAYS on clean load
     let previousSourceSelection = 'english';
-    let fullImageCache = []; // Stores all extracted image blobs so "Next game" can pull a new set
+    let fullImageCache = []; 
+    let currentActiveBlobs = []; // Critical variable for "Next Game" photo shuffling
 
     const els = {
       app: document.getElementById('app'),
@@ -466,7 +473,7 @@
       clickableSourceOptions: [...document.querySelectorAll('.source-option[data-source]:not(.file-source-option)')]
     };
     
-    // Bind hidden inputs to standardized buttons
+    // Wire up custom upload buttons
     document.getElementById('btnUploadPhotos').onclick = () => els.customImageInput.click();
     document.getElementById('btnUploadChat').onclick = () => els.customFileInput.click();
 
@@ -588,10 +595,9 @@
     function getCurrentBank(rng = Math.random) {
       if (selectedSource === 'images') return getBalancedImageBank(rng);
       if (selectedSource === 'custom_images') {
-          // If we have a cached pool of images from a zip upload, pull 25 random images
           if (fullImageCache && fullImageCache.length >= 25) {
               const selectedBlobs = shuffle([...fullImageCache], rng).slice(0, 25);
-              state.blobs = selectedBlobs; // Save blobs for potential sharing
+              currentActiveBlobs = selectedBlobs; // Save to global active context so it isn't lost
               banks.custom_images = selectedBlobs.map(b => URL.createObjectURL(b));
               return banks.custom_images;
           }
@@ -723,8 +729,10 @@
       selectedSource = source;
       const rng = seededRandom(`${source}:${seed}`);
       const setup = makeRoles(rng);
+      const generatedWords = shuffle(getCurrentBank(rng), rng).slice(0, 25);
+      
       return {
-        words: shuffle(getCurrentBank(rng), rng).slice(0, 25),
+        words: generatedWords,
         roles: setup.roles,
         revealed: revealed || Array(25).fill(false),
         source,
@@ -735,26 +743,28 @@
         turn: setup.startingTeam,
         spymaster,
         darkMode: false,
-        spymasterMayGuess: false
+        spymasterMayGuess: false,
+        blobs: source === 'custom_images' ? currentActiveBlobs : null
       };
     }
 
     async function uploadAnonymousImage(blob) {
+      if (CLOUDINARY_CLOUD_NAME === 'tchfkyl7' && CLOUDINARY_UPLOAD_PRESET.includes('REPLACE_ME')) {
+          throw new Error("Cloudinary setup incomplete. Please add your CLOUDINARY_UPLOAD_PRESET in the HTML file.");
+      }
+
       const formData = new FormData();
-      formData.append('image', blob);
+      formData.append('file', blob);
+      formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
       
-      // Using Imgur's anonymous public API upload
-      const res = await fetch('https://api.imgur.com/3/image', {
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
           method: 'POST',
-          headers: {
-              'Authorization': 'Client-ID c4bc8cb982e5346'
-          },
           body: formData
       });
       
-      if (!res.ok) throw new Error("Upload failed");
+      if (!res.ok) throw new Error("Upload failed via Cloudinary");
       const data = await res.json();
-      return data.data.link;
+      return data.secure_url;
     }
 
     function getShareableGameUrl() {
@@ -860,8 +870,8 @@
     }
 
     async function shareGameLink() {
-      // If we are sharing a board with local blobs, we must upload them first to a host
       if (state.source === 'custom_images' && state.words.some(w => w.startsWith('blob:'))) {
+        
         els.loadingModal.querySelector('.loading-box').textContent = "Uploading images for sharing... (this may take a minute)";
         els.loadingModal.classList.add('show');
         try {
@@ -875,10 +885,10 @@
                 }
             }
             state.words = newUrls;
-            state.blobs = null; // Free up the locally stored blob array since they are remote now
+            state.blobs = null; 
         } catch (e) {
             console.error(e);
-            alert("Failed to upload images for sharing. Try again later.");
+            alert("Failed to upload images for sharing: " + e.message + "\nMake sure you added your CLOUDINARY_UPLOAD_PRESET to the HTML code!");
             els.loadingModal.classList.remove('show');
             return;
         }
@@ -916,7 +926,7 @@
 
     function newGame(saveCurrent = false) {
       if (saveCurrent && state.words) previousGameState = cloneGameState(state);
-      freeBlobMemory(); // Reclaim memory from old board blobs
+      freeBlobMemory(); 
       
       const seed = makeCompactSeed();
       const previousDarkMode = state.darkMode || false;
@@ -962,7 +972,6 @@
             el.style.backgroundImage = `url(${w})`;
             el.classList.add('image-bg-card');
             
-            // Add a clean overlay icon when revealed for the image view
             if (state.revealed[i]) {
                 const icon = document.createElement('span');
                 icon.className = 'role-icon';
@@ -1327,8 +1336,8 @@
           if (w > h) {
               sx = (w - minDim) / 2;
           } else if (h > w) {
-              // 25% from top for vertical images
-              sy = (h - minDim) * 0.25;
+              // Crop 25% from top for vertical images to keep faces centered
+              sy = (h - minDim) * 0.25; 
           }
           
           canvas.width = maxSize;
@@ -1413,9 +1422,7 @@
                 throw new Error(`Found ${imgFiles.length} usable images. You need at least 25 to play.`);
             }
 
-            // Shuffle all valid image files
             const allFiles = shuffle(imgFiles);
-            // Cap at 100 images to prevent browser memory crashes on huge zips
             const filesToProcess = allFiles.slice(0, Math.min(100, allFiles.length));
             const processedBlobs = [];
             
@@ -1425,7 +1432,6 @@
                 processedBlobs.push(resizedBlob);
             }
             
-            // Update the global cache so "Next game" can pull a new random set
             fullImageCache = processedBlobs;
 
             previousSourceSelection = selectedSource;
