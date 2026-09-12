@@ -92,15 +92,15 @@
       transform: translateY(-50%);
       font-size: clamp(19px, 2.2vw, 34px);
     }
-
-    .score .red { color: var(--red); }
-    .score .blue { color: var(--blue); }
     
-    /* Hide score in Spymaster mode */
+    /* Hide Score in Spymaster Mode */
     .app.spymaster .score { 
       display: none; 
     }
-    
+
+    .score .red { color: var(--red); }
+    .score .blue { color: var(--blue); }
+
     main.board {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
@@ -133,46 +133,19 @@
       font-size: clamp(24px, 3.25vw, 54px);
       line-height: 1;
     }
-    
-    .card.image-bg-card {
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-    }
 
-    .card.image-bg-card > span:not(.role-icon) {
-      display: none;
-    }
-
-    .card.image-bg-card.revealed::before {
+    /* Media Mode Visual Overlay For Guesses */
+    .card.image-bg-card.revealed::after {
       content: '';
-      position: absolute; inset: 0;
-      background: var(--reveal-color);
+      position: absolute;
+      inset: 0;
       opacity: 0.85;
       z-index: 1;
     }
-
-    .card.image-bg-card.red.revealed { --reveal-color: var(--red); }
-    .card.image-bg-card.blue.revealed { --reveal-color: var(--blue); }
-    .card.image-bg-card.neutral.revealed { --reveal-color: var(--revealed-neutral); }
-    .card.image-bg-card.assassin.revealed { --reveal-color: var(--assassin); }
-    
-    .spymaster .card.image-bg-card:not(.revealed)::before {
-      content: ''; position: absolute; inset: 0;
-      background: var(--spy-color); z-index: 1;
-      border: 4px solid var(--spy-solid);
-    }
-    
-    .spymaster .card.image-bg-card.red:not(.revealed) { --spy-color: rgba(215, 25, 32, 0.35); --spy-solid: var(--red); }
-    .spymaster .card.image-bg-card.blue:not(.revealed) { --spy-color: rgba(49, 95, 184, 0.35); --spy-solid: var(--blue); }
-    .spymaster .card.image-bg-card.neutral:not(.revealed) { --spy-color: rgba(216, 185, 103, 0.45); --spy-solid: var(--revealed-neutral); }
-    .spymaster .card.image-bg-card.assassin:not(.revealed) { --spy-color: rgba(0,0,0,0.55); --spy-solid: var(--assassin); }
-
-    .role-icon {
-      z-index: 2;
-      font-size: clamp(24px, 3.5vw, 60px);
-      text-shadow: 0 2px 8px rgba(0,0,0,0.5);
-    }
+    .card.image-bg-card.revealed.red::after { background-color: var(--red); }
+    .card.image-bg-card.revealed.blue::after { background-color: var(--blue); }
+    .card.image-bg-card.revealed.neutral::after { background-color: rgba(255, 255, 255, 0.6); }
+    .card.image-bg-card.revealed.assassin::after { background-color: rgba(0, 0, 0, 0.9); }
 
     .card.pending::before {
       content: '';
@@ -185,10 +158,10 @@
 
     @keyframes fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
     @keyframes flash {
-      0% { background: var(--red); opacity: 0.8; }
-      33% { background: var(--blue); opacity: 0.8; }
-      66% { background: #999; opacity: 0.8; }
-      100% { background: var(--red); opacity: 0.8; }
+      0% { background: var(--red); }
+      33% { background: var(--blue); }
+      66% { background: #999; }
+      100% { background: var(--red); }
     }
 
     .card.reveal-anim { animation: revealPop 400ms ease; }
@@ -198,15 +171,15 @@
       100% { transform: scale(1); filter: brightness(1); }
     }
 
-    .card:not(.image-bg-card).revealed.red { background: var(--red); color: white; }
-    .card:not(.image-bg-card).revealed.blue { background: var(--blue); color: white; }
-    .card:not(.image-bg-card).revealed.neutral { background: var(--revealed-neutral); color: #111; }
-    .card:not(.image-bg-card).revealed.assassin { background: black; color: white; }
+    .card.revealed.red { background: var(--red); color: white; }
+    .card.revealed.blue { background: var(--blue); color: white; }
+    .card.revealed.neutral { background: var(--revealed-neutral); color: #111; }
+    .card.revealed.assassin { background: black; color: white; }
 
-    .spymaster .card:not(.image-bg-card):not(.revealed).red { background: rgba(215, 25, 32, 0.25); }
-    .spymaster .card:not(.image-bg-card):not(.revealed).blue { background: rgba(49, 95, 184, 0.25); }
-    .spymaster .card:not(.image-bg-card):not(.revealed).neutral { background: rgba(216, 185, 103, 0.42); }
-    .spymaster .card:not(.image-bg-card):not(.revealed).assassin { background: rgba(0,0,0,0.4); color: white; }
+    .spymaster .card:not(.revealed).red { background: rgba(215, 25, 32, 0.25); box-shadow: inset 0 0 0 6px var(--red); }
+    .spymaster .card:not(.revealed).blue { background: rgba(49, 95, 184, 0.25); box-shadow: inset 0 0 0 6px var(--blue); }
+    .spymaster .card:not(.revealed).neutral { background: rgba(216, 185, 103, 0.42); box-shadow: inset 0 0 0 6px #d8b967; }
+    .spymaster .card:not(.revealed).assassin { background: rgba(0,0,0,0.4); color: white; box-shadow: inset 0 0 0 6px var(--assassin); }
 
     .screen-shake { animation: screenShake 520ms ease-in-out; }
     @keyframes screenShake {
@@ -382,7 +355,6 @@
           <input type="checkbox" id="spymasterGuessToggle" />
         </label>
       </div>
-      
       <div class="footer-section settings-section">
         <button class="control-btn settings-btn" id="settingsBtn">⚙</button>
       </div>
@@ -402,27 +374,26 @@
         <button class="control-btn source-option" data-source="spanish" type="button">🇪🇸</button>
         <button class="control-btn source-option" data-source="images" type="button">🖼️</button>
         
-        <button class="control-btn source-option file-source-option" id="btnUploadPhotos" data-source="custom_images" title="Upload WhatsApp ZIP with photos" type="button">📸</button>
-        <button class="control-btn source-option file-source-option" id="btnUploadChat" data-source="custom" title="Upload Chat Text" type="button">📄</button>
+        <!-- Standardized Buttons for Uploads -->
+        <button class="control-btn source-option" data-source="custom" id="btnCustomText" type="button">📄</button>
+        <button class="control-btn source-option" data-source="custom-media" id="btnCustomMedia" type="button">📸</button>
         
-        <!-- Hidden Inputs for clean identical buttons -->
-        <input type="file" id="customImageInput" accept=".zip,application/zip" style="display: none;" />
-        <input type="file" id="customFileInput" accept=".txt,.zip,text/plain,application/zip" style="display: none;" />
+        <!-- Hidden Inputs triggered by above buttons -->
+        <input type="file" id="customFileInput" accept=".txt,.zip,text/plain,application/zip" style="display:none;" />
+        <input type="file" id="customMediaInput" accept=".zip,application/zip" style="display:none;" />
       </div>
       <div class="footer-section download-section">
         <button class="control-btn" id="downloadPngBtn">Download</button>
       </div>
     </footer>
     <canvas class="effects-canvas" id="effectsCanvas"></canvas>
-    <div class="loading-modal" id="loadingModal"><div class="loading-box">Loading…</div></div>
+    <div class="loading-modal" id="loadingModal"><div class="loading-box" id="loadingText">Loading…</div></div>
   </div>
   <div style="height:520px" aria-hidden="true"></div>
 
   <script>
-    // --- CLOUDINARY CONFIGURATION ---
-    const CLOUDINARY_CLOUD_NAME = 'tchfkyl7'; 
-    const CLOUDINARY_UPLOAD_PRESET = 'codenames_temp'; 
-    // --------------------------------
+    const CLOUDINARY_CLOUD_NAME = 'tchfkyl7';
+    const CLOUDINARY_UPLOAD_PRESET = 'codenames_temp';
 
     const banks = {
       english: ['TRIANGLE','PORT','PENGUIN','SCALE','TRUNK','BOOM','BACK','BAT','PISTOL','CROSS','BERMUDA','FORCE','LINE','SOCK','FIGHTER','EYE','TRIP','SPIDER','PIANO','BAR','FIGURE','WHIP','GROUND','JACK','SATELLITE','AMAZON','BRIDGE','CASTLE','CLOUD','CROWN','DRAGON','FAIR','GHOST','GLASS','HONEY','IVORY','JUPITER','KING','LASER','MERCURY','NINJA','OLIVE','PILOT','QUEEN','ROBOT','SHADOW','TEMPLE','UNICORN','VAN','WHALE'],
@@ -438,17 +409,15 @@
         '🧑','👨','👩','👨‍🚀','👩‍⚕️','👨‍🍳','👨‍🎤','👮','🧑‍🏫','🧑‍🔬','🧑‍🎨','🧑‍🚒','🕵️','🥷','🧙'
       ],
       custom: [],
-      custom_images: []
+      customMedia: []
     };
 
     const stopWords = new Set(`a al algo algunas algunos ante antes como con contra cual cuando de del desde donde dos el ella ellas ellos en entre era eran eres es esa esas ese eso esos esta estaba estaban estamos estan estar estas este esto estos fue fui fuimos ha habia han hasta hay la las le les lo los mas me mi mis muy nada ni no nos o para pero por porque que quien se ser si sin sobre son su sus te tiene todo tu un una uno unos y ya yo the and for are but not you your with from that this have has had was were what when where who why how she her his him they them there here about into onto over under between before after then than very just some any all out can could would should will been being more most jajaja jajajaja haha hahaha https http com www whatsapp sticker imagen audio video`.split(/\s+/).filter(Boolean));
 
     let state = {};
     let previousGameState = null;
-    let selectedSource = 'english'; // Default to english ALWAYS on clean load
+    let selectedSource = 'english'; // Default to English
     let previousSourceSelection = 'english';
-    let fullImageCache = []; 
-    let currentActiveBlobs = []; // Critical variable for "Next Game" photo shuffling
 
     const els = {
       app: document.getElementById('app'),
@@ -466,16 +435,20 @@
       shareGameBtn: document.getElementById('shareGameBtn'),
       downloadPngBtn: document.getElementById('downloadPngBtn'),
       customFileInput: document.getElementById('customFileInput'),
-      customImageInput: document.getElementById('customImageInput'),
+      customMediaInput: document.getElementById('customMediaInput'),
+      btnCustomText: document.getElementById('btnCustomText'),
+      btnCustomMedia: document.getElementById('btnCustomMedia'),
       loadingModal: document.getElementById('loadingModal'),
+      loadingText: document.getElementById('loadingText'),
       effectsCanvas: document.getElementById('effectsCanvas'),
-      sourceOptions: [...document.querySelectorAll('.source-option')],
-      clickableSourceOptions: [...document.querySelectorAll('.source-option[data-source]:not(.file-source-option)')]
+      sourceOptions: [...document.querySelectorAll('.source-option')]
     };
-    
-    // Wire up custom upload buttons
-    document.getElementById('btnUploadPhotos').onclick = () => els.customImageInput.click();
-    document.getElementById('btnUploadChat').onclick = () => els.customFileInput.click();
+
+    els.clickableSourceOptions = els.sourceOptions.filter(opt => !['custom', 'custom-media'].includes(opt.dataset.source));
+
+    // Connect custom buttons to hidden inputs
+    els.btnCustomText.onclick = () => els.customFileInput.click();
+    els.btnCustomMedia.onclick = () => els.customMediaInput.click();
 
     function cloneGameState(source) {
       return {
@@ -490,8 +463,7 @@
         turn: source.turn,
         spymaster: false,
         darkMode: source.darkMode || false,
-        spymasterMayGuess: source.spymasterMayGuess || false,
-        blobs: source.blobs ? [...source.blobs] : null
+        spymasterMayGuess: source.spymasterMayGuess || false
       };
     }
 
@@ -594,15 +566,7 @@
 
     function getCurrentBank(rng = Math.random) {
       if (selectedSource === 'images') return getBalancedImageBank(rng);
-      if (selectedSource === 'custom_images') {
-          if (fullImageCache && fullImageCache.length >= 25) {
-              const selectedBlobs = shuffle([...fullImageCache], rng).slice(0, 25);
-              currentActiveBlobs = selectedBlobs; // Save to global active context so it isn't lost
-              banks.custom_images = selectedBlobs.map(b => URL.createObjectURL(b));
-              return banks.custom_images;
-          }
-          return banks.custom_images;
-      }
+      if (selectedSource === 'custom-media') return shuffle([...(banks.customMedia || [])], rng).slice(0, 25);
       const bank = banks[selectedSource] || banks.english;
       return bank.length >= 25 ? dedupeItems(bank) : banks.english;
     }
@@ -666,49 +630,70 @@
       };
     }
 
+    function getCompactCustomBoardCode() {
+      if ((state.source !== 'custom' && state.source !== 'custom-media') || !state.seed || !Array.isArray(state.words) || state.words.length !== 25) return null;
+      
+      const isMedia = state.source === 'custom-media';
+      const prefix = isMedia ? '2' : '1'; // '2' guarantees we rebuild using 'custom-media' RNG
+      let payload;
+
+      if (isMedia) {
+        // Strip out 'CLD:' prefix and join with commas to heavily shrink the URL string
+        const cleanedIds = state.words.map(w => w.replace('CLD:', ''));
+        payload = [state.seed, cleanedIds.join(',')].join('\n');
+      } else {
+        payload = [state.seed, ...state.words].join('\n');
+      }
+      
+      return prefix + base64UrlEncode(payload);
+    }
+
     function getCompactGameCode() {
       const sourceCode = compactSourceCodes[state.source];
       if (!sourceCode || !state.seed) return null;
       return `1${sourceCode}${state.seed}`;
     }
 
-    function getCompactCustomBoardCode() {
-      if ((state.source !== 'custom' && state.source !== 'custom_images') || !state.seed || !Array.isArray(state.words) || state.words.length !== 25) return null;
-      return '1' + base64UrlEncode([state.seed, ...state.words].join('\n'));
-    }
-
     function buildCustomStateFromCode(code) {
       const rawCode = String(code || '');
       let seed;
       let words;
+      let source;
 
-      if (rawCode.startsWith('1')) {
+      if (rawCode.startsWith('1') || rawCode.startsWith('2')) {
+        const isMedia = rawCode.startsWith('2');
+        source = isMedia ? 'custom-media' : 'custom';
+        
         const decoded = base64UrlDecode(rawCode.slice(1));
         const parts = decoded.split('\n').map(part => part.trim()).filter(Boolean);
         seed = parts.shift();
-        words = parts; 
+        
+        if (isMedia) {
+          // Re-add the CLD prefix that we stripped for compression
+          words = parts[0].split(',').map(id => `CLD:${id}`);
+        } else {
+          words = parts.map(word => word.toUpperCase());
+        }
       } else {
         const parts = rawCode.split('.').filter(Boolean);
         seed = parts.shift();
         words = parts.map(word => word.toUpperCase());
+        source = 'custom';
       }
 
-      if (!seed || seed.length < 8 || words.length !== 25) {
+      if (!seed || seed.length < 8 || words.length !== 25 || words.some(word => !word || word.length > 50)) {
         throw new Error('Invalid custom board');
       }
-
-      const isImageMode = words[0].startsWith('http');
-      selectedSource = isImageMode ? 'custom_images' : 'custom';
+      
+      selectedSource = source;
       previousSourceSelection = selectedSource;
       
-      if (!isImageMode) {
-        words = words.map(w => w.toUpperCase());
-        banks.custom = words;
-      } else {
-        banks.custom_images = words;
-      }
+      if (source === 'custom-media') banks.customMedia = words;
+      else banks.custom = words;
 
-      const setup = makeRoles(seededRandom(`${selectedSource}:${seed}`));
+      // Ensure the PRNG uses the correct source prefix so roles align perfectly
+      const setup = makeRoles(seededRandom(`${source}:${seed}`));
+      
       return {
         words,
         roles: setup.roles,
@@ -729,10 +714,8 @@
       selectedSource = source;
       const rng = seededRandom(`${source}:${seed}`);
       const setup = makeRoles(rng);
-      const generatedWords = shuffle(getCurrentBank(rng), rng).slice(0, 25);
-      
       return {
-        words: generatedWords,
+        words: shuffle(getCurrentBank(rng), rng).slice(0, 25),
         roles: setup.roles,
         revealed: revealed || Array(25).fill(false),
         source,
@@ -743,28 +726,8 @@
         turn: setup.startingTeam,
         spymaster,
         darkMode: false,
-        spymasterMayGuess: false,
-        blobs: source === 'custom_images' ? currentActiveBlobs : null
+        spymasterMayGuess: false
       };
-    }
-
-    async function uploadAnonymousImage(blob) {
-      if (CLOUDINARY_CLOUD_NAME === 'tchfkyl7' && CLOUDINARY_UPLOAD_PRESET.includes('REPLACE_ME')) {
-          throw new Error("Cloudinary setup incomplete. Please add your CLOUDINARY_UPLOAD_PRESET in the HTML file.");
-      }
-
-      const formData = new FormData();
-      formData.append('file', blob);
-      formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
-      
-      const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
-          method: 'POST',
-          body: formData
-      });
-      
-      if (!res.ok) throw new Error("Upload failed via Cloudinary");
-      const data = await res.json();
-      return data.secure_url;
     }
 
     function getShareableGameUrl() {
@@ -870,34 +833,45 @@
     }
 
     async function shareGameLink() {
-      if (state.source === 'custom_images' && state.words.some(w => w.startsWith('blob:'))) {
-        
-        els.loadingModal.querySelector('.loading-box').textContent = "Uploading images for sharing... (this may take a minute)";
+      // 1. Upload Local Blobs if they exist
+      if (state.source === 'custom-media' && state.words.some(w => w.startsWith('blob:'))) {
+        els.loadingText.textContent = 'Uploading board...';
         els.loadingModal.classList.add('show');
+        
         try {
-            const newUrls = [];
-            for (let i = 0; i < 25; i++) {
-                if (state.words[i].startsWith('blob:')) {
-                    const url = await uploadAnonymousImage(state.blobs[i]);
-                    newUrls.push(url.trim());
-                } else {
-                    newUrls.push(state.words[i]);
-                }
-            }
-            state.words = newUrls;
-            state.blobs = null; 
-        } catch (e) {
-            console.error(e);
-            alert("Failed to upload images for sharing: " + e.message + "\nMake sure you added your CLOUDINARY_UPLOAD_PRESET to the HTML code!");
-            els.loadingModal.classList.remove('show');
-            return;
+          const uploadPromises = state.words.map(async (word) => {
+            if (!word.startsWith('blob:')) return word;
+            
+            const response = await fetch(word);
+            const blob = await response.blob();
+            const formData = new FormData();
+            formData.append('file', blob);
+            formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET); 
+            
+            const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
+              method: 'POST',
+              body: formData
+            });
+            if (!res.ok) throw new Error('Upload failed');
+            const data = await res.json();
+            
+            return `CLD:${data.public_id}`;
+          });
+
+          state.words = await Promise.all(uploadPromises);
+          
+        } catch (error) {
+          alert('Upload failed. Check your internet connection.');
+          els.loadingModal.classList.remove('show');
+          return; // Abort share if upload fails
         }
-        els.loadingModal.querySelector('.loading-box').textContent = "Loading…";
         els.loadingModal.classList.remove('show');
       }
 
       syncGameUrl();
       const link = getShareableGameUrl();
+
+      // Native sharing logic restored (removes manual alert banner)
       if (navigator.share) {
         try {
           await navigator.share({ title: 'Codenames board', url: link });
@@ -906,6 +880,7 @@
           if (error.name === 'AbortError') return;
         }
       }
+      
       try {
         await navigator.clipboard.writeText(link);
         const original = els.shareGameBtn.textContent;
@@ -916,26 +891,14 @@
       }
     }
 
-    function freeBlobMemory() {
-      if (state.source === 'custom_images' && state.words) {
-          state.words.forEach(w => {
-              if (w.startsWith('blob:')) URL.revokeObjectURL(w);
-          });
-      }
-    }
-
     function newGame(saveCurrent = false) {
       if (saveCurrent && state.words) previousGameState = cloneGameState(state);
-      freeBlobMemory(); 
-      
       const seed = makeCompactSeed();
       const previousDarkMode = state.darkMode || false;
       const previousSpymasterMayGuess = state.spymasterMayGuess || false;
-      
       state = buildStateFromSeed(selectedSource, seed, Array(25).fill(false), false);
       state.darkMode = previousDarkMode;
       state.spymasterMayGuess = previousSpymasterMayGuess;
-      
       render();
       syncGameUrl();
     }
@@ -963,25 +926,26 @@
       state.words.forEach((w, i) => {
         const el = document.createElement('div');
         const role = state.roles[i];
-        const isImage = state.source === 'images';
-        const isCustomImage = state.source === 'custom_images';
         
-        el.className = 'card ' + role + (isImage ? ' image-card' : '') + (state.revealed[i] ? ' revealed' : '') + (state.lastRevealed === i ? ' reveal-anim' : '') + (state.pending === i ? ' pending' : '');
+        const isImage = state.source === 'images' || w.startsWith('blob:') || w.startsWith('CLD:');
+        const isCustomMedia = w.startsWith('blob:') || w.startsWith('CLD:');
         
-        if (isCustomImage) {
-            el.style.backgroundImage = `url(${w})`;
-            el.classList.add('image-bg-card');
-            
-            if (state.revealed[i]) {
-                const icon = document.createElement('span');
-                icon.className = 'role-icon';
-                icon.textContent = role === 'red' ? '🔴' : role === 'blue' ? '🔵' : role === 'assassin' ? '💀' : '➖';
-                el.appendChild(icon);
-            }
+        el.className = 'card ' + role + (isImage ? ' image-card' : '') + (isCustomMedia ? ' image-bg-card' : '') + (state.revealed[i] ? ' revealed' : '') + (state.lastRevealed === i ? ' reveal-anim' : '') + (state.pending === i ? ' pending' : '');
+        
+        if (isCustomMedia) {
+          let imageUrl = w;
+          if (w.startsWith('CLD:')) {
+            const publicId = w.replace('CLD:', '');
+            imageUrl = `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/${publicId}`;
+          }
+          el.style.backgroundImage = `url('${imageUrl}')`;
+          el.style.backgroundSize = 'cover';
+          el.style.backgroundPosition = 'center 25%'; // 25% crop for vertical photos
+          el.innerHTML = '<span></span>';
         } else {
-            const label = document.createElement('span');
-            label.textContent = w;
-            el.appendChild(label);
+          const label = document.createElement('span');
+          label.textContent = w;
+          el.appendChild(label);
         }
         
         el.onclick = () => handleCardClick(i);
@@ -1156,8 +1120,8 @@
       }
 
       const whatsappSenderWords = extractWhatsappSenderWords(originalText);
-
       const capitalizationStats = new Map();
+      
       originalText.split(/[^A-Za-zÀ-ÿÑñÜü]+/).filter(Boolean).forEach(token => {
         const normalized = basicNormalize(token);
         const first = token.charAt(0);
@@ -1224,11 +1188,14 @@
         if (word.length > 11) score *= 0.86;
         if (strongConcreteHints.has(word)) score *= 1.35;
         if (/[aeiou][bcdfghjklmnñpqrstvwxyz][aeiou]/.test(word)) score *= 1.05;
+
         const stats = capitalizationStats.get(word);
         const capitalizedRatio = stats ? stats.capitalized / stats.total : 0;
         if (capitalizedRatio > 0.35) score *= 0.7;
+
         const recencyWeight = 0.9 + (firstIndex / total) * 0.15;
         score *= recencyWeight;
+
         if (docFrequency === 1 && count < 2.2) score *= 0.55;
         if (count > 18) score *= 0.8;
         return score;
@@ -1253,7 +1220,9 @@
         if (!isGoodShape(word)) return;
         if (stopWords.has(word) || weakWords.has(word) || spanishFunctionWords.has(word) || whatsappNoise.has(word) || monthsAndDays.has(word) || placeNoise.has(word)) return;
         if (looksLikeVerb(word) || looksLikeAbstractOrProcess(word) || looksLikeProperName(word)) return;
+
         if (/^(www|http|https|com|net|org|jpeg|jpg|png|mov|mp4|opus|webp)$/.test(word)) return;
+
         const previous = counts.get(word) || 0;
         const rarityBoost = previous === 0 ? 1 : 0.85;
         counts.set(word, previous + rarityBoost);
@@ -1264,10 +1233,14 @@
         .map(([word, count]) => [word, wordScore(word, count, count, firstSeen.get(word) || 0, total)])
         .filter(([word, score]) => score >= 1.35)
         .sort((a, b) => {
-          const diff = b[1] - a[1];
+          const [wordA, scoreA] = a;
+          const [wordB, scoreB] = b;
+          const diff = scoreB - scoreA;
           if (Math.abs(diff) > 0.2) return diff;
-          return (b[0].length - a[0].length) || ((firstSeen.get(a[0]) || 0) - (firstSeen.get(b[0]) || 0));
+          return (wordB.length - wordA.length) || ((firstSeen.get(wordA) || 0) - (firstSeen.get(wordB) || 0));
         });
+
+      function isLaughLikeWord(word) { return word.includes('jaja') || word.includes('haha'); }
 
       const seenFamilies = new Set();
       const finalWords = [];
@@ -1275,7 +1248,7 @@
       rankedWords.forEach(([word]) => {
         const familyKey = getWordFamilyKey(word);
         if (seenFamilies.has(familyKey)) return;
-        if (word.includes('jaja') || word.includes('haha')) {
+        if (isLaughLikeWord(word)) {
           if (hasLaughLikeWord) return;
           hasLaughLikeWord = true;
         }
@@ -1286,17 +1259,14 @@
       return finalWords.slice(0, 80);
     }
 
-    async function loadJSZip() {
-        if (!window.JSZip) {
-            const script = document.createElement('script');
-            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
-            document.head.appendChild(script);
-            await new Promise((resolve, reject) => { script.onload = resolve; script.onerror = reject; });
-        }
-    }
-
     async function extractTextFromZip(file) {
-      await loadJSZip();
+      if (!window.JSZip) {
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+        document.head.appendChild(script);
+        await new Promise((resolve, reject) => { script.onload = resolve; script.onerror = reject; });
+      }
+
       const zip = await JSZip.loadAsync(file);
       let combined = '';
       const textLikeFiles = Object.values(zip.files).filter(f => {
@@ -1307,7 +1277,10 @@
 
       for (const f of textLikeFiles) {
         try { combined += '\n' + await f.async('string'); } 
-        catch (error) { const buffer = await f.async('arraybuffer'); combined += '\n' + new TextDecoder('utf-8', { fatal: false }).decode(buffer); }
+        catch (error) {
+          const buffer = await f.async('arraybuffer');
+          combined += '\n' + new TextDecoder('utf-8', { fatal: false }).decode(buffer);
+        }
       }
 
       if (!combined.trim()) throw new Error('No readable text files found in zip');
@@ -1317,137 +1290,139 @@
     async function readCustomTextFile(file) {
       if (file.name.toLowerCase().endsWith('.zip')) return extractTextFromZip(file);
       try { return await file.text(); } 
-      catch (error) { const buffer = await file.arrayBuffer(); return new TextDecoder('utf-8', { fatal: false }).decode(buffer); }
+      catch (error) {
+        const buffer = await file.arrayBuffer();
+        return new TextDecoder('utf-8', { fatal: false }).decode(buffer);
+      }
     }
 
-    async function resizeImageBlob(blob, maxSize = 400) {
-      return new Promise((resolve, reject) => {
+    async function extractImagesFromZip(file) {
+      if (!window.JSZip) {
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+        document.head.appendChild(script);
+        await new Promise((resolve, reject) => { script.onload = resolve; script.onerror = reject; });
+      }
+      
+      const zip = await JSZip.loadAsync(file);
+      const imageFiles = Object.values(zip.files).filter(f => !f.dir && f.name.match(/\.(jpe?g|png)$/i));
+      
+      if (imageFiles.length < 25) {
+        throw new Error(`Only found ${imageFiles.length} images. You need at least 25.`);
+      }
+
+      const selectedFiles = shuffle(imageFiles).slice(0, 100);
+      const processedImages = [];
+
+      for (const f of selectedFiles) {
+        const blob = await f.async('blob');
         const img = new Image();
         const url = URL.createObjectURL(blob);
-        img.onload = () => {
-          URL.revokeObjectURL(url);
-          const canvas = document.createElement('canvas');
-          let w = img.width, h = img.height;
-          
-          const minDim = Math.min(w, h);
-          let sx = 0;
-          let sy = 0;
-          
-          if (w > h) {
-              sx = (w - minDim) / 2;
-          } else if (h > w) {
-              // Crop 25% from top for vertical images to keep faces centered
-              sy = (h - minDim) * 0.25; 
-          }
-          
-          canvas.width = maxSize;
-          canvas.height = maxSize;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, sx, sy, minDim, minDim, 0, 0, maxSize, maxSize);
-          
-          canvas.toBlob(resolve, 'image/jpeg', 0.85);
-        };
-        img.onerror = reject;
-        img.src = url;
-      });
+        
+        await new Promise((resolve) => {
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const size = 400; 
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            
+            let sX = 0, sY = 0, sW = img.width, sH = img.height;
+            if (img.width > img.height) {
+              sW = img.height;
+              sX = (img.width - img.height) / 2;
+            } else if (img.height > img.width) {
+              sH = img.width;
+              sY = (img.height - img.width) * 0.25; 
+            }
+            
+            ctx.drawImage(img, sX, sY, sW, sH, 0, 0, size, size);
+            
+            canvas.toBlob(resizedBlob => {
+              processedImages.push(URL.createObjectURL(resizedBlob));
+              resolve();
+            }, 'image/jpeg', 0.8);
+          };
+          img.src = url;
+        });
+      }
+      return processedImages;
     }
 
+    
     els.settingsBtn.onclick = (event) => {
       event.stopPropagation();
       els.settingsPanel.classList.toggle('open');
     };
     els.settingsPanel.onclick = (event) => event.stopPropagation();
     document.addEventListener('click', () => els.settingsPanel.classList.remove('open'));
-    
     els.playerBtn.onclick = () => { state.spymaster = false; state.lastRevealed = null; render(); };
     els.spymasterBtn.onclick = () => { state.spymaster = true; state.lastRevealed = null; render(); };
-    
     els.previousGameBtn.onclick = () => {
       if (!previousGameState) { alert('No previous game yet.'); return; }
-      freeBlobMemory();
-      clearPending(); 
-      state = cloneGameState(previousGameState); 
-      selectedSource = state.source || selectedSource; 
-      render(); 
-      syncGameUrl();
+      clearPending(); state = cloneGameState(previousGameState); selectedSource = state.source || selectedSource; render(); syncGameUrl();
     };
-    
     els.nextBtn.onclick = () => { clearPending(); newGame(true); };
     els.shareGameBtn.onclick = shareGameLink;
     els.downloadPngBtn.onclick = downloadPlayerBoardPng;
     
     els.clickableSourceOptions.forEach(option => {
-      option.onclick = () => { previousSourceSelection = selectedSource; selectedSource = option.dataset.source; newGame(true); };
+      option.onclick = () => { 
+        previousSourceSelection = selectedSource; 
+        selectedSource = option.dataset.source; 
+        newGame(true); 
+      };
     });
 
     els.customFileInput.onchange = async (event) => {
-      const loading = els.loadingModal;
       const file = event.target.files?.[0];
       if (!file) { selectedSource = previousSourceSelection; render(); return; }
-      loading.classList.add('show');
+      els.loadingText.textContent = 'Parsing chat...';
+      els.loadingModal.classList.add('show');
       const start = performance.now();
       await new Promise(resolve => requestAnimationFrame(resolve));
       try {
         const text = await readCustomTextFile(file);
         banks.custom = extractCustomWords(text);
         if (banks.custom.length < 25) {
-          alert(`I found ${banks.custom.length} usable words. Upload a longer text file or use another language.`);
+          alert(`I found ${banks.custom.length} usable words. Upload a longer text file.`);
           selectedSource = previousSourceSelection; render(); return;
         }
         previousSourceSelection = selectedSource; selectedSource = 'custom'; newGame(true);
       } catch (error) {
-        alert('Could not read that file. Try exporting the chat again or uploading the .txt file directly.');
+        alert('Could not read that file. Try exporting the chat again.');
         selectedSource = previousSourceSelection; render();
       } finally {
         const elapsed = performance.now() - start;
         if (elapsed < 2000) await new Promise(r => setTimeout(r, 2000 - elapsed));
-        loading.classList.remove('show'); event.target.value = '';
+        els.loadingModal.classList.remove('show'); event.target.value = '';
       }
     };
 
-    els.customImageInput.onchange = async (event) => {
-        const file = event.target.files?.[0];
-        if (!file) { selectedSource = previousSourceSelection; render(); return; }
-        
-        els.loadingModal.querySelector('.loading-box').textContent = "Extracting images...";
-        els.loadingModal.classList.add('show');
-        
-        try {
-            await loadJSZip();
-            const zip = await JSZip.loadAsync(file);
-            
-            const imgFiles = Object.values(zip.files).filter(f => !f.dir && /\.(jpe?g|png|webp)$/i.test(f.name) && !f.name.includes('__MACOSX'));
-            
-            if (imgFiles.length < 25) {
-                throw new Error(`Found ${imgFiles.length} usable images. You need at least 25 to play.`);
-            }
-
-            const allFiles = shuffle(imgFiles);
-            const filesToProcess = allFiles.slice(0, Math.min(100, allFiles.length));
-            const processedBlobs = [];
-            
-            for (let f of filesToProcess) {
-                const originalBlob = await f.async('blob');
-                const resizedBlob = await resizeImageBlob(originalBlob);
-                processedBlobs.push(resizedBlob);
-            }
-            
-            fullImageCache = processedBlobs;
-
-            previousSourceSelection = selectedSource;
-            selectedSource = 'custom_images';
-            
-            newGame(true);
-            
-        } catch (error) {
-            alert(error.message || "Failed to process images. Make sure it's a standard WhatsApp Media Export .zip");
-            selectedSource = previousSourceSelection;
-            render();
-        } finally {
-            els.loadingModal.querySelector('.loading-box').textContent = "Loading…";
-            els.loadingModal.classList.remove('show');
-            event.target.value = '';
-        }
+    els.customMediaInput.onchange = async (event) => {
+      const file = event.target.files?.[0];
+      if (!file) { selectedSource = previousSourceSelection; render(); return; }
+      
+      els.loadingText.textContent = 'Extracting photos...';
+      els.loadingModal.classList.add('show');
+      const start = performance.now();
+      await new Promise(resolve => requestAnimationFrame(resolve));
+      
+      try {
+        const images = await extractImagesFromZip(file);
+        banks.customMedia = images;
+        previousSourceSelection = selectedSource;
+        selectedSource = 'custom-media';
+        newGame(true);
+      } catch (error) {
+        alert(error.message || 'Could not extract images from that file.');
+        selectedSource = previousSourceSelection; render();
+      } finally {
+        const elapsed = performance.now() - start;
+        if (elapsed < 2000) await new Promise(r => setTimeout(r, 2000 - elapsed));
+        els.loadingModal.classList.remove('show'); 
+        event.target.value = '';
+      }
     };
 
     els.darkModeToggle.onchange = (event) => { state.darkMode = event.target.checked; state.lastRevealed = null; render(); };
@@ -1458,70 +1433,42 @@
     }
 
     function downloadPlayerBoardPng() {
+      if (state.source === 'custom-media') {
+        alert("Board downloading is currently only supported for text boards.");
+        return;
+      }
       return new Promise((resolve) => {
         const width = 1920, height = 1080;
         const canvas = document.createElement('canvas'); canvas.width = width; canvas.height = height;
         const ctx = canvas.getContext('2d');
         const isDark = state.darkMode;
         const colors = { bg: isDark ? '#111111' : '#ffffff', text: isDark ? '#f3f3f3' : '#050505', neutral: isDark ? '#2b2b2b' : '#e8e8e8', border: isDark ? '#242424' : '#f0f0f0', red: '#d71920', blue: '#315fb8', gray: '#ecd99f', assassin: '#000000' };
-        
         ctx.fillStyle = colors.bg; ctx.fillRect(0, 0, width, height);
         ctx.fillStyle = colors.text; ctx.font = '700 42px Georgia, serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('CODENAMES', width / 2, 54);
         ctx.fillStyle = colors.border; ctx.fillRect(0, 96, width, 2);
-        
         const redRemaining = state.roles.filter((role, i) => role === 'red' && !state.revealed[i]).length;
         const blueRemaining = state.roles.filter((role, i) => role === 'blue' && !state.revealed[i]).length;
-        
         ctx.font = '44px Arial, Helvetica, sans-serif'; ctx.textAlign = 'left'; ctx.fillStyle = colors.red; ctx.fillText(redRemaining, 32, 142); ctx.fillStyle = isDark ? '#888888' : '#777777'; ctx.fillText('–', 86, 142); ctx.fillStyle = colors.blue; ctx.fillText(blueRemaining, 122, 142);
         ctx.textAlign = 'center';
-        
         const cols = 5, rows = 5, boardX = 22, boardY = 186, gapX = 34, gapY = 30;
         const cardW = (width - boardX * 2 - gapX * (cols - 1)) / cols;
         const cardH = (height - boardY - 28 - gapY * (rows - 1)) / rows;
-        
-        let loadedImages = 0;
-        const totalImages = state.source === 'custom_images' ? 25 : 0;
-        
-        const finishRender = () => {
-          canvas.toBlob(async (blob) => {
-            if (!blob) { resolve(false); return; }
-            const fileName = `codenames-board-${Date.now()}.png`;
-            const file = new File([blob], fileName, { type: 'image/png' });
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
-              try { await navigator.share({ files: [file], title: 'Codenames board' }); resolve(true); return; } catch (error) { if (error.name === 'AbortError') { resolve(false); return; } }
-            }
-            const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href = url; link.download = fileName; document.body.appendChild(link); link.click(); document.body.removeChild(link); setTimeout(() => URL.revokeObjectURL(url), 1000); resolve(true);
-          }, 'image/png');
-        };
-
         state.words.forEach((word, i) => {
           const x = boardX + (i % cols) * (cardW + gapX), y = boardY + Math.floor(i / cols) * (cardH + gapY);
           const role = state.roles[i]; let fill = colors.neutral, textColor = colors.text;
           if (state.revealed[i]) { if (role === 'red') fill = colors.red; if (role === 'blue') fill = colors.blue; if (role === 'neutral') fill = colors.gray; if (role === 'assassin') fill = colors.assassin; textColor = role === 'neutral' ? '#111111' : '#ffffff'; }
-          
           ctx.fillStyle = fill; roundRect(ctx, x, y, cardW, cardH, 12); ctx.fill();
-          
-          if (state.source === 'custom_images') {
-             const img = new Image();
-             img.onload = () => {
-                 ctx.save();
-                 ctx.beginPath(); roundRect(ctx, x, y, cardW, cardH, 12); ctx.clip();
-                 ctx.drawImage(img, x, y, cardW, cardH);
-                 if (state.revealed[i]) {
-                     ctx.fillStyle = fill; ctx.globalAlpha = 0.85; ctx.fillRect(x, y, cardW, cardH); ctx.globalAlpha = 1;
-                     ctx.fillStyle = '#fff'; ctx.font = '80px Arial'; ctx.fillText(role === 'red' ? '🔴' : role === 'blue' ? '🔵' : role === 'assassin' ? '💀' : '➖', x + cardW / 2, y + cardH / 2);
-                 }
-                 ctx.restore();
-                 loadedImages++;
-                 if(loadedImages === totalImages) finishRender();
-             };
-             img.src = word;
-          } else {
-             ctx.fillStyle = textColor; ctx.font = state.source === 'images' ? '76px Arial, sans-serif' : '700 38px Arial, Helvetica, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(word, x + cardW / 2, y + cardH / 2);
-          }
+          ctx.fillStyle = textColor; ctx.font = state.source === 'images' ? '76px Arial, sans-serif' : '700 38px Arial, Helvetica, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(word, x + cardW / 2, y + cardH / 2);
         });
-        
-        if (totalImages === 0) finishRender();
+        canvas.toBlob(async (blob) => {
+          if (!blob) { resolve(false); return; }
+          const fileName = `codenames-board-${Date.now()}.png`;
+          const file = new File([blob], fileName, { type: 'image/png' });
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            try { await navigator.share({ files: [file], title: 'Codenames board' }); resolve(true); return; } catch (error) { if (error.name === 'AbortError') { resolve(false); return; } }
+          }
+          const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href = url; link.download = fileName; document.body.appendChild(link); link.click(); document.body.removeChild(link); setTimeout(() => URL.revokeObjectURL(url), 1000); resolve(true);
+        }, 'image/png');
       });
     }
 
@@ -1537,7 +1484,10 @@
     window.visualViewport?.addEventListener('resize', () => { if (window.scrollY < 40) nudgeSafariChromeAway(); });
     document.addEventListener('touchend', () => { if (window.scrollY < 1) nudgeSafariChromeAway(); }, { passive: true });
 
-    if (!loadSharedGameFromUrl()) newGame();
+    if (!loadSharedGameFromUrl()) {
+      selectedSource = 'english';
+      newGame();
+    }
   </script>
 </body>
 </html>
