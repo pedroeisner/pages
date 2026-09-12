@@ -95,8 +95,7 @@
 
     .score .red { color: var(--red); }
     .score .blue { color: var(--blue); }
-
-    /* Hide score in Spymaster mode */
+    
     .app.spymaster .score { 
       display: none; 
     }
@@ -133,7 +132,7 @@
       font-size: clamp(24px, 3.25vw, 54px);
       line-height: 1;
     }
-
+    
     .card.image-bg-card {
       background-size: cover;
       background-position: center;
@@ -401,8 +400,11 @@
         <button class="control-btn source-option active" data-source="english" type="button">🇬🇧</button>
         <button class="control-btn source-option" data-source="spanish" type="button">🇪🇸</button>
         <button class="control-btn source-option" data-source="images" type="button">🖼️</button>
-        <button class="control-btn source-option file-source-option" data-source="custom_images" title="Upload WhatsApp ZIP with photos" type="button" onclick="document.getElementById('customImageInput').click()">📸</button>
-        <button class="control-btn source-option file-source-option" data-source="custom" title="Upload Chat Text" type="button" onclick="document.getElementById('customFileInput').click()">📄</button>
+        
+        <!-- Standardized buttons for hidden inputs -->
+        <button class="control-btn source-option file-source-option" id="btnUploadPhotos" data-source="custom_images" title="Upload WhatsApp ZIP with photos" type="button">📸</button>
+        <button class="control-btn source-option file-source-option" id="btnUploadChat" data-source="custom" title="Upload Chat Text" type="button">📄</button>
+        
         <input type="file" id="customImageInput" accept=".zip,application/zip" style="display: none;" />
         <input type="file" id="customFileInput" accept=".txt,.zip,text/plain,application/zip" style="display: none;" />
       </div>
@@ -437,8 +439,9 @@
 
     let state = {};
     let previousGameState = null;
-    let selectedSource = 'english';
+    let selectedSource = 'english'; // Default source is English
     let previousSourceSelection = 'english';
+    let fullImageCache = []; // Stores all extracted image blobs so "Next game" can pull a new set
 
     const els = {
       app: document.getElementById('app'),
@@ -462,6 +465,10 @@
       sourceOptions: [...document.querySelectorAll('.source-option')],
       clickableSourceOptions: [...document.querySelectorAll('.source-option[data-source]:not(.file-source-option)')]
     };
+    
+    // Bind hidden inputs to standardized buttons
+    document.getElementById('btnUploadPhotos').onclick = () => els.customImageInput.click();
+    document.getElementById('btnUploadChat').onclick = () => els.customFileInput.click();
 
     function cloneGameState(source) {
       return {
@@ -580,7 +587,16 @@
 
     function getCurrentBank(rng = Math.random) {
       if (selectedSource === 'images') return getBalancedImageBank(rng);
-      if (selectedSource === 'custom_images') return banks.custom_images;
+      if (selectedSource === 'custom_images') {
+          // If we have a cached pool of images from a zip upload, pull 25 random images
+          if (fullImageCache && fullImageCache.length >= 25) {
+              const selectedBlobs = shuffle([...fullImageCache], rng).slice(0, 25);
+              state.blobs = selectedBlobs; // Save blobs for potential sharing
+              banks.custom_images = selectedBlobs.map(b => URL.createObjectURL(b));
+              return banks.custom_images;
+          }
+          return banks.custom_images;
+      }
       const bank = banks[selectedSource] || banks.english;
       return bank.length >= 25 ? dedupeItems(bank) : banks.english;
     }
@@ -723,11 +739,11 @@
       };
     }
 
-    async function uploadToImgur(blob) {
+    async function uploadAnonymousImage(blob) {
       const formData = new FormData();
       formData.append('image', blob);
       
-      // Using a standard public Client-ID for anonymous uploads
+      // Using Imgur's anonymous public API upload
       const res = await fetch('https://api.imgur.com/3/image', {
           method: 'POST',
           headers: {
@@ -844,7 +860,7 @@
     }
 
     async function shareGameLink() {
-      // If we are sharing a board with local blobs, we must upload them first to Imgur
+      // If we are sharing a board with local blobs, we must upload them first to a host
       if (state.source === 'custom_images' && state.words.some(w => w.startsWith('blob:'))) {
         els.loadingModal.querySelector('.loading-box').textContent = "Uploading images for sharing... (this may take a minute)";
         els.loadingModal.classList.add('show');
@@ -852,14 +868,14 @@
             const newUrls = [];
             for (let i = 0; i < 25; i++) {
                 if (state.words[i].startsWith('blob:')) {
-                    const url = await uploadToImgur(state.blobs[i]);
+                    const url = await uploadAnonymousImage(state.blobs[i]);
                     newUrls.push(url.trim());
                 } else {
                     newUrls.push(state.words[i]);
                 }
             }
             state.words = newUrls;
-            state.blobs = null; // Free up the locally stored blobs
+            state.blobs = null; // Free up the locally stored blob array since they are remote now
         } catch (e) {
             console.error(e);
             alert("Failed to upload images for sharing. Try again later.");
@@ -900,7 +916,7 @@
 
     function newGame(saveCurrent = false) {
       if (saveCurrent && state.words) previousGameState = cloneGameState(state);
-      freeBlobMemory();
+      freeBlobMemory(); // Reclaim memory from old board blobs
       
       const seed = makeCompactSeed();
       const previousDarkMode = state.darkMode || false;
@@ -1309,11 +1325,9 @@
           let sy = 0;
           
           if (w > h) {
-              // Landscape: Crop horizontally from the dead center
               sx = (w - minDim) / 2;
           } else if (h > w) {
-              // Portrait: Crop vertically from 25% down the available slack
-              // This is "off the middle, towards the top"
+              // 25% from top for vertical images
               sy = (h - minDim) * 0.25;
           }
           
@@ -1393,51 +1407,32 @@
             await loadJSZip();
             const zip = await JSZip.loadAsync(file);
             
-            // Find all image files, excluding MacOS artifacts
             const imgFiles = Object.values(zip.files).filter(f => !f.dir && /\.(jpe?g|png|webp)$/i.test(f.name) && !f.name.includes('__MACOSX'));
             
             if (imgFiles.length < 25) {
                 throw new Error(`Found ${imgFiles.length} usable images. You need at least 25 to play.`);
             }
 
-            // Pick 25 random files (Shuffle so it varies each time you select the ZIP)
-            const selectedFiles = shuffle(imgFiles).slice(0, 25);
-            const blobs = [];
+            // Shuffle all valid image files
+            const allFiles = shuffle(imgFiles);
+            // Cap at 100 images to prevent browser memory crashes on huge zips
+            const filesToProcess = allFiles.slice(0, Math.min(100, allFiles.length));
+            const processedBlobs = [];
             
-            for (let f of selectedFiles) {
+            for (let f of filesToProcess) {
                 const originalBlob = await f.async('blob');
                 const resizedBlob = await resizeImageBlob(originalBlob);
-                blobs.push(resizedBlob);
+                processedBlobs.push(resizedBlob);
             }
-
-            // Generate Blob URLs for local display immediately
-            const urls = blobs.map(b => URL.createObjectURL(b));
             
+            // Update the global cache so "Next game" can pull a new random set
+            fullImageCache = processedBlobs;
+
             previousSourceSelection = selectedSource;
             selectedSource = 'custom_images';
             
-            // New game state initialization for custom images
-            freeBlobMemory(); // clear old ones if they existed
-            const seed = makeCompactSeed();
-            const setup = makeRoles(seededRandom(`${selectedSource}:${seed}`));
-            state = {
-                words: urls,
-                roles: setup.roles,
-                revealed: Array(25).fill(false),
-                source: 'custom_images',
-                seed: seed,
-                pending: null, 
-                pendingTimer: null, 
-                lastRevealed: null,
-                turn: setup.startingTeam, 
-                spymaster: false, 
-                darkMode: state.darkMode, 
-                spymasterMayGuess: state.spymasterMayGuess,
-                blobs: blobs // store blobs for the Share button to use later!
-            };
+            newGame(true);
             
-            render();
-            syncGameUrl();
         } catch (error) {
             alert(error.message || "Failed to process images. Make sure it's a standard WhatsApp Media Export .zip");
             selectedSource = previousSourceSelection;
