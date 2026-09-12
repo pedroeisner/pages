@@ -1,8 +1,7 @@
 name: Update World Cup 2026 calendar
 
 on:
-  schedule:
-    - cron: "7 * * * *"
+
   workflow_dispatch:
 
 permissions:
