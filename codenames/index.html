@@ -16,6 +16,7 @@
       --neutral-dark: #d9d9d9;
       --revealed-neutral: #ecd99f;
       --assassin: #111;
+      --emoji-font: "Apple Color Emoji", "Noto Color Emoji", "Segoe UI Emoji", sans-serif;
       --text: #050505;
       --white: #fff;
       --border: #f0f0f0;
@@ -64,6 +65,7 @@
       --button-bg: #222;
       --button-border: #555;
       --settings-bg: rgba(18,18,18,0.97);
+      --emoji-background: #e8e8e8;
     }
 
     header {
@@ -97,6 +99,8 @@
     .app.spymaster .score { 
       display: none; 
     }
+
+    .spymaster-hint { font-size: clamp(11px, 1.15vw, 17px); }
 
     .score .red { color: var(--red); }
     .score .blue { color: var(--blue); }
@@ -134,6 +138,21 @@
       line-height: 1;
     }
 
+    .card.image-card:not(.image-bg-card) span {
+      font-family: var(--emoji-font);
+      font-size: clamp(24px, min(8vw, 7.4dvh), 96px);
+    }
+
+    .app.dark .card.image-card:not(.image-bg-card) span {
+      display: grid;
+      place-items: center;
+      width: 1.38em;
+      height: 1.38em;
+      border-radius: 50%;
+      background: var(--emoji-background);
+      color: #111;
+    }
+
     /* Media Mode Visual Overlay For Guesses */
     .card.image-bg-card.revealed::after {
       content: '';
@@ -153,7 +172,7 @@
       inset: 0;
       transform-origin: left;
       animation: fill 3s linear forwards, flash 400ms infinite;
-      z-index: 3;
+      z-index: 1;
     }
 
     @keyframes fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
@@ -180,6 +199,33 @@
     .spymaster .card:not(.revealed).blue { background: rgba(49, 95, 184, 0.25); box-shadow: inset 0 0 0 6px var(--blue); }
     .spymaster .card:not(.revealed).neutral { background: rgba(216, 185, 103, 0.42); box-shadow: inset 0 0 0 6px #d8b967; }
     .spymaster .card:not(.revealed).assassin { background: rgba(0,0,0,0.4); color: white; box-shadow: inset 0 0 0 6px var(--assassin); }
+
+    button.card {
+      border: 0;
+      font-family: inherit;
+    }
+
+    .card.marked:not(.revealed)::after {
+      content: '✓';
+      position: absolute;
+      top: 7px;
+      right: 7px;
+      z-index: 3;
+      display: grid;
+      place-items: center;
+      width: clamp(16px, 2vw, 29px);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: #171717;
+      color: #fff;
+      font-size: clamp(11px, 1.35vw, 21px);
+      font-weight: 700;
+      line-height: 1;
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.75);
+      pointer-events: none;
+    }
+
+    .card.marked:not(.revealed) span { opacity: 0.72; }
 
     .screen-shake { animation: screenShake 520ms ease-in-out; }
     @keyframes screenShake {
@@ -291,6 +337,35 @@
       accent-color: var(--blue);
     }
 
+    .share-board-dialog {
+      width: min(90vw, 35rem);
+      max-height: 92dvh;
+      padding: clamp(10px, 2.5dvh, 24px);
+      border: 1px solid var(--button-border);
+      border-radius: 16px;
+      background: var(--white);
+      color: var(--text);
+      text-align: center;
+    }
+
+    .share-board-dialog::backdrop { background: rgba(0, 0, 0, 0.72); }
+    .share-board-dialog h2 { margin: 0; font-size: clamp(16px, 3.4dvh, 26px); }
+    .share-board-dialog p { margin: 0.5em 0; font-size: clamp(11px, 2.3dvh, 16px); }
+    .share-board-dialog canvas {
+      width: min(100%, 58dvh, 500px);
+      height: auto;
+      image-rendering: pixelated;
+    }
+
+    .share-board-dialog input { width: 100%; margin: 0.5em 0; }
+
+    .share-board-actions {
+      display: flex;
+      justify-content: center;
+      gap: 0.55rem;
+      margin-top: 0.5em;
+    }
+
     .loading-modal {
       position: fixed;
       inset: 0;
@@ -342,6 +417,7 @@
     <div class="rule"></div>
     <section class="status">
       <div class="score"><span class="red" id="redScore">9</span> – <span class="blue" id="blueScore">8</span></div>
+      <span class="spymaster-hint" id="spymasterHint" hidden>Tap to mark a guessed card</span>
     </section>
     <main class="board" id="board"></main>
     <footer>
@@ -349,10 +425,6 @@
         <label class="setting-row">
           <span>Dark mode</span>
           <input type="checkbox" id="darkModeToggle" />
-        </label>
-        <label class="setting-row">
-          <span>Spymaster may guess</span>
-          <input type="checkbox" id="spymasterGuessToggle" />
         </label>
       </div>
       <div class="footer-section settings-section">
@@ -386,11 +458,23 @@
         <button class="control-btn" id="downloadPngBtn">Download</button>
       </div>
     </footer>
+    <dialog class="share-board-dialog" id="shareBoardDialog" aria-labelledby="shareBoardTitle">
+      <h2 id="shareBoardTitle">Join as Spymaster</h2>
+      <p id="shareBoardInstructions"></p>
+      <canvas id="shareBoardQr" role="img" aria-label="QR code for the Spymaster board"></canvas>
+      <input id="shareBoardLink" type="text" readonly hidden aria-label="Spymaster board link" />
+      <form method="dialog" class="share-board-actions">
+        <button class="control-btn" id="copyBoardLinkBtn" type="button">Copy link</button>
+        <button class="control-btn" id="shareLinkBtn" type="button" hidden>Share link</button>
+        <button class="control-btn" autofocus>Done</button>
+      </form>
+    </dialog>
     <canvas class="effects-canvas" id="effectsCanvas"></canvas>
     <div class="loading-modal" id="loadingModal"><div class="loading-box" id="loadingText">Loading…</div></div>
   </div>
   <div style="height:520px" aria-hidden="true"></div>
 
+  <script src="qr-code.js"></script>
   <script>
     const CLOUDINARY_CLOUD_NAME = 'tchfkyl7';
     const CLOUDINARY_UPLOAD_PRESET = 'codenames_temp';
@@ -426,13 +510,19 @@
       blueScore: document.getElementById('blueScore'),
       playerBtn: document.getElementById('playerBtn'),
       spymasterBtn: document.getElementById('spymasterBtn'),
+      spymasterHint: document.getElementById('spymasterHint'),
       settingsBtn: document.getElementById('settingsBtn'),
       settingsPanel: document.getElementById('settingsPanel'),
       darkModeToggle: document.getElementById('darkModeToggle'),
-      spymasterGuessToggle: document.getElementById('spymasterGuessToggle'),
       previousGameBtn: document.getElementById('previousGameBtn'),
       nextBtn: document.getElementById('nextBtn'),
       shareGameBtn: document.getElementById('shareGameBtn'),
+      shareBoardDialog: document.getElementById('shareBoardDialog'),
+      shareBoardInstructions: document.getElementById('shareBoardInstructions'),
+      shareBoardQr: document.getElementById('shareBoardQr'),
+      shareBoardLink: document.getElementById('shareBoardLink'),
+      copyBoardLinkBtn: document.getElementById('copyBoardLinkBtn'),
+      shareLinkBtn: document.getElementById('shareLinkBtn'),
       downloadPngBtn: document.getElementById('downloadPngBtn'),
       customFileInput: document.getElementById('customFileInput'),
       customMediaInput: document.getElementById('customMediaInput'),
@@ -455,6 +545,7 @@
         words: [...source.words],
         roles: [...source.roles],
         revealed: [...source.revealed],
+        spymasterMarks: source.spymasterMarks && new Set(source.spymasterMarks),
         source: source.source,
         seed: source.seed || null,
         pending: null,
@@ -463,7 +554,6 @@
         turn: source.turn,
         spymaster: false,
         darkMode: source.darkMode || false,
-        spymasterMayGuess: source.spymasterMayGuess || false
       };
     }
 
@@ -706,7 +796,6 @@
         turn: setup.startingTeam,
         spymaster: false,
         darkMode: false,
-        spymasterMayGuess: false
       };
     }
 
@@ -726,11 +815,10 @@
         turn: setup.startingTeam,
         spymaster,
         darkMode: false,
-        spymasterMayGuess: false
       };
     }
 
-    function getShareableGameUrl() {
+    function getShareableGameUrl(spymaster = false) {
       const url = new URL(window.location.href);
       const compactCode = getCompactGameCode();
       const customCode = getCompactCustomBoardCode();
@@ -748,22 +836,26 @@
         url.searchParams.set('game', base64UrlEncode(JSON.stringify(getLegacyGamePayload())));
       }
 
+      if (spymaster) url.searchParams.set('view', 'spymaster');
       url.hash = '';
       return url.toString();
     }
 
     function syncGameUrl() {
       if (!state.words || state.words.length !== 25) return;
-      const url = new URL(getShareableGameUrl());
+      const openedAsSpymaster = new URLSearchParams(window.location.search).get('view') === 'spymaster';
+      const url = getShareableGameUrl(openedAsSpymaster && state.spymaster);
       window.history.replaceState({}, '', url.toString());
     }
 
     function loadSharedGameFromUrl() {
       const params = new URLSearchParams(window.location.search);
+      const spymaster = params.get('view') === 'spymaster';
       const customCode = params.get('c');
       if (customCode) {
         try {
           state = buildCustomStateFromCode(customCode);
+          state.spymaster = spymaster;
           render();
           syncGameUrl();
           return true;
@@ -784,7 +876,7 @@
           const seed = compactCode.slice(2);
           if (version !== '1' || !source || seed.length < 8) throw new Error('Invalid compact game');
           previousSourceSelection = source;
-          state = buildStateFromSeed(source, seed, Array(25).fill(false), false);
+          state = buildStateFromSeed(source, seed, Array(25).fill(false), spymaster);
           render();
           syncGameUrl();
           return true;
@@ -816,9 +908,8 @@
           pendingTimer: null,
           lastRevealed: null,
           turn: 'red',
-          spymaster: false,
+          spymaster,
           darkMode: false,
-          spymasterMayGuess: false
         };
         render();
         syncGameUrl();
@@ -832,14 +923,14 @@
       }
     }
 
-    async function shareGameLink() {
-      // 1. Upload Local Blobs if they exist
-      if (state.source === 'custom-media' && state.words.some(w => w.startsWith('blob:'))) {
+    async function prepareBoardForSharing() {
+      const board = state;
+      if (board.source === 'custom-media' && board.words.some(w => w.startsWith('blob:'))) {
         els.loadingText.textContent = 'Uploading board...';
         els.loadingModal.classList.add('show');
         
         try {
-          const uploadPromises = state.words.map(async (word) => {
+          const uploadPromises = board.words.map(async (word) => {
             if (!word.startsWith('blob:')) return word;
             
             const response = await fetch(word);
@@ -858,36 +949,80 @@
             return `CLD:${data.public_id}`;
           });
 
-          state.words = await Promise.all(uploadPromises);
+          board.words = await Promise.all(uploadPromises);
           
         } catch (error) {
           alert('Upload failed. Check your internet connection.');
+          return false;
+        } finally {
           els.loadingModal.classList.remove('show');
-          return; // Abort share if upload fails
         }
-        els.loadingModal.classList.remove('show');
       }
-
+      if (state !== board) return false;
       syncGameUrl();
-      const link = getShareableGameUrl();
+      return true;
+    }
 
-      // Native sharing logic restored (removes manual alert banner)
-      if (navigator.share) {
-        try {
-          await navigator.share({ title: 'Codenames board', url: link });
-          return;
-        } catch (error) {
-          if (error.name === 'AbortError') return;
+    function drawBoardQr(link) {
+      const qr = createCodenamesQr(link);
+      const modules = qr.getModuleCount();
+      const quietZone = 4;
+      const pixelsPerModule = 8;
+      const canvas = els.shareBoardQr;
+      canvas.width = canvas.height = (modules + 2 * quietZone) * pixelsPerModule;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#000';
+      for (let row = 0; row < modules; row++) {
+        for (let column = 0; column < modules; column++) {
+          if (qr.isDark(row, column)) {
+            ctx.fillRect((column + quietZone) * pixelsPerModule, (row + quietZone) * pixelsPerModule,
+              pixelsPerModule, pixelsPerModule);
+          }
         }
       }
-      
+    }
+
+    async function showBoardShare() {
+      els.shareGameBtn.disabled = true;
       try {
-        await navigator.clipboard.writeText(link);
-        const original = els.shareGameBtn.textContent;
-        els.shareGameBtn.textContent = 'Copied!';
-        setTimeout(() => { els.shareGameBtn.textContent = original; }, 1400);
+        if (!await prepareBoardForSharing()) return;
+        const link = getShareableGameUrl(true);
+        els.shareBoardLink.value = link;
+        els.shareBoardLink.hidden = true;
+        els.shareLinkBtn.hidden = typeof navigator.share !== 'function';
+        els.copyBoardLinkBtn.textContent = 'Copy link';
+        els.shareBoardQr.hidden = false;
+        els.shareBoardInstructions.textContent = 'Scan with your phone’s camera to open this board in Spymaster mode.';
+        try {
+          drawBoardQr(link);
+        } catch {
+          els.shareBoardQr.hidden = true;
+          els.shareBoardInstructions.textContent = 'A QR code is unavailable for this board. Use the link to open it in Spymaster mode.';
+        }
+        els.shareBoardDialog.showModal();
+      } finally {
+        els.shareGameBtn.disabled = false;
+      }
+    }
+
+    async function copyBoardLink() {
+      try {
+        await navigator.clipboard.writeText(els.shareBoardLink.value);
+        els.copyBoardLinkBtn.textContent = 'Copied!';
+      } catch {
+        els.shareBoardLink.hidden = false;
+        els.shareBoardLink.focus();
+        els.shareBoardLink.select();
+      }
+    }
+
+    async function shareBoardLink() {
+      try {
+        await navigator.share({ title: 'Codenames Spymaster board', url: els.shareBoardLink.value });
       } catch (error) {
-        window.prompt('Copy this board link:', link);
+        if (error.name !== 'AbortError') await copyBoardLink();
       }
     }
 
@@ -895,17 +1030,50 @@
       if (saveCurrent && state.words) previousGameState = cloneGameState(state);
       const seed = makeCompactSeed();
       const previousDarkMode = state.darkMode || false;
-      const previousSpymasterMayGuess = state.spymasterMayGuess || false;
       state = buildStateFromSeed(selectedSource, seed, Array(25).fill(false), false);
       state.darkMode = previousDarkMode;
-      state.spymasterMayGuess = previousSpymasterMayGuess;
       render();
       syncGameUrl();
+    }
+
+    function spymasterMarksKey() {
+      const board = JSON.stringify([state.source, state.seed, state.words, state.roles]);
+      return 'codenames:spymaster-marks:' + cyrb128(board).join('-');
+    }
+
+    function getSpymasterMarks() {
+      if (state.spymasterMarks) return state.spymasterMarks;
+      state.spymasterMarks = new Set();
+      try {
+        const saved = JSON.parse(sessionStorage.getItem(spymasterMarksKey()));
+        if (Array.isArray(saved)) {
+          state.spymasterMarks = new Set(saved.filter(index =>
+            Number.isInteger(index) && index >= 0 && index < state.words.length));
+        }
+      } catch {
+        // In-memory marks still work if browser storage is unavailable.
+      }
+      return state.spymasterMarks;
+    }
+
+    function toggleSpymasterMark(card, index, marks) {
+      const marked = !marks.has(index);
+      if (marked) marks.add(index);
+      else marks.delete(index);
+      card.classList.toggle('marked', marked);
+      card.setAttribute('aria-pressed', String(marked));
+      try {
+        sessionStorage.setItem(spymasterMarksKey(), JSON.stringify([...marks]));
+      } catch {
+        // The marks remain available until the tab reloads.
+      }
     }
 
     function render() {
       els.app.classList.toggle('dark', state.darkMode);
       els.app.classList.toggle('spymaster', state.spymaster);
+      const marks = state.spymaster ? getSpymasterMarks() : null;
+      els.spymasterHint.hidden = !state.spymaster;
       let redRemaining = 0;
       let blueRemaining = 0;
       state.roles.forEach((role, i) => {
@@ -919,12 +1087,12 @@
       els.playerBtn.classList.toggle('active', !state.spymaster);
       els.spymasterBtn.classList.toggle('active', state.spymaster);
       els.darkModeToggle.checked = state.darkMode;
-      els.spymasterGuessToggle.checked = state.spymasterMayGuess;
       els.sourceOptions.forEach(option => option.classList.toggle('active', option.dataset.source === selectedSource));
 
       const fragment = document.createDocumentFragment();
       state.words.forEach((w, i) => {
-        const el = document.createElement('div');
+        const markable = state.spymaster && !state.revealed[i];
+        const el = document.createElement(markable ? 'button' : 'div');
         const role = state.roles[i];
         
         const isImage = state.source === 'images' || w.startsWith('blob:') || w.startsWith('CLD:');
@@ -948,7 +1116,16 @@
           el.appendChild(label);
         }
         
-        el.onclick = () => handleCardClick(i);
+        const marked = Boolean(marks?.has(i) && !state.revealed[i]);
+        el.classList.toggle('marked', marked);
+        if (markable) {
+          el.type = 'button';
+          el.setAttribute('aria-pressed', String(marked));
+          if (isCustomMedia) el.setAttribute('aria-label', 'Photo card ' + (i + 1));
+          el.onclick = () => toggleSpymasterMark(el, i, marks);
+        } else if (!state.spymaster) {
+          el.onclick = () => handleCardClick(i);
+        }
         fragment.appendChild(el);
       });
 
@@ -956,7 +1133,7 @@
     }
 
     function handleCardClick(i) {
-      if (state.spymaster && !state.spymasterMayGuess) return;
+      if (state.spymaster) return;
       if (state.pending === i) { clearPending(); render(); return; }
       if (state.pending !== null) clearPending();
       if (state.revealed[i]) {
@@ -1357,13 +1534,20 @@
     els.settingsPanel.onclick = (event) => event.stopPropagation();
     document.addEventListener('click', () => els.settingsPanel.classList.remove('open'));
     els.playerBtn.onclick = () => { state.spymaster = false; state.lastRevealed = null; render(); };
-    els.spymasterBtn.onclick = () => { state.spymaster = true; state.lastRevealed = null; render(); };
+    els.spymasterBtn.onclick = () => {
+      clearPending();
+      state.spymaster = true;
+      state.lastRevealed = null;
+      render();
+    };
     els.previousGameBtn.onclick = () => {
       if (!previousGameState) { alert('No previous game yet.'); return; }
       clearPending(); state = cloneGameState(previousGameState); selectedSource = state.source || selectedSource; render(); syncGameUrl();
     };
     els.nextBtn.onclick = () => { clearPending(); newGame(true); };
-    els.shareGameBtn.onclick = shareGameLink;
+    els.shareGameBtn.onclick = showBoardShare;
+    els.copyBoardLinkBtn.onclick = copyBoardLink;
+    els.shareLinkBtn.onclick = shareBoardLink;
     els.downloadPngBtn.onclick = downloadPlayerBoardPng;
     
     els.clickableSourceOptions.forEach(option => {
@@ -1426,7 +1610,6 @@
     };
 
     els.darkModeToggle.onchange = (event) => { state.darkMode = event.target.checked; state.lastRevealed = null; render(); };
-    els.spymasterGuessToggle.onchange = (event) => { state.spymasterMayGuess = event.target.checked; state.lastRevealed = null; render(); };
 
     function roundRect(ctx, x, y, width, height, radius) {
       ctx.beginPath(); ctx.moveTo(x + radius, y); ctx.lineTo(x + width - radius, y); ctx.quadraticCurveTo(x + width, y, x + width, y + radius); ctx.lineTo(x + width, y + height - radius); ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height); ctx.lineTo(x + radius, y + height); ctx.quadraticCurveTo(x, y + height, x, y + height - radius); ctx.lineTo(x, y + radius); ctx.quadraticCurveTo(x, y, x + radius, y); ctx.closePath();
@@ -1442,6 +1625,12 @@
         const canvas = document.createElement('canvas'); canvas.width = width; canvas.height = height;
         const ctx = canvas.getContext('2d');
         const isDark = state.darkMode;
+        const isEmojiBoard = state.source === 'images';
+        const boardStyle = isEmojiBoard ? getComputedStyle(els.app) : null;
+        const emojiBackground = isDark && boardStyle?.getPropertyValue('--emoji-background').trim();
+        const labelFont = isEmojiBoard
+          ? '76px ' + boardStyle.getPropertyValue('--emoji-font').trim()
+          : '700 38px Arial, Helvetica, sans-serif';
         const colors = { bg: isDark ? '#111111' : '#ffffff', text: isDark ? '#f3f3f3' : '#050505', neutral: isDark ? '#2b2b2b' : '#e8e8e8', border: isDark ? '#242424' : '#f0f0f0', red: '#d71920', blue: '#315fb8', gray: '#ecd99f', assassin: '#000000' };
         ctx.fillStyle = colors.bg; ctx.fillRect(0, 0, width, height);
         ctx.fillStyle = colors.text; ctx.font = '700 42px Georgia, serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('CODENAMES', width / 2, 54);
@@ -1458,7 +1647,17 @@
           const role = state.roles[i]; let fill = colors.neutral, textColor = colors.text;
           if (state.revealed[i]) { if (role === 'red') fill = colors.red; if (role === 'blue') fill = colors.blue; if (role === 'neutral') fill = colors.gray; if (role === 'assassin') fill = colors.assassin; textColor = role === 'neutral' ? '#111111' : '#ffffff'; }
           ctx.fillStyle = fill; roundRect(ctx, x, y, cardW, cardH, 12); ctx.fill();
-          ctx.fillStyle = textColor; ctx.font = state.source === 'images' ? '76px Arial, sans-serif' : '700 38px Arial, Helvetica, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(word, x + cardW / 2, y + cardH / 2);
+          if (emojiBackground) {
+            ctx.fillStyle = emojiBackground;
+            ctx.beginPath();
+            ctx.arc(x + cardW / 2, y + cardH / 2, 52.5, 0, 2 * Math.PI);
+            ctx.fill();
+          }
+          ctx.fillStyle = emojiBackground ? '#111' : textColor;
+          ctx.font = labelFont;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(word, x + cardW / 2, y + cardH / 2);
         });
         canvas.toBlob(async (blob) => {
           if (!blob) { resolve(false); return; }
